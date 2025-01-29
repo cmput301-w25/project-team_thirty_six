@@ -5,7 +5,7 @@
 | Name        | CCID   | GitHub Username |
 | ----------- | ------ | --------------- |
 | Dalton Low  | dwlow  | dwlow           |
-| [Full Name] | [CCID] | [@username]     |
+| Lawrence O  | aomotosh| aomotosh       |
 | [Full Name] | [CCID] | [@username]     |
 | [Full Name] | [CCID] | [@username]     |
 | [Full Name] | [CCID] | [@username]     |
