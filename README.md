@@ -7,7 +7,7 @@
 | Dalton Low             | dwlow   | dwlow          |
 | Lawrence O             | aomotosh| aomotosh       |
 | Olaoluwasubomi Oluyadi | ooluyadi| subomiualberta       |
-| [Full Name]            | [CCID] | [@username]     |
+| Rhiyon Naderi            | rhiyon | rhiyon     |
 | [Full Name]            | [CCID] | [@username]     |
 | [Full Name]             | [CCID] | [@username]     |
 
