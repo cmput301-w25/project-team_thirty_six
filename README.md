@@ -6,7 +6,7 @@
 | -----------            | ------  | ---------------|
 | Dalton Low             | dwlow   | dwlow          |
 | Lawrence O             | aomotosh| aomotosh       |
-| Olaoluwasubomi Oluyadi | ooluyadi| ooluyadi       |
+| Olaoluwasubomi Oluyadi | ooluyadi| subomiualberta       |
 | [Full Name]            | [CCID] | [@username]     |
 | [Full Name]            | [CCID] | [@username]     |
 | [Full Name]             | [CCID] | [@username]     |
