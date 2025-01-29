@@ -2,14 +2,14 @@
 
 ## Team Members
 
-| Name        | CCID   | GitHub Username |
-| ----------- | ------ | --------------- |
-| Dalton Low  | dwlow  | dwlow           |
-| Lawrence O  | aomotosh| aomotosh       |
-| [Full Name] | [CCID] | [@username]     |
-| [Full Name] | [CCID] | [@username]     |
-| [Full Name] | [CCID] | [@username]     |
-| [Full Name] | [CCID] | [@username]     |
+| Name                   | CCID   | GitHub Username |
+| -----------            | ------  | ---------------|
+| Dalton Low             | dwlow   | dwlow          |
+| Lawrence O             | aomotosh| aomotosh       |
+| Olaoluwasubomi Oluyadi | ooluyadi| ooluyadi       |
+| [Full Name]            | [CCID] | [@username]     |
+| [Full Name]            | [CCID] | [@username]     |
+| [Full Name]             | [CCID] | [@username]     |
 
 ## Project Description
 
