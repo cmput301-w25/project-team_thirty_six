@@ -13,7 +13,7 @@
 
 ## Project Description
 
-[Brief description of the project in your own words]
+A mood board app that allows users to keep track of moods and when they occurred
 
 ## Key Features
 
