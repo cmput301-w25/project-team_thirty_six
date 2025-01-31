@@ -1,4 +1,4 @@
-# CMPUT 301 W25 - Team [Team Name]
+# CMPUT 301 W25 - Team Thirty_Six
 
 ## Team Members
 
@@ -9,7 +9,7 @@
 | Olaoluwasubomi Oluyadi | ooluyadi | subomiualberta  |
 | Rhiyon Naderi          | rhiyon   | rhiyon          |
 | Sheldon Tang           | sktang   | estee100        |
-| [Full Name]            | [CCID]   | [@username]     |
+| Haasya Shah            | haasya   | @azya404        |
 
 ## Project Description
 
