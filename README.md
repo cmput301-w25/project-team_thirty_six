@@ -1,4 +1,4 @@
-# CMPUT 301 W25 - Team Thirty_Six
+# CMPUT 301 W25 - Team_Thirty_Six
 
 ## Team Members
 
