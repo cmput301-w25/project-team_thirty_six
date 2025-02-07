@@ -31,5 +31,5 @@ A mood board app that allows users to keep track of moods and when they occurred
 
 - https://github.com/cmput301-w25/project-team_thirty_six/wiki
 - https://github.com/orgs/cmput301-w25/projects/23
-- [UI Mockups]
+- UI Mockups: https://www.figma.com/design/GdmAGRYTzR9NaD3Xaj6Ne4/Team-36?node-id=1-981&p=f&t=tnyiWSGc3mRq0Sl3-0
 - [UML]
