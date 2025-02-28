@@ -23,4 +23,8 @@ public class ExampleInstrumentedTest {
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         assertEquals("com.example.androidproject", appContext.getPackageName());
     }
+
+    @Test
+    public void addUserToDatabase(){
+    }
 }

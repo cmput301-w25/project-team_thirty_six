@@ -7,6 +7,7 @@ import java.util.List;
  * Creates the user class to keep track of users interactions with others and moods
  */
 public class User {
+    private Database database;
     String username;
     String password;
     // No setter for these 3 as their logic is handled in the add and delete functions
@@ -24,8 +25,10 @@ public class User {
         this.username = username;
         this.password = password;
         this.following = new ArrayList<>();
-        this.moodHistory = new ArrayList<>();
+        //this.moodHistory = new ArrayList<>();
     }
+
+
 
     /**
      * Adds a provided mood to a users mood history and updates the most recent mood
@@ -59,6 +62,8 @@ public class User {
             mostRecentMood = moodHistory.get(moodHistory.size() - 1);
         }
     }
+
+
 
     /**
      * Adds a user to the following list

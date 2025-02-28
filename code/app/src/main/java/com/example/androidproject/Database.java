@@ -38,4 +38,8 @@ public class Database {
         } return dbInstance;
     }
 
+    public void addUser(User user){
+        users.document(user.getUsername()).set(user);
+    }
+
 }
