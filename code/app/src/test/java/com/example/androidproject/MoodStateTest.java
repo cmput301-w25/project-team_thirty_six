@@ -10,6 +10,7 @@ import android.location.LocationManager;
 
 import org.junit.Test;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -96,9 +97,10 @@ public class MoodStateTest {
         MoodState moodState = new MoodState("Happiness");
         assertEquals(moodState.getMood(),"Happiness");
 
-        Date newDate = new Date();
+        LocalDateTime newDate = LocalDateTime.now();
         moodState.setDayTime(newDate);
-        assertEquals(moodState.getDayTime(),newDate);
+        assertEquals(moodState.getDay(),newDate.toLocalDate());
+        assertEquals(moodState.getTime(),newDate.toLocalTime());
 
         String newTrigger = "Loud Noises";
         moodState.setTrigger(newTrigger);
