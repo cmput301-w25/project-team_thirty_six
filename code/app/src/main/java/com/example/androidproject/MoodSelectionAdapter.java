@@ -47,20 +47,28 @@ public class MoodSelectionAdapter extends ArrayAdapter<String> {
         switch (mood) {
             case "Anger":
                 moodImage.setImageResource(R.drawable.anger);
+                break;
             case "Confusion":
                 moodImage.setImageResource(R.drawable.confusion);
+                break;
             case "Disgust":
                 moodImage.setImageResource(R.drawable.disgust);
+                break;
             case "Fear":
                 moodImage.setImageResource(R.drawable.fear);
+                break;
             case "Happiness":
                 moodImage.setImageResource(R.drawable.happiness);
+                break;
             case "Sadness":
                 moodImage.setImageResource(R.drawable.sadness);
+                break;
             case "Shame":
                 moodImage.setImageResource(R.drawable.shame);
+                break;
             case "Surprise":
                 moodImage.setImageResource(R.drawable.surprise);
+                break;
         }
         return view;
 

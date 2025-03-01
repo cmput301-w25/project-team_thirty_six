@@ -23,7 +23,6 @@ public class MoodState {
 
     protected LocalDateTime dayTime;
     // All underneath are nullable
-    protected String trigger;
     protected String situation;
     protected String reason;
     protected ImageView image;
@@ -112,14 +111,6 @@ public class MoodState {
         this.emoji = MapMoodToEmoji(mood);
         // Gets the day and time
         this.dayTime = LocalDateTime.now();
-    }
-
-    public String getTrigger() {
-        return trigger;
-    }
-
-    public void setTrigger(String trigger) {
-        this.trigger = trigger;
     }
 
     public String getSituation() {

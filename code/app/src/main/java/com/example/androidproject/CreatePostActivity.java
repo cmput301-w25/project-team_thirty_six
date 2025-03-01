@@ -63,9 +63,18 @@ public class CreatePostActivity extends AppCompatActivity {
                 // If the drop down is open close it
                 if (dropdownStatus) {
                     dropdownList.setVisibility(View.GONE);
+                    aloneButton.setVisibility(View.VISIBLE);
+                    pairButton.setVisibility(View.VISIBLE);
+                    groupButton.setVisibility(View.VISIBLE);
+                    confirmButton.setVisibility(View.VISIBLE);
                 } else {
                     // If the drop down is closed make it visible
                     dropdownList.setVisibility(View.VISIBLE);
+                    dropdownList.bringToFront();
+                    aloneButton.setVisibility(View.INVISIBLE);
+                    pairButton.setVisibility(View.INVISIBLE);
+                    groupButton.setVisibility(View.INVISIBLE);
+                    confirmButton.setVisibility(View.INVISIBLE);
                 }
                 dropdownStatus = !dropdownStatus;
             }
@@ -77,6 +86,11 @@ public class CreatePostActivity extends AppCompatActivity {
                 chosenMood = moodList.get(position);
                 dropdownStatus = Boolean.FALSE;
                 dropdownList.setVisibility(View.GONE);
+                aloneButton.setVisibility(View.VISIBLE);
+                pairButton.setVisibility(View.VISIBLE);
+                groupButton.setVisibility(View.VISIBLE);
+                confirmButton.setVisibility(View.VISIBLE);
+                moodDropdown.setText(chosenMood);
             }
         });
         // Sets the alone option button
@@ -98,6 +112,29 @@ public class CreatePostActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 chosenSituation = "Group";
+            }
+        });
+
+        // Sets the confirm on click listener
+        confirmButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Gives an error message if trying to enter without setting mood
+                if (chosenMood == null) {
+                    confirmButton.setError("Cannot leave mood blank");
+                } else {
+                    // Creates the new mood state
+                    MoodState newMood = new MoodState(chosenMood);
+                    // Adds chosen situation if it was specified
+                    if (chosenSituation != null) {
+                        newMood.setSituation(chosenSituation);
+                    }
+                    // Adds reason if it was specified
+                    if (reasonText.getText().length() != 0) {
+                        newMood.setReason(reasonText.getText().toString());
+                    }
+
+                }
             }
         });
 
