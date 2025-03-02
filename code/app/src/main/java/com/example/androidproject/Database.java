@@ -2,12 +2,24 @@ package com.example.androidproject;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.AggregateQuery;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldPath;
+import com.google.firebase.firestore.Filter;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.Source;
 
 
+import java.nio.file.Path;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -46,20 +58,8 @@ public class Database {
         users.document(user.getUsername()).set(user);
     }
 
-
-    public AtomicBoolean searchUser(String username) {
-        AtomicBoolean userAlreadyExists = new AtomicBoolean(false);
-        DocumentReference docRef = users.document("username");
-
-        docRef.get().addOnSuccessListener(documentSnapshot -> {
-            userAlreadyExists.set(documentSnapshot.exists()); // Sets the boolean to true if the user already exists
-
-        }).addOnFailureListener(e -> {
-            Log.d("Database Failiure", "Document does not exist");
-        });
-        return userAlreadyExists;
+    public CollectionReference getUsers() {
+        return users;
     }
-
-
 }
 

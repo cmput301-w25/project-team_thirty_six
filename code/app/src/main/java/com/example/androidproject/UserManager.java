@@ -3,6 +3,13 @@ package com.example.androidproject;
 import android.provider.ContactsContract;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.QuerySnapshot;
+
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class UserManager {
@@ -24,16 +31,29 @@ public class UserManager {
      * @param password
      */
     public void addUser(String username, String password) throws InterruptedException {
-        AtomicBoolean userAlreadyExists = database.searchUser(username);
-        Thread.sleep(5000);
-        if (userAlreadyExists.get()){
-            Log.d("TESTERRRR", "Tis very true");
-        } else{
-            Log.d("TESTERRRR", "Tis not ture");
-
-            User user = new User(username, password); // Create new user
-            database.addUser(user);
-        }
+        // Creates the query for the username
+        Task<QuerySnapshot> query = database.getUsers().whereEqualTo("username",username).get();
+        // Adds a success listenet
+        query.addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                Integer i = queryDocumentSnapshots.size();
+                // If the query isn't empty user was found and new one cannot be created
+                if (i > 0) {
+                    Log.d("Name Error","Name already taken");
+                } else {
+                    // If the query is empty create new user
+                    User user = new User(username, password); // Create new user
+                    database.addUser(user);
+                }
+            }
+            // Creates on failure listener to send message
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d("Database","Could not connect to database");
+            }
+        });
     }
 
 }
