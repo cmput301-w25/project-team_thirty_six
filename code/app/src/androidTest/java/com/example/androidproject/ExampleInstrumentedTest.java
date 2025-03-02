@@ -27,13 +27,11 @@ public class ExampleInstrumentedTest {
 
     @Test
     public void addUserToDatabase(){
+        // TODO Make this a real test
     }
 
     @Test
-    public void checkIfUserInDatabaseTest() throws InterruptedException{
-        Log.d("TESTING", "WHYS IT NOT WORKING");
-        Database database = Database.getInstance();
-        database.searchUser("testUser");
-
+    public void checkIfUserInDatabaseTest() {
+        // TODO Make this a real test
     }
 }

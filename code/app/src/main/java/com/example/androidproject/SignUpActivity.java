@@ -20,7 +20,7 @@ public class SignUpActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
-        this.userManager = new UserManager(); // Setting this class' user manager to a userManager.
+        this.userManager = new UserManager(this); // Setting this class' user manager to a userManager and giving it the activity context
     }
     /**
      * Handles the login button click event.
@@ -39,7 +39,7 @@ public class SignUpActivity extends AppCompatActivity {
      * Creates a new user and adds them to the database
      * @param view the view that was clicked
      */
-    public void signUpOnClick(View view) throws InterruptedException {
+    public void signUpOnClick(View view) {
         EditText editUsername = findViewById(R.id.username);
         EditText editPassword = findViewById(R.id.password);
         String username = editUsername.getText().toString();
