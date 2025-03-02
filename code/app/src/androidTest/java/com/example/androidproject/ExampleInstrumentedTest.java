@@ -1,6 +1,7 @@
 package com.example.androidproject;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -26,5 +27,13 @@ public class ExampleInstrumentedTest {
 
     @Test
     public void addUserToDatabase(){
+    }
+
+    @Test
+    public void checkIfUserInDatabaseTest() throws InterruptedException{
+        Log.d("TESTING", "WHYS IT NOT WORKING");
+        Database database = Database.getInstance();
+        database.searchUser("testUser");
+
     }
 }

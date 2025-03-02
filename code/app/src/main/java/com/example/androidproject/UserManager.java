@@ -3,6 +3,8 @@ package com.example.androidproject;
 import android.provider.ContactsContract;
 import android.util.Log;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 public class UserManager {
 
     private Database database;
@@ -21,11 +23,17 @@ public class UserManager {
      * @param username
      * @param password
      */
-    public void addUser(String username, String password){
-        Log.d("myTag", "made it to addUser");
-        User user = new User(username, password); // Create new user
+    public void addUser(String username, String password) throws InterruptedException {
+        AtomicBoolean userAlreadyExists = database.searchUser(username);
+        Thread.sleep(5000);
+        if (userAlreadyExists.get()){
+            Log.d("TESTERRRR", "Tis very true");
+        } else{
+            Log.d("TESTERRRR", "Tis not ture");
 
-        database.addUser(user);
+            User user = new User(username, password); // Create new user
+            database.addUser(user);
+        }
     }
 
 }

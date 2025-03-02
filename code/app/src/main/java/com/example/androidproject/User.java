@@ -7,7 +7,6 @@ import java.util.List;
  * Creates the user class to keep track of users interactions with others and moods
  */
 public class User {
-    private Database database;
     String username;
     String password;
     // No setter for these 3 as their logic is handled in the add and delete functions

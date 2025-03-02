@@ -39,7 +39,7 @@ public class SignUpActivity extends AppCompatActivity {
      * Creates a new user and adds them to the database
      * @param view the view that was clicked
      */
-    public void signUpOnClick(View view){
+    public void signUpOnClick(View view) throws InterruptedException {
         EditText editUsername = findViewById(R.id.username);
         EditText editPassword = findViewById(R.id.password);
         String username = editUsername.getText().toString();

@@ -1,11 +1,14 @@
 package com.example.androidproject;
 
+import android.util.Log;
+
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Creates a database class to allow interacting with the database
@@ -15,6 +18,7 @@ public class Database {
     private static Database dbInstance; // Used to make sure there is only a singular instance of the database throughout all classes
     private CollectionReference moods;
     private CollectionReference users;
+
 
 
     /**
@@ -42,4 +46,20 @@ public class Database {
         users.document(user.getUsername()).set(user);
     }
 
+
+    public AtomicBoolean searchUser(String username) {
+        AtomicBoolean userAlreadyExists = new AtomicBoolean(false);
+        DocumentReference docRef = users.document("username");
+
+        docRef.get().addOnSuccessListener(documentSnapshot -> {
+            userAlreadyExists.set(documentSnapshot.exists()); // Sets the boolean to true if the user already exists
+
+        }).addOnFailureListener(e -> {
+            Log.d("Database Failiure", "Document does not exist");
+        });
+        return userAlreadyExists;
+    }
+
+
 }
+
