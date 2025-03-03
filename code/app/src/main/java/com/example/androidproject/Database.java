@@ -1,6 +1,7 @@
 package com.example.androidproject;
 
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
@@ -40,6 +41,12 @@ public class Database {
 
     public void addUser(User user){
         users.document(user.getUsername()).set(user);
+    }
+
+    public void addMood(MoodState mood){
+        DocumentReference newDoc = moods.document();
+        mood.setId(newDoc.getId());
+        newDoc.set(mood);
     }
 
 }

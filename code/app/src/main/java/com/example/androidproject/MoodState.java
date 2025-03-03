@@ -1,6 +1,7 @@
 package com.example.androidproject;
 
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.widget.ImageView;
 
@@ -14,6 +15,8 @@ import java.util.Date;
  * Creates an abstract emotion class that all of the emotions extend
  */
 public class MoodState {
+    protected String id;
+    protected String username;
     protected String mood;
     protected ArrayList<String> moodList;
     // Stores the hex code of the color
@@ -25,7 +28,7 @@ public class MoodState {
     // All underneath are nullable
     protected String situation;
     protected String reason;
-    protected ImageView image;
+    protected Bitmap image;
     protected Location location;
 
     /**
@@ -129,11 +132,11 @@ public class MoodState {
         this.reason = reason;
     }
 
-    public ImageView getImage() {
+    public Bitmap getImage() {
         return image;
     }
 
-    public void setImage(ImageView image) {
+    public void setImage(Bitmap image) {
         this.image = image;
     }
 
@@ -171,5 +174,21 @@ public class MoodState {
 
     public LocalDateTime getDayTime() {
         return dayTime;
+    }
+
+    public String getUser() {
+        return username;
+    }
+
+    public void setUser(String user) {
+        this.username = user;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }
