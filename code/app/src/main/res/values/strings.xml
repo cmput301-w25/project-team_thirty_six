@@ -9,4 +9,5 @@
     <string name="reason">Reason:</string>
     <string name="enter_a_reason">Enter a reason</string>
     <string name="social_situation">Social Situation:</string>
+    <string name="image_selection">Select image:</string>
 </resources>

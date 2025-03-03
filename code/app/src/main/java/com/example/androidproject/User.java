@@ -12,8 +12,8 @@ public class User {
     String password;
     // No setter for these 3 as their logic is handled in the add and delete functions
     ArrayList<User> following;
-    ArrayList<MoodEvent> moodHistory;
-    MoodEvent mostRecentMood;
+    ArrayList<MoodState> moodHistory;
+    MoodState mostRecentMood;
 
     /**
      * Initializes a user
@@ -25,7 +25,7 @@ public class User {
         this.username = username;
         this.password = password;
         this.following = new ArrayList<>();
-        //this.moodHistory = new ArrayList<>();
+        this.moodHistory = new ArrayList<>();
     }
 
 
@@ -35,7 +35,7 @@ public class User {
      * @param mood
      *      Mood you are adding to mood history
      */
-    public void addMood(MoodEvent mood){
+    public void addMood(MoodState mood){
         // If an exact copy of the mood already exists throw an error
         if (moodHistory.contains(mood)){
             throw new IllegalArgumentException();
@@ -50,7 +50,7 @@ public class User {
      * @param mood
      *      Mood you are deleting from history
      */
-    public void deleteMood(MoodEvent mood){
+    public void deleteMood(MoodState mood){
         // If the mood does not exist throw an error
         if (!moodHistory.contains(mood)){
             throw new IllegalArgumentException();
@@ -59,7 +59,17 @@ public class User {
         moodHistory.remove(mood);
         // If it is the most recent mood sets second most recent as new most recent
         if (mostRecentMood == mood){
-            mostRecentMood = moodHistory.get(moodHistory.size() - 1);
+            // Finds the new lowest mood
+            MoodState newLow;
+            newLow = moodHistory.get(0);
+            for (int i = 1; i < moodHistory.size(); i++){
+                // Checks the element to see if it is after the other
+                if (newLow.getDayTime().isBefore(moodHistory.get(i).getDayTime())) {
+                    newLow = moodHistory.get(i);
+                }
+            }
+            // Sets mood history to the new low
+            this.mostRecentMood = newLow;
         }
     }
 
@@ -102,7 +112,7 @@ public class User {
         return password.equals(testPassword);
     }
 
-    public ArrayList<MoodEvent> getMoodHistory() {
+    public ArrayList<MoodState> getMoodHistory() {
         return moodHistory;
     }
 
@@ -114,7 +124,7 @@ public class User {
         return following;
     }
 
-    public MoodEvent getMostRecentMood() {
+    public MoodState getMostRecentMood() {
         return mostRecentMood;
     }
 

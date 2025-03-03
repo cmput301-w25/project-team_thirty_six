@@ -2,7 +2,11 @@ package com.example.androidproject;
 
 import android.graphics.Bitmap;
 import android.location.Location;
+import android.widget.ImageView;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -17,12 +21,11 @@ public class MoodState {
     // Stores the id of the emoji in drawable
     protected int emoji;
 
-    protected Date dayTime;
+    protected LocalDateTime dayTime;
     // All underneath are nullable
-    protected String trigger;
     protected String situation;
     protected String reason;
-    protected Bitmap image;
+    protected ImageView image;
     protected Location location;
 
     /**
@@ -107,24 +110,7 @@ public class MoodState {
         this.color = MapMoodToColor(mood);
         this.emoji = MapMoodToEmoji(mood);
         // Gets the day and time
-        this.dayTime = new Date();
-    }
-
-
-    public Date getDayTime() {
-        return dayTime;
-    }
-
-    public void setDayTime(Date dayTime) {
-        this.dayTime = dayTime;
-    }
-
-    public String getTrigger() {
-        return trigger;
-    }
-
-    public void setTrigger(String trigger) {
-        this.trigger = trigger;
+        this.dayTime = LocalDateTime.now();
     }
 
     public String getSituation() {
@@ -143,11 +129,11 @@ public class MoodState {
         this.reason = reason;
     }
 
-    public Bitmap getImage() {
+    public ImageView getImage() {
         return image;
     }
 
-    public void setImage(Bitmap image) {
+    public void setImage(ImageView image) {
         this.image = image;
     }
 
@@ -169,5 +155,21 @@ public class MoodState {
 
     public int getEmoji() {
         return emoji;
+    }
+
+    public LocalDate getDay() {
+        return dayTime.toLocalDate();
+    }
+
+    public void setDayTime(LocalDateTime day) {
+        this.dayTime = day;
+    }
+
+    public LocalTime getTime() {
+        return dayTime.toLocalTime();
+    }
+
+    public LocalDateTime getDayTime() {
+        return dayTime;
     }
 }
