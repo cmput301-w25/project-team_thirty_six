@@ -3,6 +3,7 @@ package com.example.androidproject;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
+import android.net.Uri;
 import android.widget.ImageView;
 
 import java.time.LocalDate;
@@ -28,7 +29,7 @@ public class MoodState {
     // All underneath are nullable
     protected String situation;
     protected String reason;
-    protected Bitmap image;
+    protected Uri image;
     protected Location location;
 
     /**
@@ -132,11 +133,11 @@ public class MoodState {
         this.reason = reason;
     }
 
-    public Bitmap getImage() {
+    public Uri getImage() {
         return image;
     }
 
-    public void setImage(Bitmap image) {
+    public void setImage(Uri image) {
         this.image = image;
     }
 

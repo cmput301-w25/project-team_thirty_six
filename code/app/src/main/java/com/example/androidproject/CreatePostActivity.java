@@ -1,33 +1,24 @@
 package com.example.androidproject;
-
-import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
-import static android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION;
-import static android.content.Intent.FLAG_RECEIVER_FOREGROUND;
-
-import android.app.Activity;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
-import android.media.Image;
+import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.common.images.ImageManager;
-import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
-import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 /**
@@ -45,8 +36,9 @@ public class CreatePostActivity extends AppCompatActivity {
     ListView dropdownList;
     String chosenMood;
     String chosenSituation;
-    Bitmap chosenImage;
+    Uri chosenImage;
     Boolean dropdownStatus;
+    CreatePostActivity current;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,15 +54,30 @@ public class CreatePostActivity extends AppCompatActivity {
         imageButton = findViewById(R.id.add_mood_image_button);
         //Sets drop down status to false to start
         dropdownStatus = Boolean.FALSE;
-
-        // The following is from IJ APPS
-        // Android Pick Image from Gallery | Tutorial
-        // https://www.youtube.com/watch?v=H1ja8gvTtBE
-        // Released: August 9, 2021
-        // Taken: March 2, 2025
-        Intent imagePicker = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        // End of citation
-
+        //Taken from https://developer.android.com/training/basics/intents/result
+        //Authored by Google Developers
+        //Taken by Dalton Low
+        //Taken on March 3, 2025
+        ActivityResultLauncher<String> launcher = registerForActivityResult(new ActivityResultContracts.GetContent(),
+                new ActivityResultCallback<Uri>() {
+                    @Override
+                    public void onActivityResult(Uri uri) {
+                        // End of citation
+                        chosenImage = uri;
+                        // Gets firebase instance and a new storage reference
+                        FirebaseStorage currentFirebase = FirebaseStorage.getInstance();
+                        StorageReference newStorage = currentFirebase.getReference().child("images/test");
+                        InputStream newSteam = null;
+                        try {
+                            // Gets a new stream to add
+                            newSteam = getContentResolver().openInputStream(uri);
+                        } catch (FileNotFoundException e) {
+                            throw new RuntimeException(e);
+                        }
+                        // Adds stream to storage
+                        newStorage.putStream(newSteam);
+                    }
+                });
         //Adds all the moods for the dropdowns
         ArrayList<String> moodList = new ArrayList<>();
         moodList.add("Anger");
@@ -147,9 +154,10 @@ public class CreatePostActivity extends AppCompatActivity {
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                imagePicker.setFlags(FLAG_GRANT_READ_URI_PERMISSION);
-                startActivity(imagePicker);
-
+                // Creates the flags that we need
+                launcher.launch("image/*");
+                Log.e("TEST","adasdasd");
+                Log.e("TEST","JOASDADadasdasd");
             }
         });
 
@@ -171,20 +179,13 @@ public class CreatePostActivity extends AppCompatActivity {
                     if (reasonText.getText().length() != 0) {
                         newMood.setReason(reasonText.getText().toString());
                     }
-                    if (imagePicker.getData() != null) {
-                        Log.e("TEST","JOASDAD");
-                        imageButton.setImageURI(imagePicker.getData());
-                        chosenImage = BitmapFactory.decodeFile(imagePicker.getData().getPath());
+                    if (chosenImage != null) {
                         newMood.setImage(chosenImage);
                     }
-                    // Adds the mood to the database
                     newMood.setUser("testUser");
                     Database.getInstance().addMood(newMood);
                 }
             }
         });
-
     }
-
-
 }
