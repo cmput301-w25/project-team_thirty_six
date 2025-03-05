@@ -207,7 +207,7 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_marginEnd="12dp"
-                android:src="@drawable/mapSymbol"
+                android:src="@drawable/mapsymbol"
                 android:contentDescription="Map icon" />
 
             <TextView
@@ -238,7 +238,7 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_marginEnd="12dp"
-                android:src="@drawable/Clock"
+                android:src="@drawable/clock"
                 android:contentDescription="Clock icon" />
 
             <TextView
@@ -269,7 +269,7 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_marginEnd="12dp"
-                android:src="@drawable/Image"
+                android:src="@drawable/image"
                 android:contentDescription="Image icon" />
 
             <TextView
