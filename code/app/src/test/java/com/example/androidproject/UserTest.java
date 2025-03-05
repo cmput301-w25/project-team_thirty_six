@@ -167,4 +167,5 @@ public class UserTest {
             newUser.removeFollowing(newUser);
         });
     }
+
 }

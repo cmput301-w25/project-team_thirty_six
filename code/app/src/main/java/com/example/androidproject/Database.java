@@ -1,12 +1,26 @@
 package com.example.androidproject;
 
+import android.util.Log;
+
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.AggregateQuery;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldPath;
+import com.google.firebase.firestore.Filter;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.Source;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+
+import java.nio.file.Path;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Creates a database class to allow interacting with the database
@@ -16,6 +30,7 @@ public class Database {
     private static Database dbInstance; // Used to make sure there is only a singular instance of the database throughout all classes
     private CollectionReference moods;
     private CollectionReference users;
+
 
 
     /**
@@ -48,5 +63,8 @@ public class Database {
         mood.setId(newDoc.getId());
         newDoc.set(mood);
     }
-
+    public CollectionReference getUsers() {
+        return users;
+    }
 }
+
