@@ -58,6 +58,11 @@ public class Database {
         users.document(user.getUsername()).set(user);
     }
 
+    public void addMood(MoodState mood){
+        DocumentReference newDoc = moods.document();
+        mood.setId(newDoc.getId());
+        newDoc.set(mood);
+    }
     public CollectionReference getUsers() {
         return users;
     }
