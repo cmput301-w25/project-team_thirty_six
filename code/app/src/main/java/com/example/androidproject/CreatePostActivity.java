@@ -1,5 +1,6 @@
 package com.example.androidproject;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -28,6 +29,9 @@ public class CreatePostActivity extends AppCompatActivity {
     String chosenMood;
     String chosenSituation;
     Boolean dropdownStatus;
+    Uri chosenImage;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -133,6 +137,9 @@ public class CreatePostActivity extends AppCompatActivity {
                     if (reasonText.getText().length() != 0) {
                         newMood.setReason(reasonText.getText().toString());
                     }
+
+                    if (chosenImage != null) {
+                        newMood.setImage(chosenImage);
 
                 }
             }
