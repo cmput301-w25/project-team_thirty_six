@@ -2,7 +2,6 @@ package com.example.androidproject;
 
 import android.content.ContentResolver;
 import android.net.Uri;
-
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -11,9 +10,6 @@ import com.google.firebase.storage.StorageReference;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Creates a database class to allow interacting with the database
@@ -23,6 +19,7 @@ public class Database {
     private static Database dbInstance; // Used to make sure there is only a singular instance of the database throughout all classes
     private CollectionReference moods;
     private CollectionReference users;
+
 
 
     /**
@@ -80,5 +77,8 @@ public class Database {
         // Adds stream to storage
         newStorage.putStream(newSteam);
     }
-
+    public CollectionReference getUsers() {
+        return users;
+    }
 }
+
