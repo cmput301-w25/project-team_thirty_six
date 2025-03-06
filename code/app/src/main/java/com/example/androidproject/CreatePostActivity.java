@@ -1,24 +1,16 @@
 package com.example.androidproject;
-import android.net.Uri;
+
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.TextView;
 
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.util.ArrayList;
 
 /**
@@ -31,14 +23,11 @@ public class CreatePostActivity extends AppCompatActivity {
     Button pairButton;
     Button groupButton;
     Button confirmButton;
-    ImageButton imageButton;
     MoodSelectionAdapter dropdownAdapter;
     ListView dropdownList;
     String chosenMood;
     String chosenSituation;
-    Uri chosenImage;
     Boolean dropdownStatus;
-    CreatePostActivity current;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,33 +40,8 @@ public class CreatePostActivity extends AppCompatActivity {
         groupButton = findViewById(R.id.add_mood_group_button);
         dropdownList = findViewById(R.id.add_mood_select_mood_list);
         confirmButton = findViewById(R.id.add_confirm_button);
-        imageButton = findViewById(R.id.add_mood_image_button);
         //Sets drop down status to false to start
         dropdownStatus = Boolean.FALSE;
-        //Taken from https://developer.android.com/training/basics/intents/result
-        //Authored by Google Developers
-        //Taken by Dalton Low
-        //Taken on March 3, 2025
-        ActivityResultLauncher<String> launcher = registerForActivityResult(new ActivityResultContracts.GetContent(),
-                new ActivityResultCallback<Uri>() {
-                    @Override
-                    public void onActivityResult(Uri uri) {
-                        // End of citation
-                        chosenImage = uri;
-                        // Gets firebase instance and a new storage reference
-                        FirebaseStorage currentFirebase = FirebaseStorage.getInstance();
-                        StorageReference newStorage = currentFirebase.getReference().child("images/test");
-                        InputStream newSteam = null;
-                        try {
-                            // Gets a new stream to add
-                            newSteam = getContentResolver().openInputStream(uri);
-                        } catch (FileNotFoundException e) {
-                            throw new RuntimeException(e);
-                        }
-                        // Adds stream to storage
-                        newStorage.putStream(newSteam);
-                    }
-                });
         //Adds all the moods for the dropdowns
         ArrayList<String> moodList = new ArrayList<>();
         moodList.add("Anger");
@@ -150,16 +114,6 @@ public class CreatePostActivity extends AppCompatActivity {
                 chosenSituation = "Group";
             }
         });
-        //Sets the image button on click listener
-        imageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Creates the flags that we need
-                launcher.launch("image/*");
-                Log.e("TEST","adasdasd");
-                Log.e("TEST","JOASDADadasdasd");
-            }
-        });
 
         // Sets the confirm on click listener
         confirmButton.setOnClickListener(new View.OnClickListener() {
@@ -179,13 +133,12 @@ public class CreatePostActivity extends AppCompatActivity {
                     if (reasonText.getText().length() != 0) {
                         newMood.setReason(reasonText.getText().toString());
                     }
-                    if (chosenImage != null) {
-                        newMood.setImage(chosenImage);
-                    }
-                    newMood.setUser("testUser");
-                    Database.getInstance().addMood(newMood);
+
                 }
             }
         });
+
     }
+
+
 }

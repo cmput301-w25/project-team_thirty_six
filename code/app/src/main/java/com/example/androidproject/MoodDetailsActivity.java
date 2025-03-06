@@ -15,9 +15,14 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.squareup.picasso.Picasso;
 
+import java.text.DateFormatSymbols;
 import java.util.Locale;
 import java.util.Map;
 
+/**
+ * Activity to display details of a selected mood post.
+ * Retrieves mood details from Firestore and updates the UI accordingly.
+ */
 public class MoodDetailsActivity extends AppCompatActivity {
 
     // UI elements
@@ -37,16 +42,22 @@ public class MoodDetailsActivity extends AppCompatActivity {
     private String moodId;
     private String userId;
 
+    /**
+     * Called when the activity is first created.
+     * Initializes Firebase, UI elements, and fetches mood details.
+     *
+     * @param savedInstanceState Saved state data if activity is recreated.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mood_details);
 
-        // Initialize Firebase and views
+        // Initialize Firebase and UI components
         db = FirebaseFirestore.getInstance();
         initializeViews();
 
-        // Get mood ID from intent
+        // Retrieve mood ID and user ID from intent
         if (getIntent().hasExtra("id") && getIntent().hasExtra("user")) {
             moodId = getIntent().getStringExtra("id");
             userId = getIntent().getStringExtra("user");
@@ -57,12 +68,15 @@ public class MoodDetailsActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Initializes UI elements and sets up the back button functionality.
+     */
     private void initializeViews() {
         // Back button
         ImageButton btnBack = findViewById(R.id.button_back);
         btnBack.setOnClickListener(v -> getOnBackPressedDispatcher().onBackPressed());
 
-        // Initialize text & image views
+        // UI elements
         tvTitle = findViewById(R.id.textView_mood_details);
         tvUsername = findViewById(R.id.textView_mood_details_user);
         ivMoodIcon = findViewById(R.id.imageView_mood_details);
@@ -72,14 +86,16 @@ public class MoodDetailsActivity extends AppCompatActivity {
         tvSocialSituation = findViewById(R.id.textView_mood_details_social_situation);
         tvTimestamp = findViewById(R.id.mood_timestamp);
 
-        // Hide the optional fields
+        // Hide optional fields initially
         tvReason.setVisibility(View.GONE);
         tvSocialSituation.setVisibility(View.GONE);
         ivMoodImage.setVisibility(View.GONE);
     }
 
+    /**
+     * Fetches mood details from Firestore based on mood ID and user ID.
+     */
     private void loadMoodDetails() {
-        // Reference to the mood document
         DocumentReference moodRef = db.collection("users").document(userId)
                 .collection("moods").document(moodId);
 
@@ -87,13 +103,9 @@ public class MoodDetailsActivity extends AppCompatActivity {
             if (task.isSuccessful() && task.getResult() != null) {
                 DocumentSnapshot document = task.getResult();
                 if (document.exists()) {
-                    // Extract the username directly from the mood document
-                    String username = document.getString("id"); // "id" contains the username
-                    if (username != null && !username.isEmpty()) {
-                        tvUsername.setText(username);
-                    } else {
-                        tvUsername.setText("User"); // Default value if username is missing
-                    }
+                    // Extract the username from the mood document
+                    String username = document.getString("id");
+                    tvUsername.setText(username != null && !username.isEmpty() ? username : "User");
 
                     updateUIWithMoodData(document);
                 } else {
@@ -109,6 +121,11 @@ public class MoodDetailsActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Updates the UI with mood data retrieved from Firestore.
+     *
+     * @param document The Firestore document containing mood data.
+     */
     private void updateUIWithMoodData(DocumentSnapshot document) {
         // Extract mood details
         String moodName = document.getString("mood");
@@ -119,10 +136,7 @@ public class MoodDetailsActivity extends AppCompatActivity {
         String imageUrl = document.getString("image");
         Map<String, Object> timeMap = (Map<String, Object>) document.get("time");
 
-        // Get username
-        getUsername(userId);
-
-        // Set mood name
+        // Set mood name and icon
         if (moodName != null) {
             tvMoodName.setText(moodName);
             setMoodIcon(moodName);
@@ -155,7 +169,7 @@ public class MoodDetailsActivity extends AppCompatActivity {
             tvSocialSituation.setText(situation);
         }
 
-        // Show image if available
+        // Load image if available
         if (imageUrl != null && !imageUrl.isEmpty()) {
             ivMoodImage.setVisibility(View.VISIBLE);
             Picasso.get().load(imageUrl).into(ivMoodImage);
@@ -169,10 +183,10 @@ public class MoodDetailsActivity extends AppCompatActivity {
             int hour = ((Long) timeMap.get("hour")).intValue();
             int minute = ((Long) timeMap.get("minute")).intValue();
 
-            // Convert month number to full month name
-            String monthName = new java.text.DateFormatSymbols().getMonths()[monthValue - 1];
+            // Convert month number to full name
+            String monthName = new DateFormatSymbols().getMonths()[monthValue - 1];
 
-            // Format time in 12-hour format with AM/PM
+            // Format time in 12-hour format
             String amPm = (hour < 12) ? "AM" : "PM";
             int displayHour = (hour == 0 || hour == 12) ? 12 : hour % 12;
 
@@ -183,21 +197,15 @@ public class MoodDetailsActivity extends AppCompatActivity {
         }
     }
 
-    private void getUsername(String userId) {
-        db.collection("users").document(userId).get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
-                        String username = documentSnapshot.getString("username");
-                        tvUsername.setText(username != null ? username : "User");
-                    }
-                })
-                .addOnFailureListener(e -> tvUsername.setText("User"));
-    }
-
+    /**
+     * Sets the appropriate mood icon based on the mood name.
+     *
+     * @param moodName The name of the mood.
+     */
     private void setMoodIcon(String moodName) {
         int resourceId;
 
-        switch (moodName.toLowerCase()) { // Convert to lowercase to avoid case mismatches
+        switch (moodName.toLowerCase()) {
             case "anger":
                 resourceId = R.drawable.anger;
                 break;
@@ -229,5 +237,4 @@ public class MoodDetailsActivity extends AppCompatActivity {
 
         ivMoodIcon.setImageResource(resourceId);
     }
-
 }

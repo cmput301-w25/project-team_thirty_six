@@ -1,6 +1,7 @@
 package com.example.androidproject;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -26,5 +27,11 @@ public class ExampleInstrumentedTest {
 
     @Test
     public void addUserToDatabase(){
+        // TODO Make this a real test
+    }
+
+    @Test
+    public void checkIfUserInDatabaseTest() {
+        // TODO Make this a real test
     }
 }
