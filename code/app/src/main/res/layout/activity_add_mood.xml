@@ -64,6 +64,7 @@
         android:background="@drawable/edit_mood_reason_text_box"
         android:gravity="start|top"
         android:hint="@string/enter_a_reason"
+        android:maxLength="30"
         android:padding="12dp"
         android:textColor="@color/black"
         android:textSize="16sp"
