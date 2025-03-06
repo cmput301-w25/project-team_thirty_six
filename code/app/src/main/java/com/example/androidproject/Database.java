@@ -1,9 +1,16 @@
 package com.example.androidproject;
 
+import android.content.ContentResolver;
+import android.net.Uri;
+
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -47,6 +54,31 @@ public class Database {
         DocumentReference newDoc = moods.document();
         mood.setId(newDoc.getId());
         newDoc.set(mood);
+    }
+
+    /**
+     *  Adds an image to the database
+     * @param uri
+     *      where to find image on phone
+     * @param id
+     *      id to store image under
+     * @param resolver
+     *      content resolver to properly locate image
+     */
+    public void addImage(Uri uri, String id, ContentResolver resolver){
+        // Gets the firebase instance
+        FirebaseStorage currentFirebase = FirebaseStorage.getInstance();
+        // Gets a child for the id
+        StorageReference newStorage = currentFirebase.getReference().child(id);
+        InputStream newSteam = null;
+        try {
+            // Gets a new stream to add
+            newSteam = resolver.openInputStream(uri);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        // Adds stream to storage
+        newStorage.putStream(newSteam);
     }
 
 }
