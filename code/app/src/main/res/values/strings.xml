@@ -57,4 +57,23 @@
         libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus
         vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
+    <string name="crowd">Crowd</string>
+    <string name="group">Group</string>
+    <string name="pair">Pair</string>
+    <string name="alone">Alone</string>
+    <string name="social_situation_edit_mood">Social Situation</string>
+    <string name="add_location">Add Location</string>
+    <string name="map_icon">Map icon</string>
+    <string name="selected_mood_image">Selected mood image</string>
+    <string name="remove_image">Remove Image</string>
+    <string name="add_image">Add Image</string>
+    <string name="image">Image</string>
+    <string name="time">Time</string>
+    <string name="clock_icon">Clock icon</string>
+    <string name="my_birthday">Mar 30, 2025</string>
+    <string name="date">Date</string>
+    <string name="calendar_icon">Calendar icon</string>
+    <string name="date_and_time">Date and Time</string>
+    <string name="done">Done</string>
+    <string name="cancel">Cancel</string>
 </resources>

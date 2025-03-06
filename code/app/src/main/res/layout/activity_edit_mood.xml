@@ -14,8 +14,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-
-
         <TextView
             android:id="@+id/textView_edit_mood"
             android:layout_width="wrap_content"
@@ -35,8 +33,8 @@
             android:layout_marginStart="16dp"
             android:background="@android:color/transparent"
             android:padding="8dp"
-            android:text="Cancel"
-            android:textColor="#3F00FF"
+            android:text="@string/cancel"
+            android:textColor="#00aeff"
             app:layout_constraintBottom_toBottomOf="@+id/textView_edit_mood"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/textView_edit_mood" />
@@ -48,8 +46,8 @@
             android:layout_marginEnd="16dp"
             android:background="@android:color/transparent"
             android:padding="8dp"
-            android:text="Done"
-            android:textColor="#3F00FF"
+            android:text="@string/done"
+            android:textColor="#00aeff"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/textView_edit_mood"
             app:layout_constraintEnd_toEndOf="parent"
@@ -63,14 +61,13 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView_edit_mood">
+            app:layout_constraintTop_toBottomOf="@+id/textView_edit_mood"
+            android:paddingBottom="65dp">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingBottom="24dp"
-                >
-
+                android:paddingBottom="24dp">
 
                 <Button
                     android:id="@+id/btnEditMoodSelectMood"
@@ -115,7 +112,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="30dp"
                     android:layout_marginTop="24dp"
-                    android:text="Date and Time"
+                    android:text="@string/date_and_time"
                     android:textColor="@color/white"
                     android:textSize="18sp"
                     app:layout_constraintStart_toStartOf="parent"
@@ -152,9 +149,8 @@
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:layout_marginEnd="12dp"
-                            android:contentDescription="Calendar icon"
-                            android:src="@drawable/calendar_icon"
-                            />
+                            android:contentDescription="@string/calendar_icon"
+                            android:src="@drawable/calendar_icon" />
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -164,7 +160,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Date"
+                                android:text="@string/date"
                                 android:textColor="#AAAAAA"
                                 android:textSize="12sp" />
 
@@ -172,7 +168,7 @@
                                 android:id="@+id/textViewSelectedDate"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Mar 5, 2025"
+                                android:text="@string/my_birthday"
                                 android:textColor="@color/white"
                                 android:textSize="16sp"
                                 android:textStyle="bold" />
@@ -210,7 +206,7 @@
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:layout_marginEnd="12dp"
-                            android:contentDescription="Clock icon"
+                            android:contentDescription="@string/clock_icon"
                             android:src="@drawable/clock" />
 
                         <LinearLayout
@@ -221,7 +217,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Time"
+                                android:text="@string/time"
                                 android:textColor="#AAAAAA"
                                 android:textSize="12sp" />
 
@@ -282,7 +278,6 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/textViewReasontext" />
 
-
                 <androidx.cardview.widget.CardView
                     android:id="@+id/imageCardView"
                     android:layout_width="0dp"
@@ -307,19 +302,55 @@
                         android:padding="8dp">
 
                         <ImageView
+                            android:id="@+id/image_button_icon"
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:layout_marginEnd="8dp"
-                            android:contentDescription="Image icon"
+                            android:contentDescription="@string/image"
                             android:src="@drawable/image" />
 
                         <TextView
+                            android:id="@+id/add_image_text"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Add Image"
+                            android:text="@string/add_image"
                             android:textColor="#FFFFFF"
                             android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@+id/remove_image_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/remove_image"
+
+                            android:textColor="#FFFFFF"
+                            android:textSize="16sp"
+                            android:visibility="gone" />
                     </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/imagePreviewCardView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="30dp"
+                    android:visibility="gone"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="0dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/imageCardView">
+
+                    <ImageView
+                        android:id="@+id/moodImageView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:adjustViewBounds="true"
+                        android:maxHeight="300dp"
+                        android:contentDescription="@string/selected_mood_image"
+                        android:scaleType="fitCenter" />
                 </androidx.cardview.widget.CardView>
 
                 <androidx.cardview.widget.CardView
@@ -334,7 +365,7 @@
                     app:cardElevation="0dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/imageCardView">
+                    app:layout_constraintTop_toBottomOf="@+id/imagePreviewCardView">
 
                     <LinearLayout
                         android:id="@+id/add_location_button"
@@ -349,38 +380,16 @@
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:layout_marginEnd="8dp"
-                            android:contentDescription="Map icon"
+                            android:contentDescription="@string/map_icon"
                             android:src="@drawable/mapsymbol" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Add Location"
+                            android:text="@string/add_location"
                             android:textColor="#FFFFFF"
                             android:textSize="16sp" />
                     </LinearLayout>
-                </androidx.cardview.widget.CardView>
-
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/imagePreviewCardView"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="30dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="30dp"
-                    android:visibility="gone"
-                    app:cardCornerRadius="12dp"
-                    app:cardElevation="0dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/locationCardView">
-
-                    <ImageView
-                        android:id="@+id/moodImageView"
-                        android:layout_width="match_parent"
-                        android:layout_height="200dp"
-                        android:contentDescription="Selected mood image"
-                        android:scaleType="centerCrop" />
                 </androidx.cardview.widget.CardView>
 
                 <androidx.cardview.widget.CardView
@@ -388,14 +397,14 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="30dp"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="8dp"
                     android:layout_marginEnd="30dp"
                     android:visibility="gone"
                     app:cardCornerRadius="12dp"
                     app:cardElevation="0dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/imagePreviewCardView">
+                    app:layout_constraintTop_toBottomOf="@+id/locationCardView">
 
                     <TextView
                         android:id="@+id/locationTextView"
@@ -413,7 +422,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="30dp"
                     android:layout_marginTop="24dp"
-                    android:text="Social Situation"
+                    android:text="@string/social_situation_edit_mood"
                     android:textColor="@color/white"
                     android:textSize="18sp"
                     app:layout_constraintStart_toStartOf="parent"
@@ -436,15 +445,16 @@
                         android:id="@+id/radioAlone"
                         android:layout_width="0dp"
                         android:layout_height="48dp"
-                        android:layout_marginEnd="8dp"
+                        android:layout_marginEnd="4dp"
                         android:layout_weight="1"
                         android:background="@drawable/edit_mood_radio_button_selector"
                         android:button="@null"
                         android:gravity="center"
-                        android:paddingStart="12dp"
-                        android:paddingEnd="12dp"
-                        android:text="Alone"
-                        android:textColor="@color/white" />
+                        android:paddingStart="8dp"
+                        android:paddingEnd="8dp"
+                        android:text="@string/alone"
+                        android:textColor="@color/white"
+                        android:textSize="12sp" />
 
                     <RadioButton
                         android:id="@+id/radioPair"
@@ -456,24 +466,42 @@
                         android:background="@drawable/edit_mood_radio_button_selector"
                         android:button="@null"
                         android:gravity="center"
-                        android:paddingStart="12dp"
-                        android:paddingEnd="12dp"
-                        android:text="Pair"
-                        android:textColor="@color/white" />
+                        android:paddingStart="8dp"
+                        android:paddingEnd="8dp"
+                        android:text="@string/pair"
+                        android:textColor="@color/white"
+                        android:textSize="12sp" />
 
                     <RadioButton
                         android:id="@+id/radioGroup"
                         android:layout_width="0dp"
                         android:layout_height="48dp"
-                        android:layout_marginStart="8dp"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginEnd="4dp"
                         android:layout_weight="1"
                         android:background="@drawable/edit_mood_radio_button_selector"
                         android:button="@null"
                         android:gravity="center"
-                        android:paddingStart="12dp"
-                        android:paddingEnd="12dp"
-                        android:text="Group"
-                        android:textColor="@color/white" />
+                        android:paddingStart="8dp"
+                        android:paddingEnd="8dp"
+                        android:text="@string/group"
+                        android:textColor="@color/white"
+                        android:textSize="12sp" />
+
+                    <RadioButton
+                        android:id="@+id/radioCrowd"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_marginStart="4dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/edit_mood_radio_button_selector"
+                        android:button="@null"
+                        android:gravity="center"
+                        android:paddingStart="8dp"
+                        android:paddingEnd="8dp"
+                        android:text="@string/crowd"
+                        android:textColor="@color/white"
+                        android:textSize="12sp" />
                 </RadioGroup>
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>
