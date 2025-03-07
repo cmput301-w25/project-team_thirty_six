@@ -107,7 +107,23 @@ public class MoodDetailsActivity extends AppCompatActivity {
                     String username = document.getString("id");
                     tvUsername.setText(username != null && !username.isEmpty() ? username : "User");
 
+                    // First load the main mood data
                     updateUIWithMoodData(document);
+
+                    // Then fetch the dayTime subcollection for timestamp formatting
+                    moodRef.collection("dayTime").document("time_data").get()
+                            .addOnSuccessListener(timeDoc -> {
+                                if (timeDoc.exists()) {
+                                    formatAndDisplayTimestamp(timeDoc);
+                                }
+                            })
+                            .addOnFailureListener(e -> {
+                                // If we can't get the dayTime data, use the timestamp from the main document
+                                Long timestamp = document.getLong("timestamp");
+                                if (timestamp != null) {
+                                    displayTimestampFromMillis(timestamp);
+                                }
+                            });
                 } else {
                     Toast.makeText(this, "Mood not found", Toast.LENGTH_SHORT).show();
                     finish();
@@ -134,7 +150,6 @@ public class MoodDetailsActivity extends AppCompatActivity {
         String reason = document.getString("reason");
         String situation = document.getString("situation");
         String imageUrl = document.getString("image");
-        Map<String, Object> timeMap = (Map<String, Object>) document.get("time");
 
         // Set mood name and icon
         if (moodName != null) {
@@ -174,27 +189,44 @@ public class MoodDetailsActivity extends AppCompatActivity {
             ivMoodImage.setVisibility(View.VISIBLE);
             Picasso.get().load(imageUrl).into(ivMoodImage);
         }
+    }
 
-        // Format timestamp
-        if (timeMap != null) {
-            int year = ((Long) timeMap.get("year")).intValue();
-            int monthValue = ((Long) timeMap.get("monthValue")).intValue();
-            int day = ((Long) timeMap.get("dayOfMonth")).intValue();
-            int hour = ((Long) timeMap.get("hour")).intValue();
-            int minute = ((Long) timeMap.get("minute")).intValue();
+    /**
+     * Formats and displays timestamp from dayTime document data
+     *
+     * @param timeDoc The Firestore document containing dayTime data
+     */
+    private void formatAndDisplayTimestamp(DocumentSnapshot timeDoc) {
+        Long year = timeDoc.getLong("year");
+        Long monthValue = timeDoc.getLong("monthValue");
+        Long day = timeDoc.getLong("dayOfMonth");
+        Long hour = timeDoc.getLong("hour");
+        Long minute = timeDoc.getLong("minute");
 
+        if (year != null && monthValue != null && day != null && hour != null && minute != null) {
             // Convert month number to full name
-            String monthName = new DateFormatSymbols().getMonths()[monthValue - 1];
+            String monthName = new DateFormatSymbols().getMonths()[monthValue.intValue() - 1];
 
             // Format time in 12-hour format
             String amPm = (hour < 12) ? "AM" : "PM";
-            int displayHour = (hour == 0 || hour == 12) ? 12 : hour % 12;
+            int displayHour = (hour.intValue() == 0 || hour.intValue() == 12) ? 12 : hour.intValue() % 12;
 
             String formattedTime = String.format(Locale.getDefault(),
                     "%s %d, %d at %d:%02d %s", monthName, day, year, displayHour, minute, amPm);
 
             tvTimestamp.setText(formattedTime);
         }
+    }
+
+    /**
+     * Displays timestamp from milliseconds as fallback
+     *
+     * @param timestamp The timestamp in milliseconds
+     */
+    private void displayTimestampFromMillis(long timestamp) {
+        java.util.Date date = new java.util.Date(timestamp);
+        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("MMMM d, yyyy 'at' h:mm a", Locale.getDefault());
+        tvTimestamp.setText(sdf.format(date));
     }
 
     /**
