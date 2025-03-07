@@ -57,6 +57,24 @@ public class MoodRepository {
                     }
                 });
     }
+    /**
+     * Deletes a mood from Firestore
+     */
+    public void deleteMood(String id, OnMoodDeleteListener listener) {
+        // Delete the mood document
+        db.collection("moods").document(id)
+                .delete()
+                .addOnSuccessListener(aVoid -> {
+                    if (listener != null) {
+                        listener.onSuccess();
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    if (listener != null) {
+                        listener.onFailure(e);
+                    }
+                });
+    }
 
     /**
      * Updates all fields in the dayTime subcollection
@@ -111,6 +129,11 @@ public class MoodRepository {
 
     // Interface for callbacks
     public interface OnMoodUpdateListener {
+        void onSuccess();
+        void onFailure(Exception e);
+    }
+
+    public interface OnMoodDeleteListener {
         void onSuccess();
         void onFailure(Exception e);
     }
