@@ -6,11 +6,14 @@ import android.location.Location;
 import android.net.Uri;
 import android.widget.ImageView;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Creates an abstract emotion class that all of the emotions extend
@@ -176,7 +179,11 @@ public class MoodState {
     public LocalDateTime getDayTime() {
         return dayTime;
     }
-
+    public String formatDateTime() {
+        // Define the format you'd like, for example: "yyyy-MM-dd HH:mm:ss"
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        return dayTime.format(formatter); // Directly format the LocalDateTime
+    }
     public String getUser() {
         return username;
     }

@@ -11,7 +11,7 @@ public class User {
     String password;
     // No setter for these 3 as their logic is handled in the add and delete functions
     ArrayList<User> following;
-    ArrayList<MoodState> moodHistory;
+    static ArrayList<MoodState> moodHistory;
     MoodState mostRecentMood;
 
     /**
@@ -111,7 +111,7 @@ public class User {
         return password.equals(testPassword);
     }
 
-    public ArrayList<MoodState> getMoodHistory() {
+    public static ArrayList<MoodState> getMoodHistory() {
         return moodHistory;
     }
 
