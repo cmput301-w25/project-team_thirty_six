@@ -102,10 +102,6 @@ public class MoodStateTest {
         assertEquals(moodState.getDay(),newDate.toLocalDate());
         assertEquals(moodState.getTime(),newDate.toLocalTime());
 
-        String newTrigger = "Loud Noises";
-        moodState.setTrigger(newTrigger);
-        assertEquals(moodState.getTrigger(),"Loud Noises");
-
         String newSituation = "Alone";
         moodState.setSituation(newSituation);
         assertEquals(moodState.getSituation(),"Alone");
