@@ -26,6 +26,7 @@ public class Database {
      * Constructor called on by getInstance()
      */
     private Database(){
+        FirebaseFirestore.getInstance();
         database = FirebaseFirestore.getInstance();
         moods = database.collection("Moods");
         users = database.collection("Users");
@@ -47,6 +48,11 @@ public class Database {
         users.document(user.getUsername()).set(user);
     }
 
+    /**
+     * Allows a user to add moods to the database
+     * @param mood
+     *      mood to be added
+     */
     public void addMood(MoodState mood){
         DocumentReference newDoc = moods.document();
         mood.setId(newDoc.getId());
