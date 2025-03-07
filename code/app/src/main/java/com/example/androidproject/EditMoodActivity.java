@@ -277,7 +277,11 @@ public class EditMoodActivity extends AppCompatActivity {
             Toast.makeText(this, "Please select a mood before saving.", Toast.LENGTH_SHORT).show();
             return;
         }
-
+        // Ensures that there is a mood id for the corresponding mood
+        if (id == null) {
+            Toast.makeText(this, "Error: Invalid mood ID", Toast.LENGTH_SHORT).show();
+            return;
+        }
         // Get reason text and validate length
         String reason = reasonText.getText() != null ? reasonText.getText().toString().trim() : "";
         if (reason.length() > 20) {

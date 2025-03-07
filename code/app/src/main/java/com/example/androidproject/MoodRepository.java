@@ -21,7 +21,13 @@ public class MoodRepository {
     public void updateMood(String moodId, String mood, String situation, String reason,
                            String location, String imageUrl, Calendar dateTime,
                            OnMoodUpdateListener listener) {
-
+        // Validate id is not null
+        if (moodId == null) {
+            if (listener != null) {
+                listener.onFailure(new IllegalArgumentException("Mood ID cannot be null"));
+            }
+            return;
+        }
         // Create the main mood document data
         Map<String, Object> updatedData = new HashMap<>();
         updatedData.put("mood", mood);
