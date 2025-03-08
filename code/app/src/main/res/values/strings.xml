@@ -73,7 +73,8 @@
     <!-- Define a custom style for spinner -->
     <style name="WhiteSpinnerStyle">
         <item name="android:textColor">#FFFFFF</item> <!-- White text color -->
-        <item name="android:popupBackground">@android:color/black</item> <!-- Black background for dropdown -->
+        <item name="android:popupBackground">@android:color/black
+        </item> <!-- Black background for dropdown -->
     </style>
 
 </resources>

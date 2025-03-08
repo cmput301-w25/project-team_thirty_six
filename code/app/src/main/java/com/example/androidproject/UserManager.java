@@ -23,6 +23,7 @@ public class UserManager {
 
 
     private Database database;
+    private static User currentUser;
     private Context context; // The activity that is calling the UserManager
 
     /**
@@ -33,6 +34,10 @@ public class UserManager {
 
         this.database = Database.getInstance();
         this.context = context;
+    }
+
+    public static User getCurrentUser(){
+        return currentUser;
     }
 
     /**
@@ -92,6 +97,29 @@ public class UserManager {
             }
         }).addOnFailureListener(error -> {
             Log.w("UserManager", "Could not connect to database");
+        });
+
+        fetchUserData(username);
+
+    }
+
+    /**
+     * Fetches the user data from the database and populates the currentUser object.
+     * @param username The username of the user to fetch.
+     */
+    //not needed any more
+    public void fetchUserData(String username) {
+        Task<QuerySnapshot> query = database.getUsers().whereEqualTo("username", username).get();
+        query.addOnSuccessListener(queryDocumentSnapshots -> {
+            if (!queryDocumentSnapshots.isEmpty()) {
+                // Assuming there's only one user with the given username
+                currentUser = queryDocumentSnapshots.toObjects(User.class).get(0);
+                Log.d("UserManager", "User data fetched and currentUser updated.");
+            } else {
+                Log.d("UserManager", "No user found with the given username.");
+            }
+        }).addOnFailureListener(e -> {
+            Log.w("UserManager", "Error fetching user data: " + e.getMessage());
         });
     }
 

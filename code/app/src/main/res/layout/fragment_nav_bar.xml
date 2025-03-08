@@ -14,6 +14,7 @@
         android:paddingBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent" />
 
     <ImageView
@@ -85,5 +86,7 @@
             android:contentDescription="Create New Post"
             android:src="@drawable/plussymbol" />
     </FrameLayout>
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

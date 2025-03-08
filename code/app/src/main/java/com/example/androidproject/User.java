@@ -28,6 +28,40 @@ public class User {
     }
 
 
+    /**
+     * Populates the user's fields (moodHistory, following, mostRecentMood) with data from Firestore.
+     * @param moodHistoryManager The MoodHistoryManager instance to fetch mood history.
+     */
+    public void populateUserFields(MoodHistoryManager moodHistoryManager) {
+        // Fetch mood history for the user
+        moodHistoryManager.fetchMoodHistory(this.username, new MoodHistoryManager.MoodHistoryCallback() {
+            @Override
+            public void onCallback(ArrayList<MoodState> fetchedMoodHistory) {
+                // Update the moodHistory field
+                moodHistory.clear();
+                moodHistory.addAll(fetchedMoodHistory);
+
+                // Update the mostRecentMood field
+                if (!moodHistory.isEmpty()) {
+                    mostRecentMood = moodHistory.get(0); // Assuming the list is sorted by date (most recent first)
+                }
+
+                // Log the fetched mood history for debugging
+                for (MoodState mood : moodHistory) {
+                    System.out.println("Mood: " + mood.getMood() + ", Reason: " + mood.getReason() + ", Date: " + mood.getDayTime());
+                }
+            }
+        });
+
+        // Fetch the following list (if applicable)
+        // You can add logic here to fetch the list of users this user is following
+        // For now, we'll leave it as an empty list
+        this.following = new ArrayList<>();
+    }
+
+
+
+
 
     /**
      * Adds a provided mood to a users mood history and updates the most recent mood
@@ -137,5 +171,9 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public void fetchMoodHistory(MoodHistoryManager moodHistoryManager, MoodHistoryManager.MoodHistoryCallback callback) {
+        moodHistoryManager.fetchMoodHistory(this.username, callback);
     }
 }

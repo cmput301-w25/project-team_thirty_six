@@ -13,7 +13,9 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * Creates an abstract emotion class that all of the emotions extend
@@ -198,5 +200,28 @@ public class MoodState {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    // Convert MoodState to a Map for Firestore
+    public Map<String, Object> toMap() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", id);
+        map.put("username", username);
+        map.put("mood", mood);
+        map.put("color", color);
+        map.put("emoji", emoji);
+        map.put("dayTime", dayTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)); // Convert to String
+        map.put("situation", situation);
+        map.put("reason", reason);
+        map.put("image", image != null ? image.toString() : null); // Convert Uri to String
+        if (location != null) {
+            Map<String, Double> locationMap = new HashMap<>();
+            locationMap.put("latitude", location.getLatitude());
+            locationMap.put("longitude", location.getLongitude());
+            map.put("location", locationMap);
+        } else {
+            map.put("location", null);
+        }
+        return map;
     }
 }

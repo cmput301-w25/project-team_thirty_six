@@ -3,10 +3,9 @@ package com.example.androidproject;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
-
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -15,7 +14,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
@@ -28,33 +26,82 @@ public class MoodHistoryActivity extends AppCompatActivity {
 
     private ArrayList<MoodState> moodHistory;
     private ArrayList<MoodState> completeMoodHistory;
+    private User currentUser;
     private MoodArrayAdapter moodAdapter;
 
     private ListView moodListView;
+
+    private MoodHistoryManager moodHistoryManager;
+    private String currentUsername;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mood_history);
 
-        //moodHistory = User.getMoodHistory();
-        //completeMoodHistory = User.getMoodHistory();
-        moodHistory = generateDummyData(); // Replace with dummy test data
-        completeMoodHistory = generateDummyData(); // Replace with dummy test data
-        moodAdapter = new MoodArrayAdapter(this, moodHistory);
+        // Initialize MoodHistoryManager
+        moodHistoryManager = new MoodHistoryManager();
 
+        // Initialize mood history lists
+        moodHistory = new ArrayList<>();
+        completeMoodHistory = new ArrayList<>();
+
+        // Initialize the adapter with an empty list
+        moodAdapter = new MoodArrayAdapter(this, moodHistory);
         moodListView = findViewById(R.id.mood_list);
         moodListView.setAdapter(moodAdapter);
 
-        // Sort the mood history by date and time in reverse chronological order
-        sortMoodHistory();
+        //change this later to use user id or
+        // add user authentication to make sure usernames are unique
+        currentUsername = "testUser"; // dummy user
+
+        // Fetch mood history for the current user
+        fetchMoodHistory(currentUsername);
 
         // Set up the filter button
         ImageButton filterButton = findViewById(R.id.filter_button);
         filterButton.setOnClickListener(view -> showFilterDialog());
+    }
 
+    /**
+     * Fetches mood history from Firestore and updates the UI.
+     */
+    private void fetchMoodHistory(String username) {
+        moodHistoryManager.fetchMoodHistory(username, new MoodHistoryManager.MoodHistoryCallback() {
+            @Override
+            public void onCallback(ArrayList<MoodState> moodHistory) {
+                if (moodHistory != null) {
+                    // Update the mood history lists
+                    MoodHistoryActivity.this.moodHistory.clear();
+                    MoodHistoryActivity.this.moodHistory.addAll(moodHistory);
 
+                    completeMoodHistory.clear();
+                    completeMoodHistory.addAll(moodHistory);
 
+                    // Sort the mood history by date and time
+                    sortMoodHistory();
+
+                    // Notify the adapter that the data has changed
+                    moodAdapter.notifyDataSetChanged();
+                } else {
+                    Log.e("MoodState", "Failed to fetch mood history");
+
+                    // Use dummy data as a fallback
+                    ArrayList<MoodState> dummyData = generateDummyData();
+                    MoodHistoryActivity.this.moodHistory.clear();
+                    MoodHistoryActivity.this.moodHistory.addAll(dummyData);
+
+                    completeMoodHistory.clear();
+                    completeMoodHistory.addAll(dummyData);
+
+                    // Sort the mood history by date and time
+                    sortMoodHistory();
+
+                    // Notify the adapter that the data has changed
+                    moodAdapter.notifyDataSetChanged();
+                }
+            }
+        });
     }
 
     /**
@@ -113,10 +160,8 @@ public class MoodHistoryActivity extends AppCompatActivity {
         Spinner spinnerMoods = dialogView.findViewById(R.id.spinner_moods);
         EditText editKeyword = dialogView.findViewById(R.id.edit_keyword);
 
-
         editKeyword.setHintTextColor(Color.LTGRAY);  // Light gray for hint text for contrast
         spinnerMoods.setBackgroundColor(Color.GRAY);
-
 
         // Set custom title with white text color
         TextView titleTextView = new TextView(this);
@@ -166,13 +211,18 @@ public class MoodHistoryActivity extends AppCompatActivity {
                 .show();
     }
 
+    /**
+     * Resets the mood history to display all moods.
+     */
     private void displayAllMoods() {
-        moodHistory = completeMoodHistory;
-        moodAdapter.clear();
-        moodAdapter.addAll(moodHistory); // Restore all moods from the original list
+        moodHistory.clear();
+        moodHistory.addAll(completeMoodHistory); // Restore all moods from the original list
         moodAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * Generates dummy data for testing purposes.
+     */
     private ArrayList<MoodState> generateDummyData() {
         ArrayList<MoodState> dummyMoods = new ArrayList<>();
 
