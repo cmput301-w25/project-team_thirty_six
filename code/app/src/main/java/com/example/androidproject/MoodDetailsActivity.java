@@ -96,15 +96,14 @@ public class MoodDetailsActivity extends AppCompatActivity {
      * Fetches mood details from Firestore based on mood ID and user ID.
      */
     private void loadMoodDetails() {
-        DocumentReference moodRef = db.collection("users").document(userId)
-                .collection("moods").document(moodId);
+        DocumentReference moodRef = db.collection("moods").document(moodId);
 
         moodRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful() && task.getResult() != null) {
                 DocumentSnapshot document = task.getResult();
                 if (document.exists()) {
                     // Extract the username from the mood document
-                    String username = document.getString("id");
+                    String username = document.getString("user");
                     tvUsername.setText(username != null && !username.isEmpty() ? username : "User");
 
                     updateUIWithMoodData(document);

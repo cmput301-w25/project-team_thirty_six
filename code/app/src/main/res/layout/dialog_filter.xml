@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:local="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Most Recent Week -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Most Recent Week"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+
+        <CheckBox
+            android:id="@+id/check_recent_week"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <!-- Filter by Mood -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Filter by Mood"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+
+        <CheckBox
+            android:id="@+id/check_filter_mood"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <Spinner
+        android:id="@+id/spinner_moods"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        local:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        local:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        android:visibility="gone" />
+
+    <!-- Filter by Keyword -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Filter by Keyword"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+
+        <CheckBox
+            android:id="@+id/check_filter_keyword"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/edit_keyword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter keyword"
+        android:visibility="gone"/>
+
+</LinearLayout>

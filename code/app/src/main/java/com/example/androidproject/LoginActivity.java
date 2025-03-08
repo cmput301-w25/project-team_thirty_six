@@ -13,12 +13,13 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
 public class LoginActivity extends AppCompatActivity {
 
     private UserManager userManager;  // This is so that the signUpOnClick method can access the userManager function without having to instantiate it each time
-
+    private User currentUser;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,5 +51,8 @@ public class LoginActivity extends AppCompatActivity {
         String username = editUsername.getText().toString();
         String password = editPassword.getText().toString();
         userManager.loginUser(username, password);
+        Intent i = new Intent(this, HomePageActivity.class);
+        i.putExtra("currentUser", username);
+        startActivity(i);
     }
 }

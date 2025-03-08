@@ -11,8 +11,17 @@ public class User {
     String password;
     // No setter for these 3 as their logic is handled in the add and delete functions
     ArrayList<User> following;
-    ArrayList<MoodState> moodHistory;
+    static ArrayList<MoodState> moodHistory;
     MoodState mostRecentMood;
+
+
+
+    // No-argument constructor required for Firestore
+    public User() {
+        // Initialize fields if needed
+        this.following = new ArrayList<>();
+        this.moodHistory = new ArrayList<>();
+    }
 
     /**
      * Initializes a user
@@ -26,6 +35,40 @@ public class User {
         this.following = new ArrayList<>();
         this.moodHistory = new ArrayList<>();
     }
+
+
+    /**
+     * Populates the user's fields (moodHistory, following, mostRecentMood) with data from Firestore.
+     * @param moodHistoryManager The MoodHistoryManager instance to fetch mood history.
+     */
+    public void populateUserFields(MoodHistoryManager moodHistoryManager) {
+        // Fetch mood history for the user
+        moodHistoryManager.fetchMoodHistory(this.username, new MoodHistoryManager.MoodHistoryCallback() {
+            @Override
+            public void onCallback(ArrayList<MoodState> fetchedMoodHistory) {
+                // Update the moodHistory field
+                moodHistory.clear();
+                moodHistory.addAll(fetchedMoodHistory);
+
+                // Update the mostRecentMood field
+                if (!moodHistory.isEmpty()) {
+                    mostRecentMood = moodHistory.get(0); // Assuming the list is sorted by date (most recent first)
+                }
+
+                // Log the fetched mood history for debugging
+                for (MoodState mood : moodHistory) {
+                    System.out.println("Mood: " + mood.getMood() + ", Reason: " + mood.getReason() + ", Date: " + mood.getDayTime());
+                }
+            }
+        });
+
+        // Fetch the following list (if applicable)
+        // You can add logic here to fetch the list of users this user is following
+        // For now, we'll leave it as an empty list
+        this.following = new ArrayList<>();
+    }
+
+
 
 
 
@@ -111,7 +154,7 @@ public class User {
         return password.equals(testPassword);
     }
 
-    public ArrayList<MoodState> getMoodHistory() {
+    public static ArrayList<MoodState> getMoodHistory() {
         return moodHistory;
     }
 
@@ -137,5 +180,9 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public void fetchMoodHistory(MoodHistoryManager moodHistoryManager, MoodHistoryManager.MoodHistoryCallback callback) {
+        moodHistoryManager.fetchMoodHistory(this.username, callback);
     }
 }
