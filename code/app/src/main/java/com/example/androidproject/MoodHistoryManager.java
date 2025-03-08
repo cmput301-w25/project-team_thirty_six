@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -11,6 +12,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+
+/**
+ * MoodHistoryManager is a utility class responsible for managing mood history data in Firestore.
+ * It provides methods to fetch, store, and manipulate mood entries for a specific user.
+ */
 
 public class MoodHistoryManager {
     private FirebaseFirestore db;
@@ -20,61 +27,22 @@ public class MoodHistoryManager {
     }
 
     /**
-     * Stores a user's moodHistory in Firestore.
-     *
-     * @param userId      The ID of the user.
-     * @param moodHistory The list of MoodState objects to store.
-     */
-    public void storeMoodHistory(String userId, List<MoodState> moodHistory) {
-        // Convert the list of MoodState objects to a list of maps
-        List<Map<String, Object>> moodHistoryMap = new ArrayList<>();
-        for (MoodState moodState : moodHistory) {
-            moodHistoryMap.add(moodState.toMap());
-        }
-
-        // Create a document with the moodHistory array
-        Map<String, Object> userMoodHistory = new HashMap<>();
-        userMoodHistory.put("moodHistory", moodHistoryMap);
-
-        // Store the document in Firestore
-        db.collection("Users")
-                .document(userId)
-                .set(userMoodHistory)
-                .addOnSuccessListener(aVoid -> {
-                    Log.d("MoodHistoryManager", "Mood history stored successfully for user: " + userId);
-                })
-                .addOnFailureListener(e -> {
-                    Log.w("MoodHistoryManager", "Error storing mood history", e);
-                });
-    }
-
-    /**
-     * Fetches the moodHistory for a user from Firestore.
+     * Fetches the mood history for a user from the "moods" collection.
      *
      * @param userId   The ID of the user.
      * @param callback The callback to handle the result.
      */
     public void fetchMoodHistory(String userId, MoodHistoryCallback callback) {
-        db.collection("Users")
-                .document(userId)
+        db.collection("Moods")
+                .whereEqualTo("user", userId) // Filter moods by the user ID
                 .get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
-                        List<Map<String, Object>> moodHistoryMap = (List<Map<String, Object>>) documentSnapshot.get("moodHistory");
-                        ArrayList<MoodState> moodHistory = new ArrayList<>(); // Use ArrayList directly
-
-                        if (moodHistoryMap != null) {
-                            for (Map<String, Object> moodMap : moodHistoryMap) {
-                                MoodState moodState = mapToMoodState(moodMap);
-                                moodHistory.add(moodState);
-                            }
-                        }
-
-                        callback.onCallback(moodHistory); // Pass ArrayList to callback
-                    } else {
-                        Log.d("MoodHistoryManager", "No such document");
-                        callback.onCallback(new ArrayList<>()); // Return an empty ArrayList if no document exists
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    ArrayList<MoodState> moodHistory = new ArrayList<>();
+                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                        MoodState moodState = documentToMoodState(document);
+                        moodHistory.add(moodState);
                     }
+                    callback.onCallback(moodHistory); // Pass the fetched moods to the callback
                 })
                 .addOnFailureListener(e -> {
                     Log.w("MoodHistoryManager", "Error fetching mood history", e);
@@ -83,21 +51,27 @@ public class MoodHistoryManager {
     }
 
     /**
-     * Converts a Firestore map to a MoodState object.
+     * Converts a Firestore document to a MoodState object.
      *
-     * @param moodStateMap The map representing a MoodState.
+     * @param document The Firestore document representing a mood.
      * @return The MoodState object.
      */
-    private MoodState mapToMoodState(Map<String, Object> moodStateMap) {
-        MoodState moodState = new MoodState((String) moodStateMap.get("mood"));
-        moodState.setUser((String) moodStateMap.get("username"));
-        moodState.setId((String) moodStateMap.get("id"));
-        moodState.setReason((String) moodStateMap.get("reason"));
-        moodState.setDayTime(LocalDateTime.parse((String) moodStateMap.get("dayTime"), DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+    private MoodState documentToMoodState(QueryDocumentSnapshot document) {
+        MoodState moodState = new MoodState(document.getString("mood"));
+        moodState.setUser(document.getString("user"));
+        moodState.setId(document.getId()); // Use the document ID as the mood ID
+        moodState.setReason(document.getString("reason"));
+
+        // Convert dayTime map to LocalDateTime
+        Map<String, Object> dayTimeMap = (Map<String, Object>) document.get("dayTime");
+        if (dayTimeMap != null) {
+            LocalDateTime dayTime = mapToLocalDateTime(dayTimeMap);
+            moodState.setDayTime(dayTime);
+        }
 
         // Handle nullable fields
-        if (moodStateMap.get("image") != null) {
-            moodState.setImage(Uri.parse((String) moodStateMap.get("image")));
+        if (document.getString("image") != null) {
+            moodState.setImage(Uri.parse(document.getString("image")));
         }
 
         return moodState;
@@ -109,4 +83,24 @@ public class MoodHistoryManager {
     public interface MoodHistoryCallback {
         void onCallback(ArrayList<MoodState> moodHistory);
     }
+
+    /**
+     * Converts a dayTime map to a LocalDateTime object.
+     *
+     * @param dayTimeMap The map representing the dayTime.
+     * @return The LocalDateTime object.
+     */
+    private LocalDateTime mapToLocalDateTime(Map<String, Object> dayTimeMap) {
+        // Convert Long values to int
+        int year = ((Long) dayTimeMap.get("year")).intValue();
+        int monthValue = ((Long) dayTimeMap.get("monthValue")).intValue();
+        int dayOfMonth = ((Long) dayTimeMap.get("dayOfMonth")).intValue();
+        int hour = ((Long) dayTimeMap.get("hour")).intValue();
+        int minute = ((Long) dayTimeMap.get("minute")).intValue();
+        int second = ((Long) dayTimeMap.get("second")).intValue();
+        int nano = ((Long) dayTimeMap.get("nano")).intValue();
+
+        return LocalDateTime.of(year, monthValue, dayOfMonth, hour, minute, second, nano);
+    }
+
 }
