@@ -52,6 +52,7 @@ public class LoginActivity extends AppCompatActivity {
         String password = editPassword.getText().toString();
         userManager.loginUser(username, password);
         Intent i = new Intent(this, HomePageActivity.class);
+        i.putExtra("currentUser", username);
         startActivity(i);
     }
 }
