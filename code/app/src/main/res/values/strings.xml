@@ -76,4 +76,23 @@
     <string name="date_and_time">Date and Time</string>
     <string name="done">Done</string>
     <string name="cancel">Cancel</string>
+
+    <!-- Add this string-array in your strings.xml -->
+    <string-array name="moods_array">
+        <item>Happiness</item>
+        <item>Sadness</item>
+        <item>Fear</item>
+        <item>Anger</item>
+        <item>Surprise</item>
+        <item>Confusion</item>
+        <item>Disgust</item>
+        <item>Shame</item>
+    </string-array>
+
+    <!-- Define a custom style for spinner -->
+    <style name="WhiteSpinnerStyle">
+        <item name="android:textColor">#FFFFFF</item> <!-- White text color -->
+        <item name="android:popupBackground">@android:color/black
+        </item> <!-- Black background for dropdown -->
+    </style>
 </resources>

@@ -1,5 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <style name="CustomDialogStyle" parent="ThemeOverlay.MaterialComponents.Dialog">
+        <!-- Set the background color to black -->
+        <item name="android:background">@android:color/black</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+        <!-- Set text color to white for all text views inside the dialog -->
     <style name="CustomDateTimePickerTheme" parent="Theme.AppCompat.Dialog.Alert">
         <item name="colorPrimary">#333F4F</item>
         <item name="colorAccent">#3F00FF</item>
