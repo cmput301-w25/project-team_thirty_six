@@ -58,7 +58,6 @@
         vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
 
-    <!-- Add this string-array in your strings.xml -->
     <string-array name="moods_array">
         <item>Happiness</item>
         <item>Sadness</item>
