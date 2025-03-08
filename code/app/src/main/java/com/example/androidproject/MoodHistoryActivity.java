@@ -22,11 +22,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+/**
+ * MoodHistoryActivity is an activity that displays the mood history of a user.
+ * It allows users to view, filter, and manage their mood entries.
+ */
+
 public class MoodHistoryActivity extends AppCompatActivity {
 
     private ArrayList<MoodState> moodHistory;
     private ArrayList<MoodState> completeMoodHistory;
-    private User currentUser;
     private MoodArrayAdapter moodAdapter;
 
     private ListView moodListView;
@@ -65,6 +69,9 @@ public class MoodHistoryActivity extends AppCompatActivity {
 
     /**
      * Fetches mood history from Firestore and updates the UI.
+     *
+     * @param username
+     *      The username of the user whose mood history is to be fetched.
      */
     private void fetchMoodHistory(String username) {
         moodHistoryManager.fetchMoodHistory(username, new MoodHistoryManager.MoodHistoryCallback() {
@@ -129,6 +136,9 @@ public class MoodHistoryActivity extends AppCompatActivity {
 
     /**
      * Filters the mood history by a specific emotional state.
+     *
+     * @param emotionalState
+     *        The emotional state to filter by.
      */
     public void filterByEmotionalState(String emotionalState) {
         ArrayList<MoodState> filteredMoods = Filter.filterByEmotionalState(moodHistory, emotionalState);
@@ -139,6 +149,9 @@ public class MoodHistoryActivity extends AppCompatActivity {
 
     /**
      * Filters the mood history by a keyword in the reason text.
+     *
+     * @param keyword
+     *      The keyword to filter by.
      */
     public void filterByKeyword(String keyword) {
         ArrayList<MoodState> filteredMoods = Filter.filterByKeyword(moodHistory, keyword);
