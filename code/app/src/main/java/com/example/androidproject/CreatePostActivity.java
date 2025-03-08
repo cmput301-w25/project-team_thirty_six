@@ -14,11 +14,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.util.ArrayList;
 
 /**
@@ -28,7 +23,7 @@ public class CreatePostActivity extends AppCompatActivity {
     Button moodDropdown;
     EditText reasonText;
     Button aloneButton;
-    Button pairButton;
+    Button crowdButton;
     Button groupButton;
     Button confirmButton;
     ImageButton imageButton;
@@ -57,7 +52,7 @@ public class CreatePostActivity extends AppCompatActivity {
         reasonText = findViewById(R.id.add_reason);
         // Finds all of the views
         aloneButton = findViewById(R.id.add_mood_alone_button);
-        pairButton = findViewById(R.id.add_mood_pair_button);
+        crowdButton = findViewById(R.id.add_mood_crowd_button);
         groupButton = findViewById(R.id.add_mood_group_button);
         dropdownList = findViewById(R.id.add_mood_select_mood_list);
         confirmButton = findViewById(R.id.add_confirm_button);
@@ -107,7 +102,7 @@ public class CreatePostActivity extends AppCompatActivity {
                 if (dropdownStatus) {
                     dropdownList.setVisibility(View.GONE);
                     aloneButton.setVisibility(View.VISIBLE);
-                    pairButton.setVisibility(View.VISIBLE);
+                    crowdButton.setVisibility(View.VISIBLE);
                     groupButton.setVisibility(View.VISIBLE);
                     confirmButton.setVisibility(View.VISIBLE);
                 } else {
@@ -115,7 +110,7 @@ public class CreatePostActivity extends AppCompatActivity {
                     dropdownList.setVisibility(View.VISIBLE);
                     dropdownList.bringToFront();
                     aloneButton.setVisibility(View.INVISIBLE);
-                    pairButton.setVisibility(View.INVISIBLE);
+                    crowdButton.setVisibility(View.INVISIBLE);
                     groupButton.setVisibility(View.INVISIBLE);
                     confirmButton.setVisibility(View.INVISIBLE);
                 }
@@ -138,7 +133,7 @@ public class CreatePostActivity extends AppCompatActivity {
                 dropdownStatus = Boolean.FALSE;
                 dropdownList.setVisibility(View.GONE);
                 aloneButton.setVisibility(View.VISIBLE);
-                pairButton.setVisibility(View.VISIBLE);
+                crowdButton.setVisibility(View.VISIBLE);
                 groupButton.setVisibility(View.VISIBLE);
                 confirmButton.setVisibility(View.VISIBLE);
                 moodDropdown.setText(chosenMood);
@@ -156,14 +151,14 @@ public class CreatePostActivity extends AppCompatActivity {
             }
         });
         // Sets the pair option button
-        pairButton.setOnClickListener(new View.OnClickListener() {
+        crowdButton.setOnClickListener(new View.OnClickListener() {
             /**
              * Creates an option to chose
              * @param v The view of pair button.
              */
             @Override
             public void onClick(View v) {
-                chosenSituation = "Pair";
+                chosenSituation = "Crowd";
             }
         });
         // Sets the group option button
@@ -202,7 +197,7 @@ public class CreatePostActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // Gives an error message if trying to enter without setting mood
                 if (chosenMood == null) {
-                    confirmButton.setError("Cannot leave mood blank");
+                    confirmButton.setError("");
                 } else {
                     // Creates the new mood state
                     MoodState newMood = new MoodState(chosenMood);
