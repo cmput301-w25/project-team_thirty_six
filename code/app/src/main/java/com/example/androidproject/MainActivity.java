@@ -53,7 +53,6 @@ public class MainActivity extends AppCompatActivity {
     public void signUpPage(View v){
         Intent i = new Intent(this, SignUpActivity.class);
         startActivity(i);
-
     }
 
 }

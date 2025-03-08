@@ -14,6 +14,15 @@ public class User {
     static ArrayList<MoodState> moodHistory;
     MoodState mostRecentMood;
 
+
+
+    // No-argument constructor required for Firestore
+    public User() {
+        // Initialize fields if needed
+        this.following = new ArrayList<>();
+        this.moodHistory = new ArrayList<>();
+    }
+
     /**
      * Initializes a user
      * @param username password

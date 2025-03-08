@@ -36,12 +36,22 @@ public class MoodHistoryActivity extends AppCompatActivity {
     private ListView moodListView;
 
     private MoodHistoryManager moodHistoryManager;
-    private String currentUsername;
+
+    private String currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mood_history);
+
+        // Retrieve the currentUser from the Intent
+        currentUser = (String) getIntent().getSerializableExtra("currentUser");
+
+        if (currentUser != null) {
+            Log.d("MoodHistoryActivity", "Current user: " + currentUser);
+        } else {
+            Log.e("MoodHistoryActivity", "No user data found");
+        }
 
         // Initialize MoodHistoryManager
         moodHistoryManager = new MoodHistoryManager();
@@ -55,12 +65,8 @@ public class MoodHistoryActivity extends AppCompatActivity {
         moodListView = findViewById(R.id.mood_list);
         moodListView.setAdapter(moodAdapter);
 
-        //change this later to use user id or
-        // add user authentication to make sure usernames are unique
-        currentUsername = "testUser"; // dummy user
-
         // Fetch mood history for the current user
-        fetchMoodHistory(currentUsername);
+        fetchMoodHistory(currentUser); // remember add user authentication to make sure usernames are unique
 
         // Set up the filter button
         ImageButton filterButton = findViewById(R.id.filter_button);
@@ -92,20 +98,6 @@ public class MoodHistoryActivity extends AppCompatActivity {
                     moodAdapter.notifyDataSetChanged();
                 } else {
                     Log.e("MoodState", "Failed to fetch mood history");
-
-                    // Use dummy data as a fallback
-                    ArrayList<MoodState> dummyData = generateDummyData();
-                    MoodHistoryActivity.this.moodHistory.clear();
-                    MoodHistoryActivity.this.moodHistory.addAll(dummyData);
-
-                    completeMoodHistory.clear();
-                    completeMoodHistory.addAll(dummyData);
-
-                    // Sort the mood history by date and time
-                    sortMoodHistory();
-
-                    // Notify the adapter that the data has changed
-                    moodAdapter.notifyDataSetChanged();
                 }
             }
         });
@@ -174,14 +166,15 @@ public class MoodHistoryActivity extends AppCompatActivity {
         EditText editKeyword = dialogView.findViewById(R.id.edit_keyword);
 
         editKeyword.setHintTextColor(Color.LTGRAY);  // Light gray for hint text for contrast
+        editKeyword.setTextColor(Color.WHITE);
         spinnerMoods.setBackgroundColor(Color.GRAY);
 
         // Set custom title with white text color
         TextView titleTextView = new TextView(this);
         titleTextView.setText("Filter by");
         titleTextView.setTextColor(Color.WHITE);
-        titleTextView.setTextSize(18);  // Optional: Adjust text size
-        titleTextView.setPadding(350, 50, 16, 16);  // Optional: Add padding for better look
+        titleTextView.setTextSize(18);
+        titleTextView.setPadding(350, 50, 16, 16);  //Add padding for better look
 
         // Get the mood options from the string array
         String[] moods = getResources().getStringArray(R.array.moods_array);
@@ -233,48 +226,4 @@ public class MoodHistoryActivity extends AppCompatActivity {
         moodAdapter.notifyDataSetChanged();
     }
 
-    /**
-     * Generates dummy data for testing purposes.
-     */
-    private ArrayList<MoodState> generateDummyData() {
-        ArrayList<MoodState> dummyMoods = new ArrayList<>();
-
-        MoodState mood1 = new MoodState("Happiness");
-        mood1.setUser("user123");
-        mood1.setId("mood_001");
-        mood1.setReason("Had a great day with friends");
-        mood1.setDayTime(LocalDateTime.now().minusDays(1));
-
-        MoodState mood2 = new MoodState("Sadness");
-        mood2.setUser("user456");
-        mood2.setId("mood_002");
-        mood2.setReason("Feeling lonely");
-        mood2.setDayTime(LocalDateTime.now().minusDays(3));
-
-        MoodState mood3 = new MoodState("Fear");
-        mood3.setUser("user789");
-        mood3.setId("mood_003");
-        mood3.setReason("Worried about the future");
-        mood3.setDayTime(LocalDateTime.now().minusDays(5));
-
-        MoodState mood4 = new MoodState("Anger");
-        mood4.setUser("user111");
-        mood4.setId("mood_004");
-        mood4.setReason("Frustrated with work");
-        mood4.setDayTime(LocalDateTime.now().minusDays(7));
-
-        MoodState mood5 = new MoodState("Surprise");
-        mood5.setUser("user222");
-        mood5.setId("mood_005");
-        mood5.setReason("Unexpected news");
-        mood5.setDayTime(LocalDateTime.now().minusDays(10));
-
-        dummyMoods.add(mood1);
-        dummyMoods.add(mood2);
-        dummyMoods.add(mood3);
-        dummyMoods.add(mood4);
-        dummyMoods.add(mood5);
-
-        return dummyMoods;
-    }
 }
