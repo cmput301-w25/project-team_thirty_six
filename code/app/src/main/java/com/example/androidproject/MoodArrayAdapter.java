@@ -1,7 +1,9 @@
 package com.example.androidproject;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +13,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatButton;
 
 import java.util.ArrayList;
 
@@ -33,17 +36,16 @@ public class MoodArrayAdapter extends ArrayAdapter<MoodState> {
 
         MoodState moodState = getItem(position);
 
-
+        // Use view instead of convertView
+        AppCompatButton viewMoreButton = view.findViewById(R.id.viewMoreDetails);
         TextView moodTextView = view.findViewById(R.id.text_mood);
         TextView dateTextView = view.findViewById(R.id.text_date);
         ImageView imageView = view.findViewById(R.id.image_mood);
 
-
         if (moodState != null) {
             String state = moodState.getMood();
             String date = moodState.formatDateTime();
-            int emoji =  moodState.getEmoji();
-
+            int emoji = moodState.getEmoji();
 
             moodTextView.setText(state);
             dateTextView.setText(date);
@@ -52,6 +54,17 @@ public class MoodArrayAdapter extends ArrayAdapter<MoodState> {
             // Set the text color of moodTextView using the color from MoodState
             String hexColor = "#" + moodState.getColor(); // Prepend '#' to the hex color
             moodTextView.setTextColor(Color.parseColor(hexColor));
+
+            // Set click listener for the button
+            viewMoreButton.setOnClickListener(v -> {
+                Log.d("MoodAdapter", "Opening details for mood: " + moodState.getId() +
+                        ", User: " + moodState.getUser() +
+                        ", Mood: " + moodState.getMood());
+                Intent intent = new Intent(getContext(), MoodDetailsActivity.class);
+                intent.putExtra("id", moodState.getId());
+                intent.putExtra("user", moodState.getUser());
+                getContext().startActivity(intent);
+            });
         }
 
         return view;

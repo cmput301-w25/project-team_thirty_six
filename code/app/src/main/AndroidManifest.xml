@@ -32,6 +32,11 @@
             android:name=".CreatePostActivity"
             android:exported="true" />
         <activity
+            android:name=".EditMoodActivity"
+            android:exported="true"/>
+        <activity android:name=".MoodDetailsActivity"
+            android:exported="true" />
+        <activity
             android:name=".SplashScreenActivity"
             android:exported="false"
             android:label="@string/title_activity_splash_screen"
@@ -45,6 +50,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
     </application>
 
 </manifest>

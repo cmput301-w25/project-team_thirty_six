@@ -14,6 +14,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
@@ -21,6 +22,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+
+import android.content.Intent;
 
 /**
  * MoodHistoryActivity is an activity that displays the mood history of a user.
@@ -71,6 +74,7 @@ public class MoodHistoryActivity extends AppCompatActivity {
         // Set up the filter button
         ImageButton filterButton = findViewById(R.id.filter_button);
         filterButton.setOnClickListener(view -> showFilterDialog());
+
     }
 
     /**
@@ -223,7 +227,9 @@ public class MoodHistoryActivity extends AppCompatActivity {
                     displayAllMoods();
                 })
                 .show();
+
     }
+
 
     /**
      * Resets the mood history to display all moods.

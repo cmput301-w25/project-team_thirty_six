@@ -5,5 +5,6 @@
     <color name="main_background">#19191b</color>
     <color name="pink">#e45eb0</color>
     <color name="green">#34e3c4</color>
-    <color name="mood_choice">#333F4F</color>
+    <color name='bluish_teal'>#6658779D</color>
+    <color name='darker_bluish_teal'>#58779D</color>
 </resources>

@@ -28,7 +28,7 @@
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/viewMoodHistory"
+            app:layout_constraintTop_toBottomOf="@+id/viewMoreDetails"
             app:layout_constraintVertical_bias="1.0" />
 
 
@@ -40,7 +40,7 @@
             android:layout_height="102dp"
             android:layout_marginTop="8dp"
             android:src="@drawable/happy"
-            app:layout_constraintEnd_toStartOf="@+id/viewMoodHistory"
+            app:layout_constraintEnd_toStartOf="@+id/viewMoreDetails"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -75,13 +75,12 @@
             app:layout_constraintVertical_bias="0.0" />
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/viewMoodHistory"
+            android:id="@+id/viewMoreDetails"
             style="@android:style/Widget.Button"
             android:layout_width="175dp"
             android:layout_height="45dp"
             android:layout_marginTop="44dp"
             android:background="@drawable/details_button"
-            android:onClick="signUpOnClick"
             android:text="View More Details"
             android:textColor="@color/white"
             android:textSize="18sp"
