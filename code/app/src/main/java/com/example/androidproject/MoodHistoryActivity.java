@@ -107,7 +107,15 @@ public class MoodHistoryActivity extends AppCompatActivity {
      * Sorts the mood history by date and time in reverse chronological order.
      */
     private void sortMoodHistory() {
-        Collections.sort(moodHistory, new Comparator<MoodState>() {
+        moodHistory.sort(new Comparator<MoodState>() {
+            @Override
+            public int compare(MoodState m1, MoodState m2) {
+                return m2.getDayTime().compareTo(m1.getDayTime()); // Reverse order
+            }
+        });
+        moodAdapter.notifyDataSetChanged(); // Refresh the adapter
+
+        completeMoodHistory.sort(new Comparator<MoodState>() {
             @Override
             public int compare(MoodState m1, MoodState m2) {
                 return m2.getDayTime().compareTo(m1.getDayTime()); // Reverse order
