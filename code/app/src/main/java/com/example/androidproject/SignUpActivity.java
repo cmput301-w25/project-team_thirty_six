@@ -6,6 +6,7 @@ import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -44,7 +45,14 @@ public class SignUpActivity extends AppCompatActivity {
         EditText editPassword = findViewById(R.id.password);
         String username = editUsername.getText().toString();
         String password = editPassword.getText().toString();
-        userManager.addUser(username, password);
+        userManager.addUser(username, password,  new UserManager.SignUpCallback(){
+            @Override
+            public void onSignUpSuccess() {
+                Intent i = new Intent(SignUpActivity.this, LoginActivity.class);
+                startActivity(i);
+
+            }
+        });
 
     }
 }
