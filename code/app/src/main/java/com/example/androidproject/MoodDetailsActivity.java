@@ -95,7 +95,7 @@ public class MoodDetailsActivity extends AppCompatActivity {
         ivMoodImage.setVisibility(View.GONE);
 
         // Always show edit button
-
+        // NEED TO IMPLEMENT CHECK FOR USER AUTH
         btnEdit.setVisibility(View.VISIBLE);
         btnEdit.setOnClickListener(v -> {
             Intent editIntent = new Intent(MoodDetailsActivity.this, EditMoodActivity.class);
@@ -109,6 +109,7 @@ public class MoodDetailsActivity extends AppCompatActivity {
      */
     private void loadMoodDetails() {
         DocumentReference moodRef = db.collection("Moods").document(moodId);
+
         moodRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful() && task.getResult() != null) {
                 DocumentSnapshot document = task.getResult();
@@ -117,6 +118,7 @@ public class MoodDetailsActivity extends AppCompatActivity {
                     String username = document.getString("user");
                     tvUsername.setText(username != null && !username.isEmpty() ? username : "User");
 
+                    // Call updateUIWithMoodData with the new document
                     updateUIWithMoodData(document);
                 } else {
                     Toast.makeText(this, "Mood not found", Toast.LENGTH_SHORT).show();
@@ -127,6 +129,15 @@ public class MoodDetailsActivity extends AppCompatActivity {
                 finish();
             }
         });
+    }
+
+    @Override
+    // Reload mood details when activity becomes active again
+    protected void onResume() {
+        super.onResume();
+        if (moodId != null) {
+            loadMoodDetails();
+        }
     }
 
     /**

@@ -3,6 +3,7 @@ package com.example.androidproject;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputFilter;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,6 +19,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
+
+import java.util.Calendar;
+import java.util.Map;
 
 public class EditMoodActivity extends AppCompatActivity {
     // UI elements
@@ -29,6 +39,7 @@ public class EditMoodActivity extends AppCompatActivity {
     private RadioButton radioPair;
     private RadioButton radioGroup;
     private RadioButton radioCrowd;
+    private Calendar calendar;
     private LinearLayout addImageButton, addLocationButton, datePickerButton, timePickerButton;
     private CardView imagePreviewCardView, locationPreviewCardView;
     private ImageView moodImageView, imageButtonIcon;
@@ -131,56 +142,121 @@ public class EditMoodActivity extends AppCompatActivity {
      */
     private void loadDataFromIntent() {
         Intent intent = getIntent();
+        id = intent.getStringExtra("moodId");
 
-        // Get mood ID and essential data
-        id = intent.getStringExtra("id");
-        chosenMood = intent.getStringExtra("mood");
-        chosenSituation = intent.getStringExtra("situation");
-        String reason = intent.getStringExtra("reason");
-
-        // Get media data
-        String location = intent.getStringExtra("location");
-        String imageUrl = intent.getStringExtra("image");
-
-        // Get timestamp
-        long timestamp = intent.getLongExtra("timestamp", System.currentTimeMillis());
-
-        // Update UI with data
-        if (chosenMood != null) moodDropdown.setText(chosenMood);
-        if (reason != null) reasonText.setText(reason);
-
-        // Set date and time
-        dateTimeManager.setCalendarFromTimestamp(timestamp);
-
-        // Set social situation
-        if (chosenSituation != null) {
-            switch (chosenSituation) {
-                case "Alone":
-                    radioAlone.setChecked(true);
-                    lastSelectedButton = radioAlone;
-                    break;
-                case "Pair":
-                    radioPair.setChecked(true);
-                    lastSelectedButton = radioPair;
-                    break;
-                case "Group":
-                    radioGroup.setChecked(true);
-                    lastSelectedButton = radioGroup;
-                    break;
-                case "Crowd":
-                    radioCrowd.setChecked(true);
-                    lastSelectedButton = radioCrowd;
-                    break;
-            }
-        } else {
-            // No selection
-            socialSituationRadioGroup.clearCheck();
-            lastSelectedButton = null;
+        if (id == null) {
+            Toast.makeText(this, "No mood ID provided", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
         }
 
-        // Set media
-        mediaManager.setLocation(location);
-        mediaManager.setImageUrl(imageUrl);
+        // Query Firestore to get the mood details
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference moodRef = db.collection("Moods").document(id);
+
+        moodRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot document = task.getResult();
+                if (document.exists()) {
+                    // Extract all mood details from Firestore
+                    chosenMood = document.getString("mood");
+                    chosenSituation = document.getString("situation");
+                    String reason = document.getString("reason");
+                    String location = document.getString("location");
+                    String imageUrl = document.getString("id");
+                    Object dayTimeObj = document.get("dayTime");
+
+                    Calendar calendar = Calendar.getInstance();
+
+                    // Handle timestamp
+                    if (dayTimeObj instanceof Map) {
+                        Map<String, Object> dayTimeMap = (Map<String, Object>) dayTimeObj;
+
+                        try {
+                            // Safely extract each component with null checks
+                            Integer year = dayTimeMap.containsKey("year") ?
+                                    ((Long) dayTimeMap.get("year")).intValue() :
+                                    calendar.get(Calendar.YEAR);
+
+                            Integer monthValue = dayTimeMap.containsKey("monthValue") ?
+                                    ((Long) dayTimeMap.get("monthValue")).intValue() - 1 :
+                                    calendar.get(Calendar.MONTH);
+
+                            Integer day = dayTimeMap.containsKey("dayOfMonth") ?
+                                    ((Long) dayTimeMap.get("dayOfMonth")).intValue() :
+                                    calendar.get(Calendar.DAY_OF_MONTH);
+
+                            Integer hour = dayTimeMap.containsKey("hour") ?
+                                    ((Long) dayTimeMap.get("hour")).intValue() :
+                                    calendar.get(Calendar.HOUR_OF_DAY);
+
+                            Integer minute = dayTimeMap.containsKey("minute") ?
+                                    ((Long) dayTimeMap.get("minute")).intValue() :
+                                    calendar.get(Calendar.MINUTE);
+
+                            // Set the calendar with extracted or default values
+                            calendar.set(
+                                    year,
+                                    monthValue,
+                                    day,
+                                    hour,
+                                    minute
+                            );
+                        } catch (Exception e) {
+                        }
+                    }
+
+                    // Update UI components
+                    if (chosenMood != null) {
+                        moodDropdown.setText(chosenMood);
+                    }
+
+                    if (reason != null) {
+                        reasonText.setText(reason);
+                    }
+
+                    // Set date and time
+                    dateTimeManager.setCalendar(calendar);
+
+                    // Set social situation
+                    if (chosenSituation != null) {
+                        switch (chosenSituation) {
+                            case "Alone":
+                                radioAlone.setChecked(true);
+                                lastSelectedButton = radioAlone;
+                                break;
+                            case "Pair":
+                                radioPair.setChecked(true);
+                                lastSelectedButton = radioPair;
+                                break;
+                            case "Group":
+                                radioGroup.setChecked(true);
+                                lastSelectedButton = radioGroup;
+                                break;
+                            case "Crowd":
+                                radioCrowd.setChecked(true);
+                                lastSelectedButton = radioCrowd;
+                                break;
+                        }
+                    } else {
+                        // No selection
+                        socialSituationRadioGroup.clearCheck();
+                        lastSelectedButton = null;
+                    }
+
+                    // Use MoodMediaManager to handle image and location
+                    mediaManager.setLocation(location);
+                    mediaManager.setImageUrl(imageUrl);
+
+                } else {
+                    Toast.makeText(this, "Mood not found", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+            } else {
+                Toast.makeText(this, "Error loading mood details", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        });
     }
 
     /**

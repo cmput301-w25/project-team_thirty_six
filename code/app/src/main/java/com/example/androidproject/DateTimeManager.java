@@ -28,22 +28,19 @@ public class DateTimeManager {
         updateDisplay();
     }
 
-    public void setOnDateTimeChangedListener(OnDateTimeChangedListener listener) {
-        this.listener = listener;
-    }
-
-    /**
-     * Shows date picker dialog
-     */
     public void showDatePicker() {
         DatePickerDialog datePickerDialog = new DatePickerDialog(
                 new ContextThemeWrapper(context, R.style.CustomDateTimePickerTheme),
                 (view, year, month, dayOfMonth) -> {
+                    // Update calendar with selected date
                     calendar.set(Calendar.YEAR, year);
                     calendar.set(Calendar.MONTH, month);
                     calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+                    // Update display
                     updateDisplay();
 
+                    // Notify listener if set
                     if (listener != null) {
                         listener.onDateTimeChanged(calendar);
                     }
@@ -55,65 +52,58 @@ public class DateTimeManager {
         datePickerDialog.show();
     }
 
-    /**
-     * Shows time picker dialog
-     */
     public void showTimePicker() {
         TimePickerDialog timePickerDialog = new TimePickerDialog(
                 new ContextThemeWrapper(context, R.style.CustomDateTimePickerTheme),
                 (view, hourOfDay, minute) -> {
+                    // Update calendar with selected time
                     calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
                     calendar.set(Calendar.MINUTE, minute);
+
+                    // Update display
                     updateDisplay();
 
+                    // Notify listener if set
                     if (listener != null) {
                         listener.onDateTimeChanged(calendar);
                     }
                 },
                 calendar.get(Calendar.HOUR_OF_DAY),
                 calendar.get(Calendar.MINUTE),
-                false
+                false  // 12-hour format
         );
         timePickerDialog.show();
     }
 
-    /**
-     * Updates the date and time display
-     */
     public void updateDisplay() {
-        // Update date display
+        // Date formatting
         SimpleDateFormat dateFormat = new SimpleDateFormat("MMM d, yyyy", Locale.getDefault());
         dateTextView.setText(dateFormat.format(calendar.getTime()));
 
-        // Update time display
+        // Time formatting
         SimpleDateFormat timeFormat = new SimpleDateFormat("h:mm a", Locale.getDefault());
         timeTextView.setText(timeFormat.format(calendar.getTime()));
     }
 
-    /**
-     * Sets the calendar to a specific time
-     */
-    public void setCalendar(Calendar calendar) {
-        this.calendar = calendar;
-        updateDisplay();
-    }
-
-    /**
-     * Sets the calendar from a timestamp
-     */
     public void setCalendarFromTimestamp(long timestamp) {
         calendar.setTimeInMillis(timestamp);
         updateDisplay();
     }
 
-    /**
-     * Returns the current calendar
-     */
+    public void setCalendar(Calendar newCalendar) {
+        calendar = newCalendar;
+        updateDisplay();
+    }
+
     public Calendar getCalendar() {
         return calendar;
     }
 
-    // Interface for callbacks
+    // Optional listener for date/time changes
+    public void setOnDateTimeChangedListener(OnDateTimeChangedListener listener) {
+        this.listener = listener;
+    }
+
     public interface OnDateTimeChangedListener {
         void onDateTimeChanged(Calendar calendar);
     }
