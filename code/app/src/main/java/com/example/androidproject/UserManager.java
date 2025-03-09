@@ -40,13 +40,18 @@ public class UserManager {
         return currentUser;
     }
 
+    public interface SignUpCallback {
+        void onSignUpSuccess();
+
+    }
+
     /**
      * Creates new user and adds them to the database. If the user already exists in the database
      * re-prompts the user to enter a different username
      * @param username
      * @param password
      */
-    public void addUser(String username, String password) {
+    public void addUser(String username, String password, SignUpCallback callback) {
         // Creates the query for the username
         Task<QuerySnapshot> query = database.getUsers().whereEqualTo("username",username).get();
         // Adds a success listener
@@ -64,6 +69,7 @@ public class UserManager {
                     User user = new User(username, password);
                     database.addUser(user);
                     // TODO Start the next activity, wherever the screen goes after signup
+                    callback.onSignUpSuccess();
                 }
             }
             // Creates on failure listener to send message
@@ -75,12 +81,17 @@ public class UserManager {
         });
     }
 
+    public interface LoginCallback {
+        void onLoginSuccess();
+
+    }
+
     /**
      *
      * @param username
      * @param password
      */
-    public void loginUser(String username, String password){
+    public void loginUser(String username, String password, LoginCallback callback){
         // Creates the query for a matching username and password
         Task<QuerySnapshot> query = database.getUsers().whereEqualTo(FieldPath.documentId(), username).whereEqualTo("password", password).get();
         // Perform the query and checks
@@ -88,6 +99,7 @@ public class UserManager {
             int i = queryDocumentSnapshots.size();
             if (i == 1){ // If the user was found and there was only one of them
                 Log.d("UserManager", "Username & password match, login successful!");
+                callback.onLoginSuccess();
             } else if (i == 0) { // User does not exist
                 Log.d("User Manager", "Username & password do not match, login unsuccessful");
                 Toast userTakenToast = Toast.makeText(context, "Username and password do not match. Please try again.", Toast.LENGTH_LONG);

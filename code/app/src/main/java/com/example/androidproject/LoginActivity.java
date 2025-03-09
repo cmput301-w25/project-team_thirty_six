@@ -50,9 +50,13 @@ public class LoginActivity extends AppCompatActivity {
         EditText editPassword = findViewById(R.id.password);
         String username = editUsername.getText().toString();
         String password = editPassword.getText().toString();
-        userManager.loginUser(username, password);
-        Intent i = new Intent(this, HomePageActivity.class);
-        i.putExtra("currentUser", username);
-        startActivity(i);
+        userManager.loginUser(username, password, new UserManager.LoginCallback() {
+            @Override
+            public void onLoginSuccess() {
+                Intent i = new Intent(LoginActivity.this, HomePageActivity.class);
+                i.putExtra("currentUser", username);
+                startActivity(i);
+            }
+        });
     }
 }
