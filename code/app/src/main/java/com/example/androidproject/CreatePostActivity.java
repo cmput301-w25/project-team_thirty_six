@@ -14,7 +14,12 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+
 import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * Creates the functionality to create a post
@@ -209,9 +214,6 @@ public class CreatePostActivity extends AppCompatActivity {
                     if (reasonText.getText().length() != 0 ) {
                         newMood.setReason(reasonText.getText().toString());
                     }
-                    if (chosenImage != null) {
-                        newMood.setImage(chosenImage);
-                    }
                     // Sets the username
                     newMood.setUser(user);
                     // Adds mood to database
@@ -219,7 +221,8 @@ public class CreatePostActivity extends AppCompatActivity {
                     // Adds images to database
                     if (chosenImage != null) {
                         Database.getInstance().addImage(chosenImage,"images/" + newMood.getId(), getContentResolver());
-                        newMood.setImage(Uri.parse("images/" + newMood.getId()));
+                        CollectionReference moodCol  = FirebaseFirestore.getInstance().collection("Moods");
+                        moodCol.document(newMood.getId()).update("image",Uri.parse("images/" + newMood.getId()));
                     }
                     finish();
                 }
