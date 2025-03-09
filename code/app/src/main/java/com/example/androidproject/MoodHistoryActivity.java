@@ -107,7 +107,15 @@ public class MoodHistoryActivity extends AppCompatActivity {
      * Sorts the mood history by date and time in reverse chronological order.
      */
     private void sortMoodHistory() {
-        Collections.sort(moodHistory, new Comparator<MoodState>() {
+        moodHistory.sort(new Comparator<MoodState>() {
+            @Override
+            public int compare(MoodState m1, MoodState m2) {
+                return m2.getDayTime().compareTo(m1.getDayTime()); // Reverse order
+            }
+        });
+        moodAdapter.notifyDataSetChanged(); // Refresh the adapter
+
+        completeMoodHistory.sort(new Comparator<MoodState>() {
             @Override
             public int compare(MoodState m1, MoodState m2) {
                 return m2.getDayTime().compareTo(m1.getDayTime()); // Reverse order
@@ -166,14 +174,15 @@ public class MoodHistoryActivity extends AppCompatActivity {
         EditText editKeyword = dialogView.findViewById(R.id.edit_keyword);
 
         editKeyword.setHintTextColor(Color.LTGRAY);  // Light gray for hint text for contrast
+        editKeyword.setTextColor(Color.WHITE);
         spinnerMoods.setBackgroundColor(Color.GRAY);
 
         // Set custom title with white text color
         TextView titleTextView = new TextView(this);
         titleTextView.setText("Filter by");
         titleTextView.setTextColor(Color.WHITE);
-        titleTextView.setTextSize(18);  // Optional: Adjust text size
-        titleTextView.setPadding(350, 50, 16, 16);  // Optional: Add padding for better look
+        titleTextView.setTextSize(18);
+        titleTextView.setPadding(350, 50, 16, 16);  //Add padding for better look
 
         // Get the mood options from the string array
         String[] moods = getResources().getStringArray(R.array.moods_array);
