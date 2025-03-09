@@ -219,7 +219,6 @@ public class MoodDetailsActivity extends AppCompatActivity {
                 formatTimestampFromLocalDateTime(dateTime);
                 return;
             } catch (Exception e) {
-                // Silently handle parsing error
             }
         }
 
