@@ -21,7 +21,13 @@ public class MoodRepository {
     public void updateMood(String moodId, String mood, String situation, String reason,
                            String location, String imageUrl, Calendar dateTime,
                            OnMoodUpdateListener listener) {
-
+        // Validate id is not null
+        if (moodId == null) {
+            if (listener != null) {
+                listener.onFailure(new IllegalArgumentException("Mood ID cannot be null"));
+            }
+            return;
+        }
         // Create the main mood document data
         Map<String, Object> updatedData = new HashMap<>();
         updatedData.put("mood", mood);
@@ -50,6 +56,24 @@ public class MoodRepository {
                 .addOnSuccessListener(aVoid -> {
                     // Now update the dayTime subcollection
                     updateDayTimeSubcollection(moodId, dateTime, listener);
+                })
+                .addOnFailureListener(e -> {
+                    if (listener != null) {
+                        listener.onFailure(e);
+                    }
+                });
+    }
+    /**
+     * Deletes a mood from Firestore
+     */
+    public void deleteMood(String id, OnMoodDeleteListener listener) {
+        // Delete the mood document
+        db.collection("moods").document(id)
+                .delete()
+                .addOnSuccessListener(aVoid -> {
+                    if (listener != null) {
+                        listener.onSuccess();
+                    }
                 })
                 .addOnFailureListener(e -> {
                     if (listener != null) {
@@ -111,6 +135,11 @@ public class MoodRepository {
 
     // Interface for callbacks
     public interface OnMoodUpdateListener {
+        void onSuccess();
+        void onFailure(Exception e);
+    }
+
+    public interface OnMoodDeleteListener {
         void onSuccess();
         void onFailure(Exception e);
     }

@@ -13,8 +13,11 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class EditMoodActivity extends AppCompatActivity {
     // UI elements
@@ -31,6 +34,7 @@ public class EditMoodActivity extends AppCompatActivity {
     private ImageView moodImageView, imageButtonIcon;
     private TextView locationTextView, textViewSelectedDate, textViewSelectedTime, addImageText, removeImageText;
     private RadioButton lastSelectedButton = null;
+    private FloatingActionButton deleteButton;
 
     // Data
     private String chosenMood, chosenSituation, id;
@@ -70,6 +74,7 @@ public class EditMoodActivity extends AppCompatActivity {
         doneButton = findViewById(R.id.done_button);
         cancelButton = findViewById(R.id.cancel_button);
         moodDropdown = findViewById(R.id.btnEditMoodSelectMood);
+        deleteButton = findViewById(R.id.delete_button);
 
         // Text inputs
         reasonText = findViewById(R.id.editReason);
@@ -240,13 +245,27 @@ public class EditMoodActivity extends AppCompatActivity {
         });
         addLocationButton.setOnClickListener(v -> mediaManager.openLocationPicker());
 
-        // Confirm or cancel changes made to mood event
+        // Confirm, cancel or delete changes made to mood event
         doneButton.setOnClickListener(v -> saveMood());
         cancelButton.setOnClickListener(v -> finish());
         radioAlone.setOnClickListener(situationClickListener);
         radioPair.setOnClickListener(situationClickListener);
         radioGroup.setOnClickListener(situationClickListener);
         radioCrowd.setOnClickListener(situationClickListener);
+        deleteButton.setOnClickListener(v -> showDeleteConfirmationDialog());
+    }
+
+    /**
+     * Brings up dialog to confirm deletion of a mood
+     */
+    private void showDeleteConfirmationDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Delete Mood")
+                .setMessage("Are you sure you want to delete this mood?")
+                .setPositiveButton("Delete", (dialog, which) -> deleteMood())
+                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                .create()
+                .show();
     }
 
     /**
@@ -258,7 +277,11 @@ public class EditMoodActivity extends AppCompatActivity {
             Toast.makeText(this, "Please select a mood before saving.", Toast.LENGTH_SHORT).show();
             return;
         }
-
+        // Ensures that there is a mood id for the corresponding mood
+        if (id == null) {
+            Toast.makeText(this, "Error: Invalid mood ID", Toast.LENGTH_SHORT).show();
+            return;
+        }
         // Get reason text and validate length
         String reason = reasonText.getText() != null ? reasonText.getText().toString().trim() : "";
         if (reason.length() > 20) {
@@ -290,6 +313,25 @@ public class EditMoodActivity extends AppCompatActivity {
                     }
                 }
         );
+    }
+    /**
+     * Delete mood from firestore
+     */
+    private void deleteMood() {
+        moodRepository.deleteMood(id, new MoodRepository.OnMoodDeleteListener() {
+            @Override
+            public void onSuccess() {
+                Toast.makeText(EditMoodActivity.this,
+                        "Mood deleted successfully", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Toast.makeText(EditMoodActivity.this,
+                        "Failed to delete mood: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     /**

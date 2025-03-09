@@ -3,13 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/main_background"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent">
-
+    android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -17,10 +11,8 @@
         android:background="@drawable/gradient_color_background"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0">
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/textView_edit_mood"
@@ -66,16 +58,16 @@
             android:layout_height="0dp"
             android:layout_marginTop="8dp"
             android:fillViewport="true"
-            android:paddingBottom="65dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView_edit_mood">
+            app:layout_constraintTop_toBottomOf="@+id/textView_edit_mood"
+            android:layout_marginBottom="80dp">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingBottom="24dp">
+                android:paddingBottom="0dp">
 
                 <Button
                     android:id="@+id/btnEditMoodSelectMood"
@@ -110,9 +102,9 @@
                     android:layout_marginEnd="30dp"
                     android:background="#333F4F"
                     android:visibility="gone"
-                    app:layout_constraintEnd_toEndOf="@id/btnEditMoodSelectMood"
+                    app:layout_constraintTop_toBottomOf="@id/btnEditMoodSelectMood"
                     app:layout_constraintStart_toStartOf="@id/btnEditMoodSelectMood"
-                    app:layout_constraintTop_toBottomOf="@id/btnEditMoodSelectMood" />
+                    app:layout_constraintEnd_toEndOf="@id/btnEditMoodSelectMood" />
 
                 <TextView
                     android:id="@+id/textViewDateTimeLabel"
@@ -345,6 +337,7 @@
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="30dp"
                     android:visibility="gone"
+                    android:background="@color/black"
                     app:cardCornerRadius="12dp"
                     app:cardElevation="0dp"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -356,8 +349,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:adjustViewBounds="true"
-                        android:contentDescription="@string/selected_mood_image"
                         android:maxHeight="300dp"
+                        android:contentDescription="@string/selected_mood_image"
                         android:scaleType="fitCenter" />
                 </androidx.cardview.widget.CardView>
 
@@ -397,6 +390,7 @@
                             android:text="@string/add_location"
                             android:textColor="#FFFFFF"
                             android:textSize="16sp" />
+
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
 
@@ -510,8 +504,26 @@
                         android:text="@string/crowd"
                         android:textColor="@color/white"
                         android:textSize="12sp" />
+
                 </RadioGroup>
+
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/delete_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="36dp"
+                    android:layout_marginEnd="16dp"
+                    android:paddingBottom="15dp"
+                    android:contentDescription="Delete mood"
+                    android:src="@drawable/trash_symbol"
+                    app:backgroundTint="#FF5252"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/socialSituationRadioGroup"
+                    app:tint="@color/white" />
+
+
             </androidx.constraintlayout.widget.ConstraintLayout>
+
         </ScrollView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -525,7 +537,4 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>
-
