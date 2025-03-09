@@ -26,4 +26,14 @@ public class HomePageActivity extends AppCompatActivity {
                 (String) getIntent().getSerializableExtra("currentUser"));
         startActivity(i);
     }
+
+    /**
+     *  Allows the user to access the add mood view
+     * @param view
+     */
+    public void addMood(View view) {
+        Intent i = new Intent(this, CreatePostActivity.class);
+        i.putExtra("user", (String) getIntent().getSerializableExtra("currentUser"));
+        startActivity(i);
+    }
 }

@@ -34,17 +34,17 @@ public class CreatePostActivity extends AppCompatActivity {
     Uri chosenImage;
     Boolean dropdownStatus;
     CreatePostActivity current;
-    User user;
+    String user;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // Gets given data
         Bundle dataGiven = getIntent().getExtras();
         // If there is data gets the user
         if (dataGiven != null) {
-            user = (User) dataGiven.get("user");
+            user = (String) dataGiven.get("user");
         } else {
             // If no data was given sets the user to a test value
-            user = new User("testUser","testPass");
+            user = "testUser";
         }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_mood);
@@ -213,7 +213,7 @@ public class CreatePostActivity extends AppCompatActivity {
                         newMood.setImage(chosenImage);
                     }
                     // Sets the username
-                    newMood.setUser(user.getUsername());
+                    newMood.setUser(user);
                     // Adds mood to database
                     Database.getInstance().addMood(newMood);
                     // Adds images to database
