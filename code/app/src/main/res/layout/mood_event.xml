@@ -62,7 +62,7 @@
         <!-- Mood Text -->
 
         <TextView
-            android:id="@+id/text_mood"
+            android:id="@+id/text_mood_state"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="119dp"
