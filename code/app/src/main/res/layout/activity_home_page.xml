@@ -23,12 +23,13 @@
             android:id="@+id/textView3"
             android:layout_width="227dp"
             android:layout_height="62dp"
-            android:layout_marginStart="116dp"
-            android:layout_marginTop="48dp"
+            android:layout_marginTop="44dp"
             android:text="Home"
             android:textColor="@color/white"
-            android:textSize="50dp"
-            android:textStyle="bold"
+            android:textSize="40dp"
+            android:textStyle="normal"
+            android:textAlignment="center"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -50,7 +51,7 @@
             app:layout_constraintHorizontal_bias="0.495"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView3"
-            app:layout_constraintVertical_bias="0.738" />
+            app:layout_constraintVertical_bias="0.755" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
