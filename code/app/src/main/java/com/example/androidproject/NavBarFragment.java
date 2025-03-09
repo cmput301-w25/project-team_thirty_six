@@ -12,8 +12,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 public class NavBarFragment extends Fragment {
-    private ImageView btnHome, btnFeed, btnMap, btnProfile;
-    private FrameLayout btnCreate;
+    private ImageView btnHome, btnFeed, btnMap, btnProfile, btnCreate;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
