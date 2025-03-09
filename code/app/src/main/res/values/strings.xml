@@ -76,6 +76,8 @@
     <string name="date_and_time">Date and Time</string>
     <string name="done">Done</string>
     <string name="cancel">Cancel</string>
+    <string name="edit">Edit</string>
+    <string name="edit_mood_mood_details">Edit Mood</string>
 
     <string-array name="moods_array">
         <item>Happiness</item>
