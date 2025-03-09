@@ -2,7 +2,6 @@ package com.example.androidproject;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -11,7 +10,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.auth.api.signin.internal.Storage;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -27,11 +25,9 @@ import java.util.Map;
 
 /**
  * Activity to display details of a selected mood post.
- * Retrieves mood details from Firestore and updates the UI accordingly.
+ * Retrieves mood details from Firestore and update UI
  */
 public class MoodDetailsActivity extends AppCompatActivity {
-
-    private static final String TAG = "MoodDetailsActivity";
 
     // UI elements
     private TextView tvTitle;
@@ -50,6 +46,10 @@ public class MoodDetailsActivity extends AppCompatActivity {
     private String moodId;
     private String userId;
 
+    /**
+     * Initializes the activity, sets up UI components, and loads mood details.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,14 +63,16 @@ public class MoodDetailsActivity extends AppCompatActivity {
         if (getIntent().hasExtra("id") && getIntent().hasExtra("user")) {
             moodId = getIntent().getStringExtra("id");
             userId = getIntent().getStringExtra("user");
-            Log.d(TAG, "Loading mood: ID=" + moodId + ", user=" + userId);
             loadMoodDetails();
         } else {
-            Toast.makeText(this, "Error: Mood details not available", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Mood details not available", Toast.LENGTH_SHORT).show();
             finish();
         }
     }
 
+    /**
+     * Initializes all of the UI components
+     */
     private void initializeViews() {
         // Back button
         ImageButton btnBack = findViewById(R.id.button_back);
@@ -90,38 +92,41 @@ public class MoodDetailsActivity extends AppCompatActivity {
         tvReason.setVisibility(View.GONE);
         tvSocialSituation.setVisibility(View.GONE);
         ivMoodImage.setVisibility(View.GONE);
-
     }
 
+    /**
+     * Loads mood details from Firestore using the mood document ID.
+     * Retrieves the document and calls {@link #updateUIWithMoodData(DocumentSnapshot)}
+     * if the document exists.
+     */
     private void loadMoodDetails() {
         DocumentReference moodRef = db.collection("Moods").document(moodId);
         moodRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful() && task.getResult() != null) {
                 DocumentSnapshot document = task.getResult();
                 if (document.exists()) {
-                    Log.d(TAG, "Document found: " + document.getId());
-
                     // Extract the username from the mood document
                     String username = document.getString("user");
                     tvUsername.setText(username != null && !username.isEmpty() ? username : "User");
 
                     updateUIWithMoodData(document);
                 } else {
-                    Log.e(TAG, "Document not found with ID: " + moodId);
                     Toast.makeText(this, "Mood not found", Toast.LENGTH_SHORT).show();
                     finish();
                 }
             } else {
-                Log.e(TAG, "Error loading mood: " +
-                        (task.getException() != null ? task.getException().getMessage() : "Unknown error"));
-                Toast.makeText(this, "Error loading mood: " +
-                                (task.getException() != null ? task.getException().getMessage() : "Unknown error"),
-                        Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Error loading mood details", Toast.LENGTH_SHORT).show();
                 finish();
             }
         });
     }
 
+    /**
+     * Updates the UI with mood data from the Firestore document.
+     * Populate UI elements with mood details
+     *
+     * @param document The DocumentSnapshot containing the mood data
+     */
     private void updateUIWithMoodData(DocumentSnapshot document) {
         try {
             // Extract mood details
@@ -130,9 +135,6 @@ public class MoodDetailsActivity extends AppCompatActivity {
             String reason = document.getString("reason");
             String situation = document.getString("situation");
             String imageUrl = document.getString("id");
-
-
-            Log.d(TAG, "Mood name: " + moodName + ", Color: " + moodColor);
 
             // Set mood name and icon
             if (moodName != null) {
@@ -146,7 +148,6 @@ public class MoodDetailsActivity extends AppCompatActivity {
                     int color = Color.parseColor("#" + moodColor);
                     tvMoodName.setTextColor(color);
                 } catch (IllegalArgumentException e) {
-                    Log.e(TAG, "Error parsing color: " + moodColor, e);
                     tvMoodName.setTextColor(Color.WHITE);
                 }
             }
@@ -179,13 +180,10 @@ public class MoodDetailsActivity extends AppCompatActivity {
                                 .placeholder(R.drawable.error_placeholder_image)
                                 .error(R.drawable.error_placeholder_image)
                                 .into(ivMoodImage);
-                        Log.d(TAG, "Successfully loaded image: " + uri);
                     }).addOnFailureListener(e -> {
-                        Log.e(TAG, "Failed to get download URL: " + imageUrl, e);
                         ivMoodImage.setVisibility(View.GONE);
                     });
                 } catch (Exception e) {
-                    Log.e(TAG, "Error loading image from Storage: " + e.getMessage());
                     ivMoodImage.setVisibility(View.GONE);
                 }
             } else {
@@ -196,14 +194,15 @@ public class MoodDetailsActivity extends AppCompatActivity {
             handleTimestamp(document);
 
         } catch (Exception e) {
-            Log.e(TAG, "Error updating UI with mood data", e);
             Toast.makeText(this, "Error displaying mood details", Toast.LENGTH_SHORT).show();
         }
     }
 
+    /**
+     * Handles timestamp extraction and formatting from the mood document.
+     * @param document The DocumentSnapshot containing potential timestamp information
+     */
     private void handleTimestamp(DocumentSnapshot document) {
-        // Try multiple approaches to get the timestamp
-
         // Check for dayTime as map
         Object dayTimeObj = document.get("dayTime");
         if (dayTimeObj instanceof Map) {
@@ -212,7 +211,7 @@ public class MoodDetailsActivity extends AppCompatActivity {
             return;
         }
 
-        // Check for dayTime as string (ISO format)
+        // Check for dayTime as string
         String dayTimeStr = document.getString("dayTime");
         if (dayTimeStr != null) {
             try {
@@ -220,7 +219,7 @@ public class MoodDetailsActivity extends AppCompatActivity {
                 formatTimestampFromLocalDateTime(dateTime);
                 return;
             } catch (Exception e) {
-                Log.e(TAG, "Error parsing dayTime string: " + dayTimeStr, e);
+                // Silently handle parsing error
             }
         }
 
@@ -233,11 +232,15 @@ public class MoodDetailsActivity extends AppCompatActivity {
             tvTimestamp.setText(formattedDate);
             return;
         }
-
         // Fallback - no timestamp available
         tvTimestamp.setText("Unknown time");
     }
 
+    /**
+     * Formats timestamp from a map representation of date and time.
+     *
+     * @param dayTimeMap A map containing date and time components
+     */
     private void formatTimestampFromMap(Map<String, Object> dayTimeMap) {
         try {
             int year = ((Long) dayTimeMap.get("year")).intValue();
@@ -258,21 +261,29 @@ public class MoodDetailsActivity extends AppCompatActivity {
 
             tvTimestamp.setText(formattedTime);
         } catch (Exception e) {
-            Log.e(TAG, "Error formatting timestamp from map", e);
             tvTimestamp.setText("Unknown time");
         }
     }
 
+    /**
+     * Formats timestamp from a LocalDateTime object.
+     *
+     * @param dateTime The LocalDateTime to be formatted
+     */
     private void formatTimestampFromLocalDateTime(LocalDateTime dateTime) {
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM d, yyyy 'at' h:mm a", Locale.getDefault());
             tvTimestamp.setText(dateTime.format(formatter));
         } catch (Exception e) {
-            Log.e(TAG, "Error formatting LocalDateTime", e);
             tvTimestamp.setText("Unknown time");
         }
     }
 
+    /**
+     * Sets the mood icon based on the mood name.
+     *
+     * @param moodName The name of the mood to set an icon for
+     */
     private void setMoodIcon(String moodName) {
         int resourceId;
 
