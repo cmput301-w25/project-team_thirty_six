@@ -1,8 +1,7 @@
 package com.example.androidproject;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,7 +40,7 @@ public class MoodArrayAdapter extends ArrayAdapter<MoodState> {
 
 
         if (moodState != null) {
-            String state = "State: " + moodState.getMood();
+            String state = moodState.getMood();
             String date = moodState.formatDateTime();
             int emoji =  moodState.getEmoji();
 
@@ -49,6 +48,10 @@ public class MoodArrayAdapter extends ArrayAdapter<MoodState> {
             moodTextView.setText(state);
             dateTextView.setText(date);
             imageView.setImageResource(emoji);
+
+            // Set the text color of moodTextView using the color from MoodState
+            String hexColor = "#" + moodState.getColor(); // Prepend '#' to the hex color
+            moodTextView.setTextColor(Color.parseColor(hexColor));
         }
 
         return view;
