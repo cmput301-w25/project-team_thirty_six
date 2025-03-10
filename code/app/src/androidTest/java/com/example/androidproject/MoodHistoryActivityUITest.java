@@ -31,17 +31,22 @@ import org.junit.runner.RunWith;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
 public class MoodHistoryActivityUITest {
 
-//    @Rule
-//    public ActivityScenarioRule<MainActivity> scenario = new
-//            ActivityScenarioRule<MainActivity>(MainActivity.class);
+    private static FirebaseFirestore db;
+    private static CollectionReference usersRef, moodsRef;
+
+    @Rule
+    public ActivityScenarioRule<MoodHistoryActivity> scenario = new
+            ActivityScenarioRule<MoodHistoryActivity>(MoodHistoryActivity.class);
 
     @BeforeClass
-    public static void setup() {
+    public static void setup(){
         // Specific address for emulated device to access our localHost
         String androidLocalhost = "10.0.2.2";
 
@@ -50,29 +55,21 @@ public class MoodHistoryActivityUITest {
     }
 
     @Before
-    public void launchActivity() {
-        // Create an Intent to launch MoodHistoryActivity with the currentUser set to "testUser"
+    public void seedDatabase() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        this.usersRef = db.collection("Users");
+        User user1 = new User("user1", "pass1");
+        usersRef.document(user1.getUsername()).set(user1);
+        this.moodsRef = db.collection("Moods");
+        MoodState mood = new MoodState("Anger");
+        mood.setId("testMoodId");
+        mood.setUser("user1");
+        mood.setReason("Test not working");
+        Database.getInstance().addMood(mood);
 
-        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), CreatePostActivity.class);
-        intent.putExtra("currentUser", "testUser");
-        ActivityScenario.launch(intent);
-        // Gets the mood dropdown and selects anger
-        onView(withId(R.id.add_select_mood_dropdown)).perform(ViewActions.click());
-        onView(withText("Anger")).perform(ViewActions.click());
-
-        //Sets the text and group for mood view
-        onView(withId(R.id.add_reason)).perform(ViewActions.typeText("TEST TEXT"));
-        closeSoftKeyboard();
-        onView(withId(R.id.add_mood_group_button)).perform(ViewActions.click());
-        onView(withId(R.id.add_confirm_button)).perform(ViewActions.click());
-
-
-        Intent intent2 = new Intent(ApplicationProvider.getApplicationContext(), MoodHistoryActivity.class);
-        intent2.putExtra("currentUser", "testUser");
-
-        // Launch the activity with the custom Intent
-        ActivityScenario.launch(intent2);
     }
+
+
 
     @Test
     public void testMoodListDisplayed() throws InterruptedException {
@@ -153,4 +150,5 @@ public class MoodHistoryActivityUITest {
         // Verify that the mood list is displayed with all moods
         onView(withId(R.id.mood_list)).check(matches(isDisplayed()));
     }
+
 }
