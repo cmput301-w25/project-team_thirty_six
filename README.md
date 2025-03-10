@@ -32,4 +32,4 @@ A mood board app that allows users to keep track of moods and when they occurred
 - [Wiki Link](https://github.com/cmput301-w25/project-team_thirty_six/wiki)
 - [Scrum Board](https://github.com/orgs/cmput301-w25/projects/23)
 - [UI Mockups](https://github.com/cmput301-w25/project-team_thirty_six/wiki/UI-Mockup-and-Storyboard-Sequence)
-- [UML]
+- [UML Diagram](https://github.com/cmput301-w25/project-team_thirty_six/blob/main/UML_DIAGRAM.svg)
