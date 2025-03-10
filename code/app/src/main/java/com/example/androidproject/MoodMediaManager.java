@@ -37,8 +37,7 @@ public class MoodMediaManager {
     private String existingImageId;  // The ID of an existing image in Firebase
     private boolean hasImage = false;  // Flag to track if we have any image
     private String location;
-    private boolean imageMarkedForDeletion = false;
-    private String imageToDeleteId = null;
+    private String imageToDeleteId = null; // Track image ID to delete
 
     public MoodMediaManager(Activity activity, ImageView moodImageView, TextView locationTextView,
                             CardView imagePreviewCardView, CardView locationPreviewCardView,
@@ -77,6 +76,9 @@ public class MoodMediaManager {
         if (resultCode == Activity.RESULT_OK && data != null) {
             Uri selectedImage = data.getData();
             if (selectedImage != null) {
+                // Clear any pending deletion
+                imageToDeleteId = null;
+
                 // Store the new image URI and clear any existing image ID
                 newImageUri = selectedImage;
                 existingImageId = null;
@@ -89,7 +91,7 @@ public class MoodMediaManager {
 
                 imagePreviewCardView.setVisibility(View.VISIBLE);
 
-                // switch to remove image mode
+                // switch to the remove image mode
                 showRemoveImageOption();
             }
         }
@@ -105,14 +107,15 @@ public class MoodMediaManager {
      * Sets image ID from existing data in Firebase
      */
     public void setImageUrl(String imageId) {
-        // Clear any new image selection
+        // Clear any new image selection and deletion tracking
         newImageUri = null;
+        imageToDeleteId = null;
 
         if (imageId != null && !imageId.isEmpty()) {
             existingImageId = imageId;
             hasImage = true;
 
-            // Load image using Picasso - this loads from Firebase Storage
+            // Load image from firebase
             StorageReference storageRef = FirebaseStorage.getInstance().getReference()
                     .child("images/" + imageId);
 
@@ -122,7 +125,7 @@ public class MoodMediaManager {
                         .into(moodImageView);
 
                 imagePreviewCardView.setVisibility(View.VISIBLE);
-                // Toggle to "Remove Image" mode
+                // Toggle to remove image mode
                 showRemoveImageOption();
             }).addOnFailureListener(e -> {
                 // Handle failure to load image
@@ -151,12 +154,12 @@ public class MoodMediaManager {
     }
 
     /**
-     * Removes the current image
+     * Removes the current image from UI and marks it for deletion
      */
     public void removeImage() {
+        // Store the existing ID for later deletion
         if (existingImageId != null) {
-            imageMarkedForDeletion = true;
-            imageToDeleteId = existingImageId; // Store ID before clearing it
+            imageToDeleteId = existingImageId;
         }
 
         newImageUri = null;
@@ -186,8 +189,6 @@ public class MoodMediaManager {
 
     /**
      * Gets the new image URI for uploading to Firebase
-     *
-     * @return The URI of a newly selected image, or null if no new image
      */
     public Uri getNewImageUri() {
         return newImageUri;
@@ -195,25 +196,16 @@ public class MoodMediaManager {
 
     /**
      * Gets the existing image ID in Firebase
-     * @return The ID of an existing image, or null if no existing image
      */
     public String getExistingImageId() {
         return existingImageId;
     }
 
     /**
-     * Checks if there is any image (new or existing)
-     * @return true if there is an image, false otherwise
+     * Gets the ID of the image to delete when saving
      */
-    public boolean hasImage() {
-        return hasImage;
-    }
-    public boolean isImageMarkedForDeletion() {
-        return imageMarkedForDeletion;
-    }
-
     public String getImageToDeleteId() {
-        return imageMarkedForDeletion ? existingImageId : null;
+        return imageToDeleteId;
     }
 
     /**
@@ -223,9 +215,11 @@ public class MoodMediaManager {
         return location;
     }
 
-    // Reset the state if the user cancels
-    public void resetDeletionState() {
-        imageMarkedForDeletion = false;
+    /**
+     * Clears the image deletion marker
+     * Call this when user cancels or after successful save
+     */
+    public void clearDeletionMarker() {
         imageToDeleteId = null;
     }
 }

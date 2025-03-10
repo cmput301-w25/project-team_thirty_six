@@ -172,23 +172,6 @@ public class MoodRepository {
                 });
         // Removed duplicate update call
     }
-    /**
-     * Deletes an image from Firebase Storage
-     */
-    public void deleteImage(String moodId, OnMoodUpdateListener listener) {
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-        StorageReference imageRef = storage.getReference().child("images/" + moodId);
-
-        imageRef.delete().addOnSuccessListener(aVoid -> {
-            if (listener != null) {
-                listener.onSuccess();
-            }
-        }).addOnFailureListener(e -> {
-            if (listener != null) {
-                listener.onSuccess();
-            }
-        });
-    }
 
     // Interface for callbacks
     public interface OnMoodUpdateListener {

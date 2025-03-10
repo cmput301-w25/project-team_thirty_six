@@ -21,6 +21,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.Calendar;
 import java.util.Map;
@@ -267,7 +269,6 @@ public class EditMoodActivity extends AppCompatActivity {
                 // Set the calendar with extracted values
                 calendar.set(year, monthValue, day, hour, minute);
             } catch (Exception e) {
-                // Default to current time if there's an error
             }
         }
 
@@ -304,7 +305,10 @@ public class EditMoodActivity extends AppCompatActivity {
 
         // Confirm, cancel or delete changes made to mood event
         doneButton.setOnClickListener(v -> saveMood());
-        cancelButton.setOnClickListener(v -> finish());
+        cancelButton.setOnClickListener(v -> {
+            mediaManager.clearDeletionMarker();
+            finish();
+        });
         deleteButton.setOnClickListener(v -> showDeleteConfirmationDialog());
     }
 
@@ -337,35 +341,97 @@ public class EditMoodActivity extends AppCompatActivity {
             return;
         }
 
-
         // Get social situation from manager
         String chosenSituation = socialSituationManager.getChosenSituation();
 
-        // Call repository to update mood with new image URI and existing image ID
-        moodRepository.updateMood(
-                id,
-                chosenMood,
-                chosenSituation,
-                reason,
-                mediaManager.getLocation(),
-                mediaManager.getNewImageUri(),
-                mediaManager.getExistingImageId(),
-                dateTimeManager.getCalendar(),
-                new MoodRepository.OnMoodUpdateListener() {
-                    @Override
-                    public void onSuccess() {
-                        Toast.makeText(EditMoodActivity.this,
-                                "Mood updated successfully!", Toast.LENGTH_SHORT).show();
-                        finish();
-                    }
+        // Check if there was an existing image that was removed
+        String imageToDeleteId = mediaManager.getImageToDeleteId();
 
-                    @Override
-                    public void onFailure(Exception e) {
-                        Toast.makeText(EditMoodActivity.this,
-                                "Failed to update mood. Please try again.", Toast.LENGTH_SHORT).show();
+        if (imageToDeleteId != null) {
+            // Delete the image from Firebase Storage
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            StorageReference imageRef = storage.getReference().child("images/" + imageToDeleteId);
+
+            imageRef.delete().addOnSuccessListener(aVoid -> {
+                moodRepository.updateMood(
+                        id,
+                        chosenMood,
+                        chosenSituation,
+                        reason,
+                        mediaManager.getLocation(),
+                        mediaManager.getNewImageUri(),
+                        null,
+                        dateTimeManager.getCalendar(),
+                        new MoodRepository.OnMoodUpdateListener() {
+                            @Override
+                            public void onSuccess() {
+                                mediaManager.clearDeletionMarker();
+                                Toast.makeText(EditMoodActivity.this,
+                                        "Mood updated successfully!", Toast.LENGTH_SHORT).show();
+                                finish();
+                            }
+
+                            @Override
+                            public void onFailure(Exception e) {
+                                Toast.makeText(EditMoodActivity.this,
+                                        "Failed to update mood. Please try again.", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                );
+            }).addOnFailureListener(e -> {
+                moodRepository.updateMood(
+                        id,
+                        chosenMood,
+                        chosenSituation,
+                        reason,
+                        mediaManager.getLocation(),
+                        mediaManager.getNewImageUri(),
+                        null, // Still mark as removed even if deletion failed
+                        dateTimeManager.getCalendar(),
+                        new MoodRepository.OnMoodUpdateListener() {
+                            @Override
+                            public void onSuccess() {
+                                mediaManager.clearDeletionMarker();
+                                Toast.makeText(EditMoodActivity.this,
+                                        "Mood updated successfully!", Toast.LENGTH_SHORT).show();
+                                finish();
+                            }
+
+                            @Override
+                            public void onFailure(Exception e) {
+                                Toast.makeText(EditMoodActivity.this,
+                                        "Failed to update mood. Please try again.", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                );
+            });
+        } else {
+            // update the mood directly when there is no image to delete
+            moodRepository.updateMood(
+                    id,
+                    chosenMood,
+                    chosenSituation,
+                    reason,
+                    mediaManager.getLocation(),
+                    mediaManager.getNewImageUri(),
+                    mediaManager.getExistingImageId(),
+                    dateTimeManager.getCalendar(),
+                    new MoodRepository.OnMoodUpdateListener() {
+                        @Override
+                        public void onSuccess() {
+                            Toast.makeText(EditMoodActivity.this,
+                                    "Mood updated successfully!", Toast.LENGTH_SHORT).show();
+                            finish();
+                        }
+
+                        @Override
+                        public void onFailure(Exception e) {
+                            Toast.makeText(EditMoodActivity.this,
+                                    "Failed to update mood. Please try again.", Toast.LENGTH_SHORT).show();
+                        }
                     }
-                }
-        );
+            );
+        }
     }
 
     /**
