@@ -41,7 +41,7 @@ public class EditMoodActivity extends AppCompatActivity {
     private FloatingActionButton deleteButton;
 
     // Data
-    private String chosenMood, id;
+    private String chosenMood, chosenColor, id;
 
     // Managers
     private MoodDropdownManager moodDropdownManager;
@@ -137,8 +137,10 @@ public class EditMoodActivity extends AppCompatActivity {
                 addImageText, removeImageText, imageButtonIcon);
 
         // Create mood dropdown manager
-        moodDropdownManager = new MoodDropdownManager(this, moodDropdown,
-                mood -> chosenMood = mood);
+        moodDropdownManager = new MoodDropdownManager(this, moodDropdown, mood -> {
+            chosenMood = mood;
+            chosenColor = new MoodState(mood).getColor();
+        });
     }
 
     /**
@@ -165,6 +167,7 @@ public class EditMoodActivity extends AppCompatActivity {
                 if (document.exists()) {
                     // Extract all mood details from Firestore
                     chosenMood = document.getString("mood");
+                    String color = document.getString("color");
                     String chosenSituation = document.getString("situation");
                     String reason = document.getString("reason");
                     String location = document.getString("location");
@@ -365,6 +368,7 @@ public class EditMoodActivity extends AppCompatActivity {
                 moodRepository.updateMood(
                         id,
                         chosenMood,
+                        chosenColor,
                         chosenSituation,
                         reason,
                         mediaManager.getLocation(),
@@ -391,6 +395,7 @@ public class EditMoodActivity extends AppCompatActivity {
                 moodRepository.updateMood(
                         id,
                         chosenMood,
+                        chosenColor,
                         chosenSituation,
                         reason,
                         mediaManager.getLocation(),
@@ -419,6 +424,7 @@ public class EditMoodActivity extends AppCompatActivity {
             moodRepository.updateMood(
                     id,
                     chosenMood,
+                    chosenColor,
                     chosenSituation,
                     reason,
                     mediaManager.getLocation(),
