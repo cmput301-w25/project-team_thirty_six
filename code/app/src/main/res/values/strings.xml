@@ -16,10 +16,10 @@
     <string name="next">Next</string>
     <string name="previous">Previous</string>
     <string name="username">Username</string>
-    <string name ="Profile">Profile</string>
-    <string name ="followers_format">%d followers</string>
-    <string name ="following_format">%d following</string>
-    <string name ="follow_requests">Follow requests:</string>
+    <string name="Profile">Profile</string>
+    <string name="followers_format">%d followers</string>
+    <string name="following_format">%d following</string>
+    <string name="follow_requests">Follow requests:</string>
 
     <string name="lorem_ipsum">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris
@@ -82,7 +82,6 @@
     <string name="mood_details_activity_header">Mood Details</string>
     <string name="back_button">back button</string>
 
-    <!-- Add this string-array in your strings.xml -->
     <string-array name="moods_array">
         <item>Happiness</item>
         <item>Sadness</item>

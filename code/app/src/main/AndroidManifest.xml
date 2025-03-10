@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <application
-        android:usesCleartextTraffic="true"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -34,7 +33,7 @@
             android:exported="true" />
         <activity
             android:name=".EditMoodActivity"
-            android:parentActivityName=".MoodDetailsActivity" />
+            android:exported="true"/>
         <activity android:name=".MoodDetailsActivity"
             android:exported="true" />
         <activity

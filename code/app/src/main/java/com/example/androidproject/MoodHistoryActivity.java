@@ -32,13 +32,13 @@ import android.content.Intent;
 
 public class MoodHistoryActivity extends AppCompatActivity {
 
-    private ArrayList<MoodState> moodHistory;
-    private ArrayList<MoodState> completeMoodHistory;
-    private MoodArrayAdapter moodAdapter;
+    ArrayList<MoodState> moodHistory;
+    ArrayList<MoodState> completeMoodHistory;
+    MoodArrayAdapter moodAdapter;
 
-    private ListView moodListView;
+    ListView moodListView;
 
-    private MoodHistoryManager moodHistoryManager;
+    MoodHistoryManager moodHistoryManager;
 
     private String currentUser;
 
@@ -83,7 +83,7 @@ public class MoodHistoryActivity extends AppCompatActivity {
      * @param username
      *      The username of the user whose mood history is to be fetched.
      */
-    private void fetchMoodHistory(String username) {
+    void fetchMoodHistory(String username) {
         moodHistoryManager.fetchMoodHistory(username, new MoodHistoryManager.MoodHistoryCallback() {
             @Override
             public void onCallback(ArrayList<MoodState> moodHistory) {
@@ -110,7 +110,7 @@ public class MoodHistoryActivity extends AppCompatActivity {
     /**
      * Sorts the mood history by date and time in reverse chronological order.
      */
-    private void sortMoodHistory() {
+    void sortMoodHistory() {
         moodHistory.sort(new Comparator<MoodState>() {
             @Override
             public int compare(MoodState m1, MoodState m2) {
@@ -234,7 +234,7 @@ public class MoodHistoryActivity extends AppCompatActivity {
     /**
      * Resets the mood history to display all moods.
      */
-    private void displayAllMoods() {
+    void displayAllMoods() {
         moodHistory.clear();
         moodHistory.addAll(completeMoodHistory); // Restore all moods from the original list
         moodAdapter.notifyDataSetChanged();

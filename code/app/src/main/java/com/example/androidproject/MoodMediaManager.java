@@ -10,8 +10,6 @@ import android.widget.TextView;
 
 import androidx.cardview.widget.CardView;
 
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
 /**
@@ -33,11 +31,8 @@ public class MoodMediaManager {
     public static final int LOCATION_PICK_REQUEST_CODE = 1002;
 
     // Current data
-    private Uri newImageUri;  // Only set when user selects a new image
-    private String existingImageId;  // The ID of an existing image in Firebase
-    private boolean hasImage = false;  // Flag to track if we have any image
+    private String imageUrl;
     private String location;
-    private String imageToDeleteId = null; // Track image ID to delete
 
     public MoodMediaManager(Activity activity, ImageView moodImageView, TextView locationTextView,
                             CardView imagePreviewCardView, CardView locationPreviewCardView,
@@ -76,22 +71,15 @@ public class MoodMediaManager {
         if (resultCode == Activity.RESULT_OK && data != null) {
             Uri selectedImage = data.getData();
             if (selectedImage != null) {
-                // Clear any pending deletion
-                imageToDeleteId = null;
+                imageUrl = selectedImage.toString();
 
-                // Store the new image URI and clear any existing image ID
-                newImageUri = selectedImage;
-                existingImageId = null;
-                hasImage = true;
-
-                // Display the selected image
                 Picasso.get()
                         .load(selectedImage)
                         .into(moodImageView);
 
                 imagePreviewCardView.setVisibility(View.VISIBLE);
 
-                // switch to the remove image mode
+                // switch to remove image mode
                 showRemoveImageOption();
             }
         }
@@ -104,41 +92,22 @@ public class MoodMediaManager {
     public void processLocationResult(int resultCode, Intent data) {}
 
     /**
-     * Sets image ID from existing data in Firebase
+     * Sets image URL from existing data
      */
-    public void setImageUrl(String imageId) {
-        // Clear any new image selection and deletion tracking
-        newImageUri = null;
-        imageToDeleteId = null;
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+        if (imageUrl != null && !imageUrl.isEmpty()) {
+            // Load image using Picasso
+            Picasso.get()
+                    .load(imageUrl)
+                    .into(moodImageView);
 
-        if (imageId != null && !imageId.isEmpty()) {
-            existingImageId = imageId;
-            hasImage = true;
+            imagePreviewCardView.setVisibility(View.VISIBLE);
 
-            // Load image from firebase
-            StorageReference storageRef = FirebaseStorage.getInstance().getReference()
-                    .child("images/" + imageId);
-
-            storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                Picasso.get()
-                        .load(uri)
-                        .into(moodImageView);
-
-                imagePreviewCardView.setVisibility(View.VISIBLE);
-                // Toggle to remove image mode
-                showRemoveImageOption();
-            }).addOnFailureListener(e -> {
-                // Handle failure to load image
-                hasImage = false;
-                existingImageId = null;
-                imagePreviewCardView.setVisibility(View.GONE);
-                showAddImageOption();
-            });
+            // Toggle to "Remove Image" mode
+            showRemoveImageOption();
         } else {
-            existingImageId = null;
-            hasImage = false;
             showAddImageOption();
-            imagePreviewCardView.setVisibility(View.GONE);
         }
     }
 
@@ -154,17 +123,10 @@ public class MoodMediaManager {
     }
 
     /**
-     * Removes the current image from UI and marks it for deletion
+     * Removes the current image
      */
     public void removeImage() {
-        // Store the existing ID for later deletion
-        if (existingImageId != null) {
-            imageToDeleteId = existingImageId;
-        }
-
-        newImageUri = null;
-        existingImageId = null;
-        hasImage = false;
+        imageUrl = null;
         imagePreviewCardView.setVisibility(View.GONE);
         showAddImageOption();
     }
@@ -175,7 +137,7 @@ public class MoodMediaManager {
     private void showAddImageOption() {
         addImageText.setVisibility(View.VISIBLE);
         removeImageText.setVisibility(View.GONE);
-        imageButtonIcon.setImageResource(R.drawable.image);
+        imageButtonIcon.setImageResource(R.drawable.image); // You may need to use a different icon for add
     }
 
     /**
@@ -184,28 +146,14 @@ public class MoodMediaManager {
     private void showRemoveImageOption() {
         addImageText.setVisibility(View.GONE);
         removeImageText.setVisibility(View.VISIBLE);
-        imageButtonIcon.setImageResource(R.drawable.image);
+        imageButtonIcon.setImageResource(R.drawable.image); // You may need to use a different icon for remove
     }
 
     /**
-     * Gets the new image URI for uploading to Firebase
+     * Gets the current image URL
      */
-    public Uri getNewImageUri() {
-        return newImageUri;
-    }
-
-    /**
-     * Gets the existing image ID in Firebase
-     */
-    public String getExistingImageId() {
-        return existingImageId;
-    }
-
-    /**
-     * Gets the ID of the image to delete when saving
-     */
-    public String getImageToDeleteId() {
-        return imageToDeleteId;
+    public String getImageUrl() {
+        return imageUrl;
     }
 
     /**
@@ -213,13 +161,5 @@ public class MoodMediaManager {
      */
     public String getLocation() {
         return location;
-    }
-
-    /**
-     * Clears the image deletion marker
-     * Call this when user cancels or after successful save
-     */
-    public void clearDeletionMarker() {
-        imageToDeleteId = null;
     }
 }
