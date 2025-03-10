@@ -170,7 +170,6 @@ public class MoodRepository {
                         listener.onFailure(e);
                     }
                 });
-        // Removed duplicate update call
     }
 
     // Interface for callbacks

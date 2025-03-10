@@ -55,6 +55,12 @@ public class MoodDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mood_details);
 
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.nav_bar_container, new NavBarFragment())
+                    .commit();
+        }
+
         // Initialize Firebase and UI components
         db = FirebaseFirestore.getInstance();
         initializeViews();
@@ -238,7 +244,6 @@ public class MoodDetailsActivity extends AppCompatActivity {
                 formatTimestampFromLocalDateTime(dateTime);
                 return;
             } catch (Exception e) {
-                // Silently handle parsing error
             }
         }
 
@@ -251,8 +256,6 @@ public class MoodDetailsActivity extends AppCompatActivity {
             tvTimestamp.setText(formattedDate);
             return;
         }
-
-        // Fallback - no timestamp available
         tvTimestamp.setText("Unknown time");
     }
 
