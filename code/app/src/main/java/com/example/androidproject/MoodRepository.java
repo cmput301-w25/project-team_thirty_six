@@ -1,8 +1,12 @@
 package com.example.androidproject;
 
+import android.net.Uri;
 import android.util.Log;
 
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,17 +15,17 @@ import java.util.Map;
  * Repository class to handle all Firestore update operations related to moods
  */
 public class MoodRepository {
-    private FirebaseFirestore  db;
+    private FirebaseFirestore db;
 
     public MoodRepository() {
         db = FirebaseFirestore.getInstance();
     }
 
     /**
-     * Updates a mood document and its dayTime subcollection in Firestore
+     * Updates a mood document with optional image upload
      */
     public void updateMood(String moodId, String mood, String situation, String reason,
-                           String location, String imageUrl, Calendar dateTime,
+                           String location, Uri newImageUri, String currentImageUrl, Calendar dateTime,
                            OnMoodUpdateListener listener) {
         // Validate id is not null
         if (moodId == null) {
@@ -30,6 +34,39 @@ public class MoodRepository {
             }
             return;
         }
+
+        // If we have a new image to upload, do that first
+        if (newImageUri != null && newImageUri.toString().startsWith("content://")) {
+            // Create a storage reference
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            StorageReference storageRef = storage.getReference();
+            StorageReference imageRef = storageRef.child("images/" + moodId);
+
+            // Upload the file
+            imageRef.putFile(newImageUri)
+                    .addOnSuccessListener(taskSnapshot -> {
+                        // After successful upload, update the mood with all data
+                        updateMoodData(moodId, mood, situation, reason, location, moodId, dateTime, listener);
+                    })
+                    .addOnFailureListener(e -> {
+                        if (listener != null) {
+                            listener.onFailure(e);
+                        }
+                    });
+        } else {
+            // No new image to upload, just update the mood data
+            // Use current image URL if available, otherwise null
+            String imageUrlToUse = (currentImageUrl == null) ? null : moodId;
+            updateMoodData(moodId, mood, situation, reason, location, imageUrlToUse, dateTime, listener);
+        }
+    }
+
+    /**
+     * Helper method to update mood data in Firestore
+     */
+    private void updateMoodData(String moodId, String mood, String situation, String reason,
+                                String location, String imageUrl, Calendar dateTime,
+                                OnMoodUpdateListener listener) {
         // Create the main mood document data
         Map<String, Object> updatedData = new HashMap<>();
         updatedData.put("mood", mood);
@@ -65,6 +102,7 @@ public class MoodRepository {
                     }
                 });
     }
+
     /**
      * Deletes a mood from Firestore
      */
@@ -85,7 +123,7 @@ public class MoodRepository {
     }
 
     /**
-     * Updates all fields in the dayTime subcollection
+     * Updates all fields in the dayTime field
      */
     private void updateDayTimeSubcollection(String id, Calendar cal, OnMoodUpdateListener listener) {
         Map<String, Object> dayTimeData = new HashMap<>();
@@ -118,25 +156,38 @@ public class MoodRepository {
         chronology.put("calendarType", "iso8601");
         dayTimeData.put("chronology", chronology);
 
-        // Update the dayTime subcollection
-        /*
         db.collection("Moods").document(id)
-                .collection("dayTime").document("time_data")
-                .set(dayTimeData)
+                .update("dayTime", dayTimeData)
                 .addOnSuccessListener(aVoid -> {
-                    Log.d("MoodRepository", "DayTime subcollection updated successfully");
+                    Log.d("MoodRepository", "DayTime field updated successfully");
                     if (listener != null) {
                         listener.onSuccess();
                     }
                 })
                 .addOnFailureListener(e -> {
-                    Log.e("MoodRepository", "Failed to update dayTime subcollection", e);
+                    Log.e("MoodRepository", "Failed to update dayTime field", e);
                     if (listener != null) {
                         listener.onFailure(e);
                     }
                 });
-         */
-        db.collection("Moods").document(id).update("dayTime",dayTimeData);
+        // Removed duplicate update call
+    }
+    /**
+     * Deletes an image from Firebase Storage
+     */
+    public void deleteImage(String moodId, OnMoodUpdateListener listener) {
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference imageRef = storage.getReference().child("images/" + moodId);
+
+        imageRef.delete().addOnSuccessListener(aVoid -> {
+            if (listener != null) {
+                listener.onSuccess();
+            }
+        }).addOnFailureListener(e -> {
+            if (listener != null) {
+                listener.onSuccess();
+            }
+        });
     }
 
     // Interface for callbacks

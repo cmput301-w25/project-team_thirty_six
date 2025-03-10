@@ -3,7 +3,6 @@ package com.example.androidproject;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputFilter;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,9 +21,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.squareup.picasso.Picasso;
 
 import java.util.Calendar;
 import java.util.Map;
@@ -35,24 +31,20 @@ public class EditMoodActivity extends AppCompatActivity {
     private Button moodDropdown;
     private EditText reasonText;
     private RadioGroup socialSituationRadioGroup;
-    private RadioButton radioAlone;
-    private RadioButton radioPair;
-    private RadioButton radioGroup;
-    private RadioButton radioCrowd;
-    private Calendar calendar;
+    private RadioButton radioAlone, radioPair, radioGroup, radioCrowd;
     private LinearLayout addImageButton, addLocationButton, datePickerButton, timePickerButton;
     private CardView imagePreviewCardView, locationPreviewCardView;
     private ImageView moodImageView, imageButtonIcon;
     private TextView locationTextView, textViewSelectedDate, textViewSelectedTime, addImageText, removeImageText;
-    private RadioButton lastSelectedButton = null;
     private FloatingActionButton deleteButton;
 
     // Data
-    private String chosenMood, chosenSituation, id;
+    private String chosenMood, id;
 
     // Managers
     private MoodDropdownManager moodDropdownManager;
     private DateTimeManager dateTimeManager;
+    private SocialSituationManager socialSituationManager;
     private MoodRepository moodRepository;
     private MoodMediaManager mediaManager;
 
@@ -67,12 +59,13 @@ public class EditMoodActivity extends AppCompatActivity {
                     .commit();
         }
 
-        // Initialize UI elements
+        // Initialize UI elements and managers
         initializeViews();
-        // Initialize managers
         initializeManagers();
+
         // Load data from intent
         loadDataFromIntent();
+
         // Setup event listeners
         setupEventListeners();
     }
@@ -126,6 +119,9 @@ public class EditMoodActivity extends AppCompatActivity {
         // Create date/time manager
         dateTimeManager = new DateTimeManager(this, textViewSelectedDate, textViewSelectedTime);
 
+        // Create social situation manager
+        socialSituationManager = new SocialSituationManager(radioAlone, radioPair, radioGroup, radioCrowd);
+
         // Create media manager
         mediaManager = new MoodMediaManager(this, moodImageView, locationTextView,
                 imagePreviewCardView, locationPreviewCardView,
@@ -160,7 +156,7 @@ public class EditMoodActivity extends AppCompatActivity {
                 if (document.exists()) {
                     // Extract all mood details from Firestore
                     chosenMood = document.getString("mood");
-                    chosenSituation = document.getString("situation");
+                    String chosenSituation = document.getString("situation");
                     String reason = document.getString("reason");
                     String location = document.getString("location");
                     String imageUrl = document.getString("id");
@@ -218,31 +214,8 @@ public class EditMoodActivity extends AppCompatActivity {
                     // Set date and time
                     dateTimeManager.setCalendar(calendar);
 
-                    // Set social situation
-                    if (chosenSituation != null) {
-                        switch (chosenSituation) {
-                            case "Alone":
-                                radioAlone.setChecked(true);
-                                lastSelectedButton = radioAlone;
-                                break;
-                            case "Pair":
-                                radioPair.setChecked(true);
-                                lastSelectedButton = radioPair;
-                                break;
-                            case "Group":
-                                radioGroup.setChecked(true);
-                                lastSelectedButton = radioGroup;
-                                break;
-                            case "Crowd":
-                                radioCrowd.setChecked(true);
-                                lastSelectedButton = radioCrowd;
-                                break;
-                        }
-                    } else {
-                        // No selection
-                        socialSituationRadioGroup.clearCheck();
-                        lastSelectedButton = null;
-                    }
+                    // Set social situation using manager
+                    socialSituationManager.setSituation(chosenSituation);
 
                     // Use MoodMediaManager to handle image and location
                     mediaManager.setLocation(location);
@@ -260,6 +233,48 @@ public class EditMoodActivity extends AppCompatActivity {
     }
 
     /**
+     * Extract calendar data from document
+     */
+    private Calendar extractCalendarFromDocument(DocumentSnapshot document) {
+        Calendar calendar = Calendar.getInstance();
+        Object dayTimeObj = document.get("dayTime");
+
+        if (dayTimeObj instanceof Map) {
+            Map<String, Object> dayTimeMap = (Map<String, Object>) dayTimeObj;
+
+            try {
+                // Safely extract each component with null checks
+                Integer year = dayTimeMap.containsKey("year") ?
+                        ((Long) dayTimeMap.get("year")).intValue() :
+                        calendar.get(Calendar.YEAR);
+
+                Integer monthValue = dayTimeMap.containsKey("monthValue") ?
+                        ((Long) dayTimeMap.get("monthValue")).intValue() - 1 :
+                        calendar.get(Calendar.MONTH);
+
+                Integer day = dayTimeMap.containsKey("dayOfMonth") ?
+                        ((Long) dayTimeMap.get("dayOfMonth")).intValue() :
+                        calendar.get(Calendar.DAY_OF_MONTH);
+
+                Integer hour = dayTimeMap.containsKey("hour") ?
+                        ((Long) dayTimeMap.get("hour")).intValue() :
+                        calendar.get(Calendar.HOUR_OF_DAY);
+
+                Integer minute = dayTimeMap.containsKey("minute") ?
+                        ((Long) dayTimeMap.get("minute")).intValue() :
+                        calendar.get(Calendar.MINUTE);
+
+                // Set the calendar with extracted values
+                calendar.set(year, monthValue, day, hour, minute);
+            } catch (Exception e) {
+                // Default to current time if there's an error
+            }
+        }
+
+        return calendar;
+    }
+
+    /**
      * Setup all event listeners for user interactions
      */
     private void setupEventListeners() {
@@ -271,40 +286,6 @@ public class EditMoodActivity extends AppCompatActivity {
                 moodDropdownManager.showDropdown();
             }
         });
-
-
-        // Handle social situation listeners
-        View.OnClickListener situationClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                RadioButton clickedButton = (RadioButton) v;
-
-                if (clickedButton == lastSelectedButton) {
-                    clickedButton.setChecked(false);
-                    lastSelectedButton = null;
-                    chosenSituation = null;
-                } else {
-                    if (lastSelectedButton != null) {
-                        lastSelectedButton.setChecked(false);
-                    }
-                    // Select the new button
-                    clickedButton.setChecked(true);
-                    lastSelectedButton = clickedButton;
-
-                    // Set the chosen situation
-                    int id = v.getId();
-                    if (id == R.id.radioAlone) {
-                        chosenSituation = "Alone";
-                    } else if (id == R.id.radioPair) {
-                        chosenSituation = "Pair";
-                    } else if (id == R.id.radioGroup) {
-                        chosenSituation = "Group";
-                    } else if (id == R.id.radioCrowd) {
-                        chosenSituation = "Crowd";
-                    }
-                }
-            }
-        };
 
         // on click listeners for displaying calendar and time dialogs
         datePickerButton.setOnClickListener(v -> dateTimeManager.showDatePicker());
@@ -324,15 +305,11 @@ public class EditMoodActivity extends AppCompatActivity {
         // Confirm, cancel or delete changes made to mood event
         doneButton.setOnClickListener(v -> saveMood());
         cancelButton.setOnClickListener(v -> finish());
-        radioAlone.setOnClickListener(situationClickListener);
-        radioPair.setOnClickListener(situationClickListener);
-        radioGroup.setOnClickListener(situationClickListener);
-        radioCrowd.setOnClickListener(situationClickListener);
         deleteButton.setOnClickListener(v -> showDeleteConfirmationDialog());
     }
 
     /**
-     * Brings up dialog to confirm deletion of a mood
+     * Shows delete confirmation dialog
      */
     private void showDeleteConfirmationDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -353,11 +330,6 @@ public class EditMoodActivity extends AppCompatActivity {
             Toast.makeText(this, "Please select a mood before saving.", Toast.LENGTH_SHORT).show();
             return;
         }
-        // Ensures that there is a mood id for the corresponding mood
-        if (id == null) {
-            Toast.makeText(this, "Error: Invalid mood ID", Toast.LENGTH_SHORT).show();
-            return;
-        }
         // Get reason text and validate length
         String reason = reasonText.getText() != null ? reasonText.getText().toString().trim() : "";
         if (reason.length() > 20) {
@@ -365,14 +337,19 @@ public class EditMoodActivity extends AppCompatActivity {
             return;
         }
 
-        // Call repository to update mood
+
+        // Get social situation from manager
+        String chosenSituation = socialSituationManager.getChosenSituation();
+
+        // Call repository to update mood with new image URI and existing image ID
         moodRepository.updateMood(
                 id,
                 chosenMood,
                 chosenSituation,
                 reason,
                 mediaManager.getLocation(),
-                mediaManager.getImageUrl(),
+                mediaManager.getNewImageUri(),
+                mediaManager.getExistingImageId(),
                 dateTimeManager.getCalendar(),
                 new MoodRepository.OnMoodUpdateListener() {
                     @Override
@@ -390,8 +367,9 @@ public class EditMoodActivity extends AppCompatActivity {
                 }
         );
     }
+
     /**
-     * Delete mood from firestore
+     * Delete mood from Firestore
      */
     private void deleteMood() {
         moodRepository.deleteMood(id, new MoodRepository.OnMoodDeleteListener() {
@@ -412,10 +390,6 @@ public class EditMoodActivity extends AppCompatActivity {
 
     /**
      * Handles activity results for image and location pickers
-     * handles the selected media and updates the UI
-     * @param requestCode The request code passed to startActivityForResult()
-     * @param resultCode The result code returned by the child activity
-     * @param data An Intent containing the result data
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
