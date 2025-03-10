@@ -50,6 +50,12 @@ public class MoodDetailsActivity extends AppCompatActivity {
     private String moodId;
     private String userId;
 
+    /**
+     * Called when the activity is starting. Initializes UI components and loads mood details.
+     *
+     * @param savedInstanceState If the activity is being reinitialized after previously being shut down,
+     *                           this Bundle contains the data it most recently supplied. Otherwise, it is null.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -138,7 +144,9 @@ public class MoodDetailsActivity extends AppCompatActivity {
     }
 
     @Override
-    // Reload mood details when activity becomes active again
+    /**
+     * Reload mood details when activity becomes active again
+     */
     protected void onResume() {
         super.onResume();
         if (moodId != null) {
