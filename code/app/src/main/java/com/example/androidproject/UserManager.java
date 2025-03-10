@@ -36,6 +36,10 @@ public class UserManager {
         this.context = context;
     }
 
+    /**
+     * Gets the current user
+     * @return
+     */
     public static User getCurrentUser(){
         return currentUser;
     }

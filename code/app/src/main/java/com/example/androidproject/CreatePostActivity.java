@@ -52,10 +52,17 @@ public class CreatePostActivity extends AppCompatActivity {
             user = "testUser";
         }
         super.onCreate(savedInstanceState);
+        // Sets content view
         setContentView(R.layout.activity_add_mood);
+        // Gets the nav bar
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.nav_bar_container, NavBarFragment.newInstance(user))
+                    .commit();
+        }
+        // Finds all of the views
         moodDropdown = findViewById(R.id.add_select_mood_dropdown);
         reasonText = findViewById(R.id.add_reason);
-        // Finds all of the views
         aloneButton = findViewById(R.id.add_mood_alone_button);
         crowdButton = findViewById(R.id.add_mood_crowd_button);
         groupButton = findViewById(R.id.add_mood_group_button);

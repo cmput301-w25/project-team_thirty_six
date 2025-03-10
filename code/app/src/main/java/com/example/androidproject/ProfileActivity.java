@@ -18,6 +18,9 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.example.androidproject.databinding.ActivityProfileBinding;
 
+/**
+ * Creates the view profile screen
+ */
 public class ProfileActivity extends AppCompatActivity {
 
     private UserManager userManager;
@@ -25,6 +28,13 @@ public class ProfileActivity extends AppCompatActivity {
 
     private User currentUser;
 
+    /**
+     * Runs the
+     * @param savedInstanceState If the activity is being re-initialized after
+     *     previously being shut down then this Bundle contains the data it most
+     *     recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
+     *
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -50,6 +60,10 @@ public class ProfileActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Adds the profile info
+     * @param currentUsername
+     */
     private void populateProfile(String currentUsername) {
         TextView userNameTextView = findViewById(R.id.displayUsername);
         userNameTextView.setText(currentUsername);

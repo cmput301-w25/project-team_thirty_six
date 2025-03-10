@@ -18,6 +18,9 @@ public class User implements Serializable {
 
 
     // No-argument constructor required for Firestore
+    /**
+     * For firestore constructor, not used
+     */
     public User() {
         // Initialize fields if needed
         this.following = new ArrayList<>();

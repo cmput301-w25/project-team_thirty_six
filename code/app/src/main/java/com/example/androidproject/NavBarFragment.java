@@ -12,10 +12,19 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+/**
+ * Nav bar fragment functionality
+ */
 public class NavBarFragment extends Fragment {
     private ImageView btnHome, btnFeed, btnMap, btnProfile, btnCreate;
     private String currentUser;
 
+    /**
+     * Gets a new instance of the nav bar
+     * @param currentUser
+     * @return
+     *      the nav bar
+     */
     // The following constructor code was obtained from ChatGPT
     // Prompt: How to have a navBarFragment pass a user class instance between activities in Android Studio Java.
     // Taken by: Rhiyon Naderi
@@ -28,7 +37,18 @@ public class NavBarFragment extends Fragment {
         return fragment;
     }
 
-
+    /**
+     * Runs the info to display nav bar fragment
+     * @param inflater The LayoutInflater object that can be used to inflate
+     * any views in the fragment,
+     * @param container If non-null, this is the parent view that the fragment's
+     * UI should be attached to.  The fragment should not add the view itself,
+     * but this can be used to generate the LayoutParams of the view.
+     * @param saveInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     *
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle saveInstanceState) {

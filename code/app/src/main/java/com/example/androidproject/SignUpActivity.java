@@ -14,6 +14,9 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+/**
+ * Activity for signing up
+ */
 public class SignUpActivity extends AppCompatActivity {
     private UserManager userManager; // This is so that the signUpOnClick method can access the userManager function without having to instantiate it each time
 

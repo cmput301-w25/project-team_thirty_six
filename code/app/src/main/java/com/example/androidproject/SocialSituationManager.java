@@ -3,11 +3,21 @@ package com.example.androidproject;
 import android.view.View;
 import android.widget.RadioButton;
 
+/**
+ * Creates a manager for social situation
+ */
 public class SocialSituationManager {
     private RadioButton radioAlone, radioPair, radioGroup, radioCrowd;
     private RadioButton lastSelectedButton = null;
     private String chosenSituation = null;
 
+    /**
+     * Creates the social situation manager
+     * @param radioAlone
+     * @param radioPair
+     * @param radioGroup
+     * @param radioCrowd
+     */
     public SocialSituationManager(RadioButton radioAlone, RadioButton radioPair,
                                   RadioButton radioGroup, RadioButton radioCrowd) {
         this.radioAlone = radioAlone;
@@ -18,6 +28,9 @@ public class SocialSituationManager {
         setupListeners();
     }
 
+    /**
+     * Sets up the listeners
+     */
     private void setupListeners() {
         View.OnClickListener situationClickListener = v -> {
             RadioButton clickedButton = (RadioButton) v;
@@ -30,6 +43,10 @@ public class SocialSituationManager {
         radioCrowd.setOnClickListener(situationClickListener);
     }
 
+    /**
+     * Runs the code that handles the situation clicked
+     * @param clickedButton
+     */
     private void handleSituationSelection(RadioButton clickedButton) {
         if (clickedButton == lastSelectedButton) {
             clickedButton.setChecked(false);
@@ -54,6 +71,10 @@ public class SocialSituationManager {
         }
     }
 
+    /**
+     *  Sets the situation for the mood
+     * @param situation
+     */
     public void setSituation(String situation) {
         this.chosenSituation = situation;
         if (situation == null) {
@@ -84,6 +105,11 @@ public class SocialSituationManager {
         }
     }
 
+    /**
+     * Gets the situation
+     * @return
+     *      situation
+     */
     public String getChosenSituation() {
         return chosenSituation;
     }
