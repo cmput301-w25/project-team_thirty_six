@@ -11,13 +11,21 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 public class HomePageActivity extends AppCompatActivity {
-
+private String currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
 
+
+        // Get the string from the login page
+        currentUser = (String) getIntent().getSerializableExtra("currentUser");
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.nav_bar_container, NavBarFragment.newInstance(currentUser))
+                    .commit();
+        }
     }
 
     public void viewMoodHistory(View view){
@@ -36,4 +44,5 @@ public class HomePageActivity extends AppCompatActivity {
         i.putExtra("user", (String) getIntent().getSerializableExtra("currentUser"));
         startActivity(i);
     }
+
 }
