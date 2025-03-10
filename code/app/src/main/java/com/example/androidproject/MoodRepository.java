@@ -119,6 +119,7 @@ public class MoodRepository {
         dayTimeData.put("chronology", chronology);
 
         // Update the dayTime subcollection
+        /*
         db.collection("Moods").document(id)
                 .collection("dayTime").document("time_data")
                 .set(dayTimeData)
@@ -134,7 +135,8 @@ public class MoodRepository {
                         listener.onFailure(e);
                     }
                 });
-
+         */
+        db.collection("Moods").document(id).update("dayTime",dayTimeData);
     }
 
     // Interface for callbacks
