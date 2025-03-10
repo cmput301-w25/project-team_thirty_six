@@ -27,7 +27,7 @@
         android:contentDescription="@string/edit_mood_mood_details"
         android:padding="10dp"
         android:textStyle="bold"
-        android:text="@string/edit"
+        android:text="Edit"
         android:textColor="#00aeff"
         android:textSize="18sp"
         android:visibility="gone"
