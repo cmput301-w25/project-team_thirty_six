@@ -41,7 +41,7 @@
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/viewMoodHistory"
+            app:layout_constraintTop_toBottomOf="@+id/signUpButton"
             app:layout_constraintVertical_bias="1.0" />
 
 
@@ -53,7 +53,7 @@
             android:layout_height="102dp"
             android:layout_marginTop="8dp"
             android:src="@drawable/happy"
-            app:layout_constraintEnd_toStartOf="@+id/viewMoodHistory"
+            app:layout_constraintEnd_toStartOf="@+id/signUpButton"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -71,7 +71,7 @@
             android:text="username"
             android:textColor="@color/white"
             android:textSize="18sp"
-            app:layout_constraintBottom_toTopOf="@+id/viewMoodHistory"
+            app:layout_constraintBottom_toTopOf="@+id/signUpButton"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.078"
             app:layout_constraintStart_toStartOf="@+id/image_mood"
@@ -79,7 +79,7 @@
             app:layout_constraintVertical_bias="1.0" />
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/viewMoodHistory"
+            android:id="@+id/signUpButton"
             style="@android:style/Widget.Button"
             android:layout_width="175dp"
             android:layout_height="45dp"

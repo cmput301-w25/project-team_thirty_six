@@ -48,7 +48,7 @@ public class SignUpActivity extends AppCompatActivity {
         userManager.addUser(username, password,  new UserManager.SignUpCallback(){
             @Override
             public void onSignUpSuccess() {
-                Intent i = new Intent(SignUpActivity.this, LoginActivity.class);
+                Intent i = new Intent(SignUpActivity.this, HomePageActivity.class);
                 startActivity(i);
 
             }
