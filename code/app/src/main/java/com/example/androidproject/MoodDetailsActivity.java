@@ -109,6 +109,14 @@ public class MoodDetailsActivity extends AppCompatActivity {
         // Always show edit button
         // NEED TO IMPLEMENT CHECK FOR USER AUTH
         btnEdit.setVisibility(View.VISIBLE);
+
+        /**
+         * Sets an OnClickListener for the edit button.
+         * When clicked, this listener starts the EditMoodActivity,
+         * passing the mood ID as an extra in the intent.
+         *
+         * @param v The view that was clicked.
+         */
         btnEdit.setOnClickListener(v -> {
             Intent editIntent = new Intent(MoodDetailsActivity.this, EditMoodActivity.class);
             editIntent.putExtra("moodId", moodId);
