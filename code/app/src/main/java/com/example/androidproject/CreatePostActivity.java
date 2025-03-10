@@ -46,7 +46,7 @@ public class CreatePostActivity extends AppCompatActivity {
         Bundle dataGiven = getIntent().getExtras();
         // If there is data gets the user
         if (dataGiven != null) {
-            user = (String) dataGiven.get("user");
+            user = (String) dataGiven.get("currentUser");
         } else {
             // If no data was given sets the user to a test value
             user = "testUser";
