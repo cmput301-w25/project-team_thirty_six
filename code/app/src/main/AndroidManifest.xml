@@ -34,7 +34,7 @@
             android:exported="true" />
         <activity
             android:name=".EditMoodActivity"
-            android:exported="true"/>
+            android:parentActivityName=".MoodDetailsActivity" />
         <activity android:name=".MoodDetailsActivity"
             android:exported="true" />
         <activity

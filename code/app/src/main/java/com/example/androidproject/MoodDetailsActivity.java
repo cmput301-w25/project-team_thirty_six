@@ -1,5 +1,6 @@
 package com.example.androidproject;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -10,6 +11,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -25,7 +28,7 @@ import java.util.Map;
 
 /**
  * Activity to display details of a selected mood post.
- * Retrieves mood details from Firestore and update UI
+ * Retrieves mood details from Firestore and updates the UI
  */
 public class MoodDetailsActivity extends AppCompatActivity {
 
@@ -38,6 +41,7 @@ public class MoodDetailsActivity extends AppCompatActivity {
     private ImageView ivMoodImage;
     private TextView tvSocialSituation;
     private TextView tvTimestamp;
+    private TextView btnEdit;
 
     // Firebase instance
     private FirebaseFirestore db;
@@ -46,10 +50,6 @@ public class MoodDetailsActivity extends AppCompatActivity {
     private String moodId;
     private String userId;
 
-    /**
-     * Initializes the activity, sets up UI components, and loads mood details.
-     * @param savedInstanceState
-     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,20 +87,29 @@ public class MoodDetailsActivity extends AppCompatActivity {
         ivMoodImage = findViewById(R.id.mood_image);
         tvSocialSituation = findViewById(R.id.textView_mood_details_social_situation);
         tvTimestamp = findViewById(R.id.mood_timestamp);
+        btnEdit = findViewById(R.id.button_edit);
 
         // Hide optional fields initially
         tvReason.setVisibility(View.GONE);
         tvSocialSituation.setVisibility(View.GONE);
         ivMoodImage.setVisibility(View.GONE);
+
+        // Always show edit button
+        // NEED TO IMPLEMENT CHECK FOR USER AUTH
+        btnEdit.setVisibility(View.VISIBLE);
+        btnEdit.setOnClickListener(v -> {
+            Intent editIntent = new Intent(MoodDetailsActivity.this, EditMoodActivity.class);
+            editIntent.putExtra("moodId", moodId);
+            startActivity(editIntent);
+        });
     }
 
     /**
      * Loads mood details from Firestore using the mood document ID.
-     * Retrieves the document and calls {@link #updateUIWithMoodData(DocumentSnapshot)}
-     * if the document exists.
      */
     private void loadMoodDetails() {
         DocumentReference moodRef = db.collection("Moods").document(moodId);
+
         moodRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful() && task.getResult() != null) {
                 DocumentSnapshot document = task.getResult();
@@ -109,6 +118,7 @@ public class MoodDetailsActivity extends AppCompatActivity {
                     String username = document.getString("user");
                     tvUsername.setText(username != null && !username.isEmpty() ? username : "User");
 
+                    // Call updateUIWithMoodData with the new document
                     updateUIWithMoodData(document);
                 } else {
                     Toast.makeText(this, "Mood not found", Toast.LENGTH_SHORT).show();
@@ -121,9 +131,17 @@ public class MoodDetailsActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    // Reload mood details when activity becomes active again
+    protected void onResume() {
+        super.onResume();
+        if (moodId != null) {
+            loadMoodDetails();
+        }
+    }
+
     /**
      * Updates the UI with mood data from the Firestore document.
-     * Populate UI elements with mood details
      *
      * @param document The DocumentSnapshot containing the mood data
      */
@@ -200,6 +218,7 @@ public class MoodDetailsActivity extends AppCompatActivity {
 
     /**
      * Handles timestamp extraction and formatting from the mood document.
+     *
      * @param document The DocumentSnapshot containing potential timestamp information
      */
     private void handleTimestamp(DocumentSnapshot document) {
@@ -211,7 +230,7 @@ public class MoodDetailsActivity extends AppCompatActivity {
             return;
         }
 
-        // Check for dayTime as string
+        // Check for dayTime as string (ISO format)
         String dayTimeStr = document.getString("dayTime");
         if (dayTimeStr != null) {
             try {
@@ -219,6 +238,7 @@ public class MoodDetailsActivity extends AppCompatActivity {
                 formatTimestampFromLocalDateTime(dateTime);
                 return;
             } catch (Exception e) {
+                // Silently handle parsing error
             }
         }
 
@@ -231,6 +251,7 @@ public class MoodDetailsActivity extends AppCompatActivity {
             tvTimestamp.setText(formattedDate);
             return;
         }
+
         // Fallback - no timestamp available
         tvTimestamp.setText("Unknown time");
     }

@@ -13,8 +13,19 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
+import java.util.Calendar;
+import java.util.Map;
 
 public class EditMoodActivity extends AppCompatActivity {
     // UI elements
@@ -22,22 +33,20 @@ public class EditMoodActivity extends AppCompatActivity {
     private Button moodDropdown;
     private EditText reasonText;
     private RadioGroup socialSituationRadioGroup;
-    private RadioButton radioAlone;
-    private RadioButton radioPair;
-    private RadioButton radioGroup;
-    private RadioButton radioCrowd;
+    private RadioButton radioAlone, radioPair, radioGroup, radioCrowd;
     private LinearLayout addImageButton, addLocationButton, datePickerButton, timePickerButton;
     private CardView imagePreviewCardView, locationPreviewCardView;
     private ImageView moodImageView, imageButtonIcon;
     private TextView locationTextView, textViewSelectedDate, textViewSelectedTime, addImageText, removeImageText;
-    private RadioButton lastSelectedButton = null;
+    private FloatingActionButton deleteButton;
 
     // Data
-    private String chosenMood, chosenSituation, id;
+    private String chosenMood, id;
 
     // Managers
     private MoodDropdownManager moodDropdownManager;
     private DateTimeManager dateTimeManager;
+    private SocialSituationManager socialSituationManager;
     private MoodRepository moodRepository;
     private MoodMediaManager mediaManager;
 
@@ -52,12 +61,13 @@ public class EditMoodActivity extends AppCompatActivity {
                     .commit();
         }
 
-        // Initialize UI elements
+        // Initialize UI elements and managers
         initializeViews();
-        // Initialize managers
         initializeManagers();
+
         // Load data from intent
         loadDataFromIntent();
+
         // Setup event listeners
         setupEventListeners();
     }
@@ -70,6 +80,7 @@ public class EditMoodActivity extends AppCompatActivity {
         doneButton = findViewById(R.id.done_button);
         cancelButton = findViewById(R.id.cancel_button);
         moodDropdown = findViewById(R.id.btnEditMoodSelectMood);
+        deleteButton = findViewById(R.id.delete_button);
 
         // Text inputs
         reasonText = findViewById(R.id.editReason);
@@ -110,6 +121,9 @@ public class EditMoodActivity extends AppCompatActivity {
         // Create date/time manager
         dateTimeManager = new DateTimeManager(this, textViewSelectedDate, textViewSelectedTime);
 
+        // Create social situation manager
+        socialSituationManager = new SocialSituationManager(radioAlone, radioPair, radioGroup, radioCrowd);
+
         // Create media manager
         mediaManager = new MoodMediaManager(this, moodImageView, locationTextView,
                 imagePreviewCardView, locationPreviewCardView,
@@ -126,56 +140,139 @@ public class EditMoodActivity extends AppCompatActivity {
      */
     private void loadDataFromIntent() {
         Intent intent = getIntent();
+        id = intent.getStringExtra("moodId");
 
-        // Get mood ID and essential data
-        id = intent.getStringExtra("id");
-        chosenMood = intent.getStringExtra("mood");
-        chosenSituation = intent.getStringExtra("situation");
-        String reason = intent.getStringExtra("reason");
-
-        // Get media data
-        String location = intent.getStringExtra("location");
-        String imageUrl = intent.getStringExtra("image");
-
-        // Get timestamp
-        long timestamp = intent.getLongExtra("timestamp", System.currentTimeMillis());
-
-        // Update UI with data
-        if (chosenMood != null) moodDropdown.setText(chosenMood);
-        if (reason != null) reasonText.setText(reason);
-
-        // Set date and time
-        dateTimeManager.setCalendarFromTimestamp(timestamp);
-
-        // Set social situation
-        if (chosenSituation != null) {
-            switch (chosenSituation) {
-                case "Alone":
-                    radioAlone.setChecked(true);
-                    lastSelectedButton = radioAlone;
-                    break;
-                case "Pair":
-                    radioPair.setChecked(true);
-                    lastSelectedButton = radioPair;
-                    break;
-                case "Group":
-                    radioGroup.setChecked(true);
-                    lastSelectedButton = radioGroup;
-                    break;
-                case "Crowd":
-                    radioCrowd.setChecked(true);
-                    lastSelectedButton = radioCrowd;
-                    break;
-            }
-        } else {
-            // No selection
-            socialSituationRadioGroup.clearCheck();
-            lastSelectedButton = null;
+        if (id == null) {
+            Toast.makeText(this, "No mood ID provided", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
         }
 
-        // Set media
-        mediaManager.setLocation(location);
-        mediaManager.setImageUrl(imageUrl);
+        // Query Firestore to get the mood details
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference moodRef = db.collection("Moods").document(id);
+
+        moodRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot document = task.getResult();
+                if (document.exists()) {
+                    // Extract all mood details from Firestore
+                    chosenMood = document.getString("mood");
+                    String chosenSituation = document.getString("situation");
+                    String reason = document.getString("reason");
+                    String location = document.getString("location");
+                    String imageUrl = document.getString("id");
+                    Object dayTimeObj = document.get("dayTime");
+
+                    Calendar calendar = Calendar.getInstance();
+
+                    // Handle timestamp
+                    if (dayTimeObj instanceof Map) {
+                        Map<String, Object> dayTimeMap = (Map<String, Object>) dayTimeObj;
+
+                        try {
+                            // Safely extract each component with null checks
+                            Integer year = dayTimeMap.containsKey("year") ?
+                                    ((Long) dayTimeMap.get("year")).intValue() :
+                                    calendar.get(Calendar.YEAR);
+
+                            Integer monthValue = dayTimeMap.containsKey("monthValue") ?
+                                    ((Long) dayTimeMap.get("monthValue")).intValue() - 1 :
+                                    calendar.get(Calendar.MONTH);
+
+                            Integer day = dayTimeMap.containsKey("dayOfMonth") ?
+                                    ((Long) dayTimeMap.get("dayOfMonth")).intValue() :
+                                    calendar.get(Calendar.DAY_OF_MONTH);
+
+                            Integer hour = dayTimeMap.containsKey("hour") ?
+                                    ((Long) dayTimeMap.get("hour")).intValue() :
+                                    calendar.get(Calendar.HOUR_OF_DAY);
+
+                            Integer minute = dayTimeMap.containsKey("minute") ?
+                                    ((Long) dayTimeMap.get("minute")).intValue() :
+                                    calendar.get(Calendar.MINUTE);
+
+                            // Set the calendar with extracted or default values
+                            calendar.set(
+                                    year,
+                                    monthValue,
+                                    day,
+                                    hour,
+                                    minute
+                            );
+                        } catch (Exception e) {
+                        }
+                    }
+
+                    // Update UI components
+                    if (chosenMood != null) {
+                        moodDropdown.setText(chosenMood);
+                    }
+
+                    if (reason != null) {
+                        reasonText.setText(reason);
+                    }
+
+                    // Set date and time
+                    dateTimeManager.setCalendar(calendar);
+
+                    // Set social situation using manager
+                    socialSituationManager.setSituation(chosenSituation);
+
+                    // Use MoodMediaManager to handle image and location
+                    mediaManager.setLocation(location);
+                    mediaManager.setImageUrl(imageUrl);
+
+                } else {
+                    Toast.makeText(this, "Mood not found", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+            } else {
+                Toast.makeText(this, "Error loading mood details", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        });
+    }
+
+    /**
+     * Extract calendar data from document
+     */
+    private Calendar extractCalendarFromDocument(DocumentSnapshot document) {
+        Calendar calendar = Calendar.getInstance();
+        Object dayTimeObj = document.get("dayTime");
+
+        if (dayTimeObj instanceof Map) {
+            Map<String, Object> dayTimeMap = (Map<String, Object>) dayTimeObj;
+
+            try {
+                // Safely extract each component with null checks
+                Integer year = dayTimeMap.containsKey("year") ?
+                        ((Long) dayTimeMap.get("year")).intValue() :
+                        calendar.get(Calendar.YEAR);
+
+                Integer monthValue = dayTimeMap.containsKey("monthValue") ?
+                        ((Long) dayTimeMap.get("monthValue")).intValue() - 1 :
+                        calendar.get(Calendar.MONTH);
+
+                Integer day = dayTimeMap.containsKey("dayOfMonth") ?
+                        ((Long) dayTimeMap.get("dayOfMonth")).intValue() :
+                        calendar.get(Calendar.DAY_OF_MONTH);
+
+                Integer hour = dayTimeMap.containsKey("hour") ?
+                        ((Long) dayTimeMap.get("hour")).intValue() :
+                        calendar.get(Calendar.HOUR_OF_DAY);
+
+                Integer minute = dayTimeMap.containsKey("minute") ?
+                        ((Long) dayTimeMap.get("minute")).intValue() :
+                        calendar.get(Calendar.MINUTE);
+
+                // Set the calendar with extracted values
+                calendar.set(year, monthValue, day, hour, minute);
+            } catch (Exception e) {
+            }
+        }
+
+        return calendar;
     }
 
     /**
@@ -190,40 +287,6 @@ public class EditMoodActivity extends AppCompatActivity {
                 moodDropdownManager.showDropdown();
             }
         });
-
-
-        // Handle social situation listeners
-        View.OnClickListener situationClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                RadioButton clickedButton = (RadioButton) v;
-
-                if (clickedButton == lastSelectedButton) {
-                    clickedButton.setChecked(false);
-                    lastSelectedButton = null;
-                    chosenSituation = null;
-                } else {
-                    if (lastSelectedButton != null) {
-                        lastSelectedButton.setChecked(false);
-                    }
-                    // Select the new button
-                    clickedButton.setChecked(true);
-                    lastSelectedButton = clickedButton;
-
-                    // Set the chosen situation
-                    int id = v.getId();
-                    if (id == R.id.radioAlone) {
-                        chosenSituation = "Alone";
-                    } else if (id == R.id.radioPair) {
-                        chosenSituation = "Pair";
-                    } else if (id == R.id.radioGroup) {
-                        chosenSituation = "Group";
-                    } else if (id == R.id.radioCrowd) {
-                        chosenSituation = "Crowd";
-                    }
-                }
-            }
-        };
 
         // on click listeners for displaying calendar and time dialogs
         datePickerButton.setOnClickListener(v -> dateTimeManager.showDatePicker());
@@ -240,13 +303,26 @@ public class EditMoodActivity extends AppCompatActivity {
         });
         addLocationButton.setOnClickListener(v -> mediaManager.openLocationPicker());
 
-        // Confirm or cancel changes made to mood event
+        // Confirm, cancel or delete changes made to mood event
         doneButton.setOnClickListener(v -> saveMood());
-        cancelButton.setOnClickListener(v -> finish());
-        radioAlone.setOnClickListener(situationClickListener);
-        radioPair.setOnClickListener(situationClickListener);
-        radioGroup.setOnClickListener(situationClickListener);
-        radioCrowd.setOnClickListener(situationClickListener);
+        cancelButton.setOnClickListener(v -> {
+            mediaManager.clearDeletionMarker();
+            finish();
+        });
+        deleteButton.setOnClickListener(v -> showDeleteConfirmationDialog());
+    }
+
+    /**
+     * Shows delete confirmation dialog
+     */
+    private void showDeleteConfirmationDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Delete Mood")
+                .setMessage("Are you sure you want to delete this mood?")
+                .setPositiveButton("Delete", (dialog, which) -> deleteMood())
+                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                .create()
+                .show();
     }
 
     /**
@@ -258,7 +334,6 @@ public class EditMoodActivity extends AppCompatActivity {
             Toast.makeText(this, "Please select a mood before saving.", Toast.LENGTH_SHORT).show();
             return;
         }
-
         // Get reason text and validate length
         String reason = reasonText.getText() != null ? reasonText.getText().toString().trim() : "";
         if (reason.length() > 20) {
@@ -266,38 +341,121 @@ public class EditMoodActivity extends AppCompatActivity {
             return;
         }
 
-        // Call repository to update mood
-        moodRepository.updateMood(
-                id,
-                chosenMood,
-                chosenSituation,
-                reason,
-                mediaManager.getLocation(),
-                mediaManager.getImageUrl(),
-                dateTimeManager.getCalendar(),
-                new MoodRepository.OnMoodUpdateListener() {
-                    @Override
-                    public void onSuccess() {
-                        Toast.makeText(EditMoodActivity.this,
-                                "Mood updated successfully!", Toast.LENGTH_SHORT).show();
-                        finish();
-                    }
+        // Get social situation from manager
+        String chosenSituation = socialSituationManager.getChosenSituation();
 
-                    @Override
-                    public void onFailure(Exception e) {
-                        Toast.makeText(EditMoodActivity.this,
-                                "Failed to update mood. Please try again.", Toast.LENGTH_SHORT).show();
+        // Check if there was an existing image that was removed
+        String imageToDeleteId = mediaManager.getImageToDeleteId();
+
+        if (imageToDeleteId != null) {
+            // Delete the image from Firebase Storage
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            StorageReference imageRef = storage.getReference().child("images/" + imageToDeleteId);
+
+            imageRef.delete().addOnSuccessListener(aVoid -> {
+                moodRepository.updateMood(
+                        id,
+                        chosenMood,
+                        chosenSituation,
+                        reason,
+                        mediaManager.getLocation(),
+                        mediaManager.getNewImageUri(),
+                        null,
+                        dateTimeManager.getCalendar(),
+                        new MoodRepository.OnMoodUpdateListener() {
+                            @Override
+                            public void onSuccess() {
+                                mediaManager.clearDeletionMarker();
+                                Toast.makeText(EditMoodActivity.this,
+                                        "Mood updated successfully!", Toast.LENGTH_SHORT).show();
+                                finish();
+                            }
+
+                            @Override
+                            public void onFailure(Exception e) {
+                                Toast.makeText(EditMoodActivity.this,
+                                        "Failed to update mood. Please try again.", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                );
+            }).addOnFailureListener(e -> {
+                moodRepository.updateMood(
+                        id,
+                        chosenMood,
+                        chosenSituation,
+                        reason,
+                        mediaManager.getLocation(),
+                        mediaManager.getNewImageUri(),
+                        null, // Still mark as removed even if deletion failed
+                        dateTimeManager.getCalendar(),
+                        new MoodRepository.OnMoodUpdateListener() {
+                            @Override
+                            public void onSuccess() {
+                                mediaManager.clearDeletionMarker();
+                                Toast.makeText(EditMoodActivity.this,
+                                        "Mood updated successfully!", Toast.LENGTH_SHORT).show();
+                                finish();
+                            }
+
+                            @Override
+                            public void onFailure(Exception e) {
+                                Toast.makeText(EditMoodActivity.this,
+                                        "Failed to update mood. Please try again.", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                );
+            });
+        } else {
+            // update the mood directly when there is no image to delete
+            moodRepository.updateMood(
+                    id,
+                    chosenMood,
+                    chosenSituation,
+                    reason,
+                    mediaManager.getLocation(),
+                    mediaManager.getNewImageUri(),
+                    mediaManager.getExistingImageId(),
+                    dateTimeManager.getCalendar(),
+                    new MoodRepository.OnMoodUpdateListener() {
+                        @Override
+                        public void onSuccess() {
+                            Toast.makeText(EditMoodActivity.this,
+                                    "Mood updated successfully!", Toast.LENGTH_SHORT).show();
+                            finish();
+                        }
+
+                        @Override
+                        public void onFailure(Exception e) {
+                            Toast.makeText(EditMoodActivity.this,
+                                    "Failed to update mood. Please try again.", Toast.LENGTH_SHORT).show();
+                        }
                     }
-                }
-        );
+            );
+        }
+    }
+
+    /**
+     * Delete mood from Firestore
+     */
+    private void deleteMood() {
+        moodRepository.deleteMood(id, new MoodRepository.OnMoodDeleteListener() {
+            @Override
+            public void onSuccess() {
+                Toast.makeText(EditMoodActivity.this,
+                        "Mood deleted successfully", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Toast.makeText(EditMoodActivity.this,
+                        "Failed to delete mood: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     /**
      * Handles activity results for image and location pickers
-     * handles the selected media and updates the UI
-     * @param requestCode The request code passed to startActivityForResult()
-     * @param resultCode The result code returned by the child activity
-     * @param data An Intent containing the result data
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
