@@ -1,12 +1,13 @@
 package com.example.androidproject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Creates the user class to keep track of users interactions with others and moods
  */
-public class User {
+public class User implements Serializable {
     String username;
     String password;
     // No setter for these 3 as their logic is handled in the add and delete functions

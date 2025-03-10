@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="CustomDialogStyle" parent="ThemeOverlay.MaterialComponents.Dialog">
         <!-- Set the background color to black -->
