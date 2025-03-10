@@ -34,7 +34,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/signUpButton"
+            android:id="@+id/viewMoodHistory"
             style="@android:style/Widget.Button"
             android:layout_width="226dp"
             android:layout_height="45dp"
