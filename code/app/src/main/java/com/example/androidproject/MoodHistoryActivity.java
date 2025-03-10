@@ -59,6 +59,12 @@ public class MoodHistoryActivity extends AppCompatActivity {
             Log.e("MoodHistoryActivity", "No user data found");
         }
 
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.nav_bar_container, NavBarFragment.newInstance(currentUser))
+                    .commit();
+        }
+
         // Initialize MoodHistoryManager
         moodHistoryManager = new MoodHistoryManager();
 

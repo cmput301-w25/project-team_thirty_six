@@ -11,6 +11,9 @@ import android.widget.PopupWindow;
 
 import java.util.ArrayList;
 
+/**
+ * Allows for the mood drop down selection
+ */
 public class MoodDropdownManager {
     private Context context;
     private Button dropdownButton;
@@ -24,6 +27,12 @@ public class MoodDropdownManager {
         void onMoodSelected(String mood);
     }
 
+    /**
+     * Constructor to create the mood drop down manager
+     * @param context
+     * @param dropdownButton
+     * @param listener
+     */
     public MoodDropdownManager(Context context, Button dropdownButton, MoodSelectedListener listener) {
         this.context = context;
         this.dropdownButton = dropdownButton;
@@ -44,6 +53,9 @@ public class MoodDropdownManager {
         setupPopupWindow();
     }
 
+    /**
+     * Creates the pop window
+     */
     private void setupPopupWindow() {
         // Inflate the popup layout from XML
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -79,6 +91,9 @@ public class MoodDropdownManager {
         popupWindow.setFocusable(true);
     }
 
+    /**
+     * Displays the dropdown
+     */
     public void showDropdown() {
         // Measure the button if width is zero
         if (dropdownButton.getWidth() == 0) {
@@ -90,12 +105,19 @@ public class MoodDropdownManager {
         popupWindow.showAsDropDown(dropdownButton);
     }
 
+    /**
+     * Hides the dropdown
+     */
     public void hideDropdown() {
         if (popupWindow.isShowing()) {
             popupWindow.dismiss();
         }
     }
 
+    /**
+     * Returns true if the textbox is showing
+     * @return
+     */
     public boolean isShowing() {
         return popupWindow.isShowing();
     }

@@ -30,6 +30,9 @@ public class MoodSelectionAdapter extends ArrayAdapter<String> {
 
     @NonNull
     @Override
+    /**
+     * Changes the view to display the mood
+     */
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         View view;
         if (convertView == null) {

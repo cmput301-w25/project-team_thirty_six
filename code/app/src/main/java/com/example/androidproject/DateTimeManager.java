@@ -20,6 +20,13 @@ public class DateTimeManager {
     private Calendar calendar;
     private OnDateTimeChangedListener listener;
 
+    /**
+     * Construtor for the day time manager
+     * @param context
+     * @param dateTextView
+     * @param timeTextView
+     */
+
     public DateTimeManager(Context context, TextView dateTextView, TextView timeTextView) {
         this.context = context;
         this.dateTextView = dateTextView;
@@ -28,6 +35,9 @@ public class DateTimeManager {
         updateDisplay();
     }
 
+    /**
+     * Display the dialog to pick a date
+     */
     public void showDatePicker() {
         DatePickerDialog datePickerDialog = new DatePickerDialog(
                 new ContextThemeWrapper(context, R.style.CustomDateTimePickerTheme),
@@ -52,6 +62,9 @@ public class DateTimeManager {
         datePickerDialog.show();
     }
 
+    /**
+     * Displays the dialog to pick a time
+     */
     public void showTimePicker() {
         TimePickerDialog timePickerDialog = new TimePickerDialog(
                 new ContextThemeWrapper(context, R.style.CustomDateTimePickerTheme),
@@ -75,6 +88,9 @@ public class DateTimeManager {
         timePickerDialog.show();
     }
 
+    /**
+     * Updates the display
+     */
     public void updateDisplay() {
         // Date formatting
         SimpleDateFormat dateFormat = new SimpleDateFormat("MMM d, yyyy", Locale.getDefault());
@@ -85,25 +101,44 @@ public class DateTimeManager {
         timeTextView.setText(timeFormat.format(calendar.getTime()));
     }
 
+    /**
+     * Allows you to set what time the calendar is at in milliseconds
+     * @param timestamp
+     */
     public void setCalendarFromTimestamp(long timestamp) {
         calendar.setTimeInMillis(timestamp);
         updateDisplay();
     }
 
+    /**
+     * Allows you to set the calendar from another calendat
+     * @param newCalendar
+     */
     public void setCalendar(Calendar newCalendar) {
         calendar = newCalendar;
         updateDisplay();
     }
 
+    /**
+     * Allows you to get the calendar
+     * @return
+     */
     public Calendar getCalendar() {
         return calendar;
     }
 
+    /**
+     * Allows you to change the listener
+     * @param listener
+     */
     // Optional listener for date/time changes
     public void setOnDateTimeChangedListener(OnDateTimeChangedListener listener) {
         this.listener = listener;
     }
 
+    /**
+     * Creates an interface for the listener
+     */
     public interface OnDateTimeChangedListener {
         void onDateTimeChanged(Calendar calendar);
     }

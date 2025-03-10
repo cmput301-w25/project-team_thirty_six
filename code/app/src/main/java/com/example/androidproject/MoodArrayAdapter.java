@@ -17,7 +17,15 @@ import androidx.appcompat.widget.AppCompatButton;
 
 import java.util.ArrayList;
 
+/**
+ * Creates an array adapter for the add mood that display the moods
+ */
 public class MoodArrayAdapter extends ArrayAdapter<MoodState> {
+    /**
+     * For creating the array adapter
+     * @param context
+     * @param moods
+     */
 
     public MoodArrayAdapter(Context context, ArrayList<MoodState> moods) {
         super(context, 0, moods);
@@ -25,6 +33,9 @@ public class MoodArrayAdapter extends ArrayAdapter<MoodState> {
 
     @NonNull
     @Override
+    /**
+     * Sets the view of the array
+     */
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         View view;
 

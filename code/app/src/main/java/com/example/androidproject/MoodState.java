@@ -203,6 +203,12 @@ public class MoodState {
     }
 
     // Convert MoodState to a Map for Firestore
+
+    /**
+     * Takes a mood and turns it into a map of values
+     * @return
+     * the map
+     */
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
         map.put("id", id);

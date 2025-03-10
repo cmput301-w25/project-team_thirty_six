@@ -10,9 +10,20 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+/**
+ * Creates the home page activity functions
+ */
+
 public class HomePageActivity extends AppCompatActivity {
 private String currentUser;
 
+    /**
+     * Runs the main home page activity loop
+     * @param savedInstanceState If the activity is being re-initialized after
+     *     previously being shut down then this Bundle contains the data it most
+     *     recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
+     *
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,20 +39,14 @@ private String currentUser;
         }
     }
 
+    /**
+     * Takes you to a page to view mood history
+     * @param view
+     */
     public void viewMoodHistory(View view){
         Intent i = new Intent(this, MoodHistoryActivity.class);
         i.putExtra("currentUser",
                 (String) getIntent().getSerializableExtra("currentUser"));
-        startActivity(i);
-    }
-
-    /**
-     *  Allows the user to access the add mood view
-     * @param view
-     */
-    public void addMood(View view) {
-        Intent i = new Intent(this, CreatePostActivity.class);
-        i.putExtra("user", (String) getIntent().getSerializableExtra("currentUser"));
         startActivity(i);
     }
 

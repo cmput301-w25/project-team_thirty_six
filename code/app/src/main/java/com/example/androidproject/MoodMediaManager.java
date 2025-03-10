@@ -39,6 +39,25 @@ public class MoodMediaManager {
     private String location;
     private String imageToDeleteId = null; // Track image ID to delete
 
+    /**
+     *  Creats a constructor for mood media manager
+     * @param activity
+     *      current activity
+     * @param moodImageView
+     *      image button
+     * @param locationTextView
+     *      location button
+     * @param imagePreviewCardView
+     *      card where preview image is displayed
+     * @param locationPreviewCardView
+     *      preview of the location
+     * @param addImageText
+     *      text that says to add image
+     * @param removeImageText
+     *      text that displays temove image
+     * @param imageButtonIcon
+     *      image button
+     */
     public MoodMediaManager(Activity activity, ImageView moodImageView, TextView locationTextView,
                             CardView imagePreviewCardView, CardView locationPreviewCardView,
                             TextView addImageText, TextView removeImageText, ImageView imageButtonIcon) {

@@ -17,6 +17,9 @@ import java.util.Map;
 public class MoodRepository {
     private FirebaseFirestore db;
 
+    /**
+     * Creats the mood repository
+     */
     public MoodRepository() {
         db = FirebaseFirestore.getInstance();
     }
