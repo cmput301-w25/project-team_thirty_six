@@ -43,6 +43,9 @@ public class MoodHistoryActivity extends AppCompatActivity {
     private String currentUser;
 
     @Override
+    /**
+     * Runs the body of mood history
+     */
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mood_history);
@@ -238,6 +241,37 @@ public class MoodHistoryActivity extends AppCompatActivity {
         moodHistory.clear();
         moodHistory.addAll(completeMoodHistory); // Restore all moods from the original list
         moodAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    /**
+     * Resets the mood history once edit is called
+     */
+    protected void onResume(){
+        super.onResume();
+        // Retrieve the currentUser from the Intent
+        currentUser = (String) getIntent().getSerializableExtra("currentUser");
+
+        if (currentUser != null) {
+            Log.d("MoodHistoryActivity", "Current user: " + currentUser);
+        } else {
+            Log.e("MoodHistoryActivity", "No user data found");
+        }
+
+        // Initialize MoodHistoryManager
+        moodHistoryManager = new MoodHistoryManager();
+
+        // Initialize mood history lists
+        moodHistory = new ArrayList<>();
+        completeMoodHistory = new ArrayList<>();
+
+        // Initialize the adapter with an empty list
+        moodAdapter = new MoodArrayAdapter(this, moodHistory);
+        moodListView = findViewById(R.id.mood_list);
+        moodListView.setAdapter(moodAdapter);
+
+        // Fetch mood history for the current user
+        fetchMoodHistory(currentUser); // remember add user authentication to make sure usernames are unique
     }
 
 }
