@@ -50,6 +50,12 @@ public class MoodDetailsActivity extends AppCompatActivity {
     private String moodId;
     private String userId;
 
+    /**
+     * Called when the activity is starting. Initializes UI components and loads mood details.
+     *
+     * @param savedInstanceState If the activity is being reinitialized after previously being shut down,
+     *                           this Bundle contains the data it most recently supplied. Otherwise, it is null.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,6 +109,14 @@ public class MoodDetailsActivity extends AppCompatActivity {
         // Always show edit button
         // NEED TO IMPLEMENT CHECK FOR USER AUTH
         btnEdit.setVisibility(View.VISIBLE);
+
+        /**
+         * Sets an OnClickListener for the edit button.
+         * When clicked, this listener starts the EditMoodActivity,
+         * passing the mood ID as an extra in the intent.
+         *
+         * @param v The view that was clicked.
+         */
         btnEdit.setOnClickListener(v -> {
             Intent editIntent = new Intent(MoodDetailsActivity.this, EditMoodActivity.class);
             editIntent.putExtra("moodId", moodId);
@@ -138,7 +152,9 @@ public class MoodDetailsActivity extends AppCompatActivity {
     }
 
     @Override
-    // Reload mood details when activity becomes active again
+    /**
+     * Reload mood details when activity becomes active again
+     */
     protected void onResume() {
         super.onResume();
         if (moodId != null) {

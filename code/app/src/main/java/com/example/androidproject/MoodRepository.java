@@ -24,7 +24,7 @@ public class MoodRepository {
     /**
      * Updates a mood document with optional image upload
      */
-    public void updateMood(String moodId, String mood, String situation, String reason,
+    public void updateMood(String moodId, String mood, String color, String situation, String reason,
                            String location, Uri newImageUri, String currentImageUrl, Calendar dateTime,
                            OnMoodUpdateListener listener) {
         // Validate id is not null
@@ -46,7 +46,7 @@ public class MoodRepository {
             imageRef.putFile(newImageUri)
                     .addOnSuccessListener(taskSnapshot -> {
                         // After successful upload, update the mood with all data
-                        updateMoodData(moodId, mood, situation, reason, location, moodId, dateTime, listener);
+                        updateMoodData(moodId, mood, color, situation, reason, location, moodId, dateTime, listener);
                     })
                     .addOnFailureListener(e -> {
                         if (listener != null) {
@@ -57,19 +57,20 @@ public class MoodRepository {
             // No new image to upload, just update the mood data
             // Use current image URL if available, otherwise null
             String imageUrlToUse = (currentImageUrl == null) ? null : moodId;
-            updateMoodData(moodId, mood, situation, reason, location, imageUrlToUse, dateTime, listener);
+            updateMoodData(moodId, mood, color, situation, reason, location, imageUrlToUse, dateTime, listener);
         }
     }
 
     /**
      * Helper method to update mood data in Firestore
      */
-    private void updateMoodData(String moodId, String mood, String situation, String reason,
+    private void updateMoodData(String moodId, String mood, String color, String situation, String reason,
                                 String location, String imageUrl, Calendar dateTime,
                                 OnMoodUpdateListener listener) {
         // Create the main mood document data
         Map<String, Object> updatedData = new HashMap<>();
         updatedData.put("mood", mood);
+        updatedData.put("color", color);
         updatedData.put("timestamp", dateTime.getTimeInMillis());
 
         // Only add fields if they are not empty
