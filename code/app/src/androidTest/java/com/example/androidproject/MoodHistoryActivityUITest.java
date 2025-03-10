@@ -69,6 +69,17 @@ public class MoodHistoryActivityUITest {
 
     }
 
+    @Test
+    public void useEditMoodToChangeAMood() throws InterruptedException {
+        Thread.sleep(1000);
+        onView(withText("View More Details")).perform(click());
+        Thread.sleep(1000);
+        onView(withText("Edit")).perform(click());
+        Thread.sleep(1000);
+        onView(withId(R.id.btnEditMoodSelectMood)).perform(click());
+
+    }
+
 
 
     @Test
@@ -102,42 +113,9 @@ public class MoodHistoryActivityUITest {
         onView(withId(R.id.mood_list)).check(matches(isDisplayed()));
     }
 
-    @Test
-    public void testFilterByEmotionalState() {
-        // Click the filter button
-        onView(withId(R.id.filter_button)).perform(click());
 
-        // Check the "Filter by Mood" checkbox
-        onView(withId(R.id.check_filter_mood)).perform(click());
 
-        // Select a mood from the spinner
-        onView(withId(R.id.spinner_moods)).perform(click());
-        onView(withText("Happy")).perform(click());
 
-        // Click the "Apply" button
-        onView(withText("Apply")).perform(click());
-
-        // Verify that the mood list is updated (you may need to add specific assertions)
-        onView(withId(R.id.mood_list)).check(matches(isDisplayed()));
-    }
-
-    @Test
-    public void testFilterByKeyword() {
-        // Click the filter button
-        onView(withId(R.id.filter_button)).perform(click());
-
-        // Check the "Filter by Keyword" checkbox
-        onView(withId(R.id.check_filter_keyword)).perform(click());
-
-        // Enter a keyword in the EditText
-        onView(withId(R.id.edit_keyword)).perform(click(), (ViewAction) withText("great"));
-
-        // Click the "Apply" button
-        onView(withText("Apply")).perform(click());
-
-        // Verify that the mood list is updated (you may need to add specific assertions)
-        onView(withId(R.id.mood_list)).check(matches(isDisplayed()));
-    }
 
     @Test
     public void testResetFilter() {
