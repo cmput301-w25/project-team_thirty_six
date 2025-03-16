@@ -26,6 +26,8 @@
         <activity
             android:name=".SignUpActivity"
             android:exported="false" />
+        <activity android:name=".SearchActivity"
+            android:exported="true" />
         <activity
             android:name=".LoginActivity"
             android:exported="false" />
