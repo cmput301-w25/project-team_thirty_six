@@ -1,10 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/main_background">
-
+    android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -12,122 +11,11 @@
         android:background="@drawable/gradient_color_background"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0">
-
-        <ListView
-            android:id="@+id/add_mood_select_mood_list"
-            android:layout_width="350dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:background="#333F4F"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.491"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/add_select_mood_dropdown" />
-
-        <Button
-            android:id="@+id/add_select_mood_dropdown"
-            android:layout_width="350dp"
-            android:layout_height="60dp"
-            android:layout_marginTop="36dp"
-            android:background="@drawable/edit_mood_edit_mood_button_background"
-            android:backgroundTint="@null"
-            android:drawableEnd="@drawable/edit_mood_drop_down_arrow"
-            android:drawablePadding="10dp"
-            android:gravity="center_vertical|start"
-            android:minHeight="0dp"
-            android:paddingStart="20dp"
-            android:paddingEnd="10dp"
-            android:text="@string/select_mood"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textSize="24sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.459"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/add_mood_text"
-            app:layout_constraintVertical_bias="0.041" />
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/textViewEditMoodOptionalText2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="36dp"
-            android:text="@string/optional"
-            android:textColor="@color/white"
-            android:textSize="20sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/add_select_mood_dropdown"
-            app:layout_constraintVertical_bias="0.0" />
-
-        <EditText
-            android:id="@+id/add_reason"
-            android:layout_width="340dp"
-            android:layout_height="100dp"
-            android:layout_marginTop="92dp"
-            android:background="@drawable/edit_mood_reason_text_box"
-            android:gravity="start|top"
-            android:hint="@string/enter_a_reason"
-            android:maxLength="30"
-            android:padding="12dp"
-            android:textColor="@color/black"
-            android:textSize="16sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.577"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewEditMoodOptionalText2"
-            app:layout_constraintVertical_bias="0.0" />
-
-        <TextView
-            android:id="@+id/textViewReasontext2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="44dp"
-            android:text="@string/reason"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            app:layout_constraintBottom_toTopOf="@+id/add_reason"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.079"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <TextView
-            android:id="@+id/textViewSituation"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Situation:"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.081"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/add_reason" />
-
-        <ImageButton
-            android:id="@+id/add_mood_image_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="28dp"
-            android:layout_marginTop="144dp"
-            android:background="@null"
-            android:contentDescription="@string/image_selection"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewSituation"
-            app:layout_constraintVertical_bias="0.0"
-            app:srcCompat="@drawable/image" />
-
-        <TextView
-            android:id="@+id/add_mood_text"
+            android:id="@+id/textView_add_mood"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
@@ -135,77 +23,413 @@
             android:textColor="@android:color/white"
             android:textSize="22sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/textViewReasontext3"
+        <Button
+            android:id="@+id/add_cancel_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="40dp"
-            android:layout_marginTop="12dp"
-            android:text="Image"
-            android:textColor="@color/white"
-            android:textSize="16sp"
+            android:layout_marginStart="16dp"
+            android:background="@android:color/transparent"
+            android:padding="8dp"
+            android:text="@string/cancel"
+            android:textColor="#00aeff"
+            app:layout_constraintBottom_toBottomOf="@+id/textView_add_mood"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/add_mood_image_button" />
+            app:layout_constraintTop_toTopOf="@+id/textView_add_mood" />
 
         <Button
-            android:id="@+id/add_mood_alone_button"
+            android:id="@+id/add_done_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="36dp"
-            android:text="Alone"
-            android:textColor="@color/white"
-            app:layout_constraintBottom_toTopOf="@+id/add_mood_image_button"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewSituation"
-            app:layout_constraintVertical_bias="0.428" />
-
-        <Button
-            android:id="@+id/add_mood_crowd_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="36dp"
-            android:text="Crowd"
-            android:textColor="@color/white"
-            app:layout_constraintBottom_toTopOf="@+id/add_mood_image_button"
+            android:layout_marginEnd="16dp"
+            android:background="@android:color/transparent"
+            android:padding="8dp"
+            android:text="@string/done"
+            android:textColor="#00aeff"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/textView_add_mood"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toEndOf="@+id/add_mood_group_button"
-            app:layout_constraintTop_toBottomOf="@+id/textViewSituation"
-            app:layout_constraintVertical_bias="0.427" />
+            app:layout_constraintTop_toTopOf="@+id/textView_add_mood" />
 
-        <Button
-            android:id="@+id/add_mood_group_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="36dp"
-            android:text="Group"
-            android:textColor="@color/white"
-            app:layout_constraintBottom_toTopOf="@+id/add_mood_image_button"
-            app:layout_constraintStart_toEndOf="@+id/add_mood_alone_button"
-            app:layout_constraintTop_toBottomOf="@+id/textViewSituation"
-            app:layout_constraintVertical_bias="0.427" />
-
-        <Button
-            android:id="@+id/add_confirm_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="168dp"
-            android:layout_marginTop="164dp"
-            android:text="Confirm"
+        <ScrollView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="8dp"
+            android:fillViewport="true"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/add_mood_image_button"
-            app:layout_constraintTop_toBottomOf="@+id/textViewSituation"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView_add_mood"
+            android:layout_marginBottom="80dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="0dp">
+
+                <Button
+                    android:id="@+id/AddMoodSelectMood"
+                    android:layout_width="0dp"
+                    android:layout_height="60dp"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginEnd="30dp"
+                    android:background="@drawable/edit_mood_card_button"
+                    android:drawableEnd="@drawable/edit_mood_drop_down_arrow"
+                    android:drawablePadding="10dp"
+                    android:gravity="center_vertical|start"
+                    android:minHeight="0dp"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="16dp"
+                    android:text="@string/select_mood"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    app:backgroundTint="@null"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ListView
+                    android:id="@+id/add_mood_select_mood_list"
+                    android:layout_width="0dp"
+                    android:layout_height="500dp"
+                    android:background="#333F4F"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="@id/AddMoodSelectMood"
+                    app:layout_constraintStart_toStartOf="@id/AddMoodSelectMood"
+                    app:layout_constraintTop_toBottomOf="@id/AddMoodSelectMood" />
+
+                <TextView
+                    android:id="@+id/textViewAddReasontext"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="28dp"
+                    android:layout_marginTop="36dp"
+                    android:text="@string/reason"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/AddMoodSelectMood" />
+
+                <TextView
+                    android:id="@+id/textViewAddMoodOptionalText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="@string/optional"
+                    android:textColor="#AAAAAA"
+                    android:textSize="14sp"
+                    android:textStyle="italic"
+                    app:layout_constraintBottom_toBottomOf="@+id/textViewAddReasontext"
+                    app:layout_constraintStart_toEndOf="@+id/textViewAddReasontext"
+                    app:layout_constraintTop_toTopOf="@+id/textViewAddReasontext" />
+
+                <EditText
+                    android:id="@+id/addReason"
+                    android:layout_width="346dp"
+                    android:layout_height="103dp"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="30dp"
+                    android:background="@drawable/edit_mood_reason_text_box"
+                    android:gravity="top|start"
+                    android:hint="@string/enter_a_reason"
+                    android:importantForAutofill="no"
+                    android:inputType="textMultiLine"
+                    android:maxLength="200"
+                    android:padding="16dp"
+                    android:textColor="@color/black"
+                    android:textColorHint="#888888"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textViewAddReasontext" />
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/imageCardView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginEnd="30dp"
+                    app:cardBackgroundColor="#00000000"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="0dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/addReason">
+
+                    <LinearLayout
+                        android:id="@+id/AddImagebutton"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:orientation="horizontal"
+                        android:padding="8dp">
+
+                        <ImageView
+                            android:id="@+id/image_button_icon"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_marginEnd="8dp"
+                            android:contentDescription="@string/image"
+                            android:src="@drawable/image" />
+
+                        <TextView
+                            android:id="@+id/add_image_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/add_image"
+                            android:textColor="#FFFFFF"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@+id/remove_image_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/remove_image"
+
+                            android:textColor="#FFFFFF"
+                            android:textSize="16sp"
+                            android:visibility="gone" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/imagePreviewCardView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="30dp"
+                    android:background="@color/black"
+                    android:visibility="gone"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="0dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/imageCardView">
+
+                    <ImageView
+                        android:id="@+id/moodImageView"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:adjustViewBounds="true"
+                        android:contentDescription="@string/selected_mood_image"
+                        android:maxHeight="300dp"
+                        android:scaleType="fitCenter" />
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/locationCardView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="30dp"
+                    app:cardBackgroundColor="#00000000"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="0dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/imagePreviewCardView">
+
+                    <LinearLayout
+                        android:id="@+id/add_location_button"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:orientation="horizontal"
+                        android:padding="8dp">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_marginEnd="8dp"
+                            android:contentDescription="@string/map_icon"
+                            android:src="@drawable/mapsymbol" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/add_location"
+                            android:textColor="#FFFFFF"
+                            android:textSize="16sp" />
+
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/locationPreviewCardView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="30dp"
+                    android:visibility="gone"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="0dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/locationCardView">
+
+                    <TextView
+                        android:id="@+id/locationTextView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="#333F4F"
+                        android:padding="16dp"
+                        android:textColor="@color/white"
+                        android:textSize="16sp" />
+                </androidx.cardview.widget.CardView>
+
+                <TextView
+                    android:id="@+id/textViewSocialSituationText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginTop="24dp"
+                    android:text="@string/social_situation_edit_mood"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/locationPreviewCardView" />
+
+                <RadioGroup
+                    android:id="@+id/socialSituationRadioGroup"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginEnd="30dp"
+                    android:orientation="horizontal"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="1.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textViewSocialSituationText">
+
+                    <RadioButton
+                        android:id="@+id/AddradioAlone"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_marginEnd="4dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/edit_mood_radio_button_selector"
+                        android:button="@null"
+                        android:gravity="center"
+                        android:paddingStart="8dp"
+                        android:paddingEnd="8dp"
+                        android:text="@string/alone"
+                        android:textColor="@color/white"
+                        android:textSize="12sp" />
+
+                    <RadioButton
+                        android:id="@+id/AddradioPair"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginEnd="4dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/edit_mood_radio_button_selector"
+                        android:button="@null"
+                        android:gravity="center"
+                        android:paddingStart="8dp"
+                        android:paddingEnd="8dp"
+                        android:text="@string/pair"
+                        android:textColor="@color/white"
+                        android:textSize="12sp" />
+
+                    <RadioButton
+                        android:id="@+id/AddradioGroup"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginEnd="4dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/edit_mood_radio_button_selector"
+                        android:button="@null"
+                        android:gravity="center"
+                        android:paddingStart="8dp"
+                        android:paddingEnd="8dp"
+                        android:text="@string/group"
+                        android:textColor="@color/white"
+                        android:textSize="12sp" />
+
+                    <RadioButton
+                        android:id="@+id/AddradioCrowd"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_marginStart="4dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/edit_mood_radio_button_selector"
+                        android:button="@null"
+                        android:gravity="center"
+                        android:paddingStart="8dp"
+                        android:paddingEnd="8dp"
+                        android:text="@string/crowd"
+                        android:textColor="@color/white"
+                        android:textSize="12sp" />
+
+                </RadioGroup>
+
+                <RadioGroup
+                    android:id="@+id/privateRadioGroup"
+                    android:layout_width="230dp"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="18dp"
+                    android:orientation="horizontal"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/socialSituationRadioGroup">
+
+                    <RadioButton
+                        android:id="@+id/addPrivate"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/edit_mood_radio_button_selector"
+                        android:button="@null"
+                        android:gravity="center"
+                        android:paddingStart="8dp"
+                        android:paddingEnd="8dp"
+                        android:text="Private"
+                        android:textColor="@color/white"
+                        android:textSize="12sp" />
+
+                    <RadioButton
+                        android:id="@+id/addPublic"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/edit_mood_radio_button_selector"
+                        android:button="@null"
+                        android:checked="true"
+                        android:gravity="center"
+                        android:paddingStart="8dp"
+                        android:paddingEnd="8dp"
+                        android:text="Public"
+                        android:textColor="@color/white"
+                        android:textSize="12sp"
+                        tools:layout_editor_absoluteX="181dp"
+                        tools:layout_editor_absoluteY="518dp" />
+
+                </RadioGroup>
 
 
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-
+        </ScrollView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
     <FrameLayout
         android:id="@+id/nav_bar_container"
         android:layout_width="match_parent"
