@@ -107,6 +107,62 @@
                     app:layout_constraintEnd_toEndOf="@id/btnEditMoodSelectMood" />
 
                 <TextView
+                    android:id="@+id/textViewVisibilityLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginTop="24dp"
+                    android:text="@string/visibility"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/edit_mood_select_mood_list" />
+
+                <RadioGroup
+                    android:id="@+id/visibilityRadioGroup"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="30dp"
+                    android:orientation="horizontal"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textViewVisibilityLabel">
+
+                    <RadioButton
+                        android:id="@+id/radioPrivate"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_marginEnd="4dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/edit_mood_radio_button_selector"
+                        android:button="@null"
+                        android:gravity="center"
+                        android:paddingStart="8dp"
+                        android:paddingEnd="8dp"
+                        android:text="Private"
+                        android:textColor="@color/white"
+                        android:textSize="12sp" />
+
+                    <RadioButton
+                        android:id="@+id/radioPublic"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_marginStart="4dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/edit_mood_radio_button_selector"
+                        android:button="@null"
+                        android:gravity="center"
+                        android:paddingStart="8dp"
+                        android:paddingEnd="8dp"
+                        android:text="Public"
+                        android:textColor="@color/white"
+                        android:textSize="12sp" />
+
+                </RadioGroup>
+
+                <TextView
                     android:id="@+id/textViewDateTimeLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -116,7 +172,7 @@
                     android:textColor="@color/white"
                     android:textSize="18sp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/edit_mood_select_mood_list" />
+                    app:layout_constraintTop_toBottomOf="@+id/visibilityRadioGroup" />
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/datePickerCard"
@@ -261,7 +317,7 @@
                 <EditText
                     android:id="@+id/editReason"
                     android:layout_width="0dp"
-                    android:layout_height="50dp"
+                    android:layout_height="103dp"
                     android:layout_marginStart="30dp"
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="30dp"

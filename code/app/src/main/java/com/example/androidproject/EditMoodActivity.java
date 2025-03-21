@@ -32,8 +32,8 @@ public class EditMoodActivity extends AppCompatActivity {
     private Button doneButton, cancelButton;
     private Button moodDropdown;
     private EditText reasonText;
-    private RadioGroup socialSituationRadioGroup;
-    private RadioButton radioAlone, radioPair, radioGroup, radioCrowd;
+    private RadioGroup socialSituationRadioGroup, visibilityRadioGroup;
+    private RadioButton radioAlone, radioPair, radioGroup, radioCrowd, radioPrivate, radioPublic;
     private LinearLayout addImageButton, addLocationButton, datePickerButton, timePickerButton;
     private CardView imagePreviewCardView, locationPreviewCardView;
     private ImageView moodImageView, imageButtonIcon;
@@ -42,6 +42,7 @@ public class EditMoodActivity extends AppCompatActivity {
 
     // Data
     private String chosenMood, chosenColor, id;
+    private boolean isPublic = false;
 
     // Managers
     private MoodDropdownManager moodDropdownManager;
@@ -99,6 +100,11 @@ public class EditMoodActivity extends AppCompatActivity {
         radioPair = findViewById(R.id.radioPair);
         radioGroup = findViewById(R.id.radioGroup);
         radioCrowd = findViewById(R.id.radioCrowd);
+
+        // Visibility elements
+        visibilityRadioGroup = findViewById(R.id.visibilityRadioGroup);
+        radioPrivate = findViewById(R.id.radioPrivate);
+        radioPublic = findViewById(R.id.radioPublic);
 
         // Date and time elements
         datePickerButton = findViewById(R.id.datePickerButton);
@@ -173,6 +179,10 @@ public class EditMoodActivity extends AppCompatActivity {
                     String location = document.getString("location");
                     String imageUrl = document.getString("id");
                     Object dayTimeObj = document.get("dayTime");
+                    Boolean visibility = document.getBoolean("visibility");
+
+                    // Set visibility (default to private/false if not set)
+                    isPublic = (visibility != null) ? visibility : true;
 
                     Calendar calendar = Calendar.getInstance();
 
@@ -223,6 +233,13 @@ public class EditMoodActivity extends AppCompatActivity {
                         reasonText.setText(reason);
                     }
 
+                    // Set visibility radio buttons
+                    if (isPublic) {
+                        radioPublic.setChecked(true);
+                    } else {
+                        radioPrivate.setChecked(true);
+                    }
+
                     // Set date and time
                     dateTimeManager.setCalendar(calendar);
 
@@ -245,7 +262,7 @@ public class EditMoodActivity extends AppCompatActivity {
     }
 
     /**
-     * Extarcts date and time values from the dayTime field
+     * Extracts date and time values from the dayTime field
      * @param document
      * @return
      */
@@ -303,6 +320,11 @@ public class EditMoodActivity extends AppCompatActivity {
         // on click listeners for displaying calendar and time dialogs
         datePickerButton.setOnClickListener(v -> dateTimeManager.showDatePicker());
         timePickerButton.setOnClickListener(v -> dateTimeManager.showTimePicker());
+
+        // Visibility radio button listener
+        visibilityRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
+            isPublic = (checkedId == R.id.radioPublic);
+        });
 
         // Add media buttons
         addImageButton.setOnClickListener(v -> {
@@ -375,6 +397,7 @@ public class EditMoodActivity extends AppCompatActivity {
                         mediaManager.getNewImageUri(),
                         null,
                         dateTimeManager.getCalendar(),
+                        isPublic,  // Pass visibility value
                         new MoodRepository.OnMoodUpdateListener() {
                             @Override
                             public void onSuccess() {
@@ -402,6 +425,7 @@ public class EditMoodActivity extends AppCompatActivity {
                         mediaManager.getNewImageUri(),
                         null, // Still mark as removed even if deletion failed
                         dateTimeManager.getCalendar(),
+                        isPublic,  // Pass visibility value
                         new MoodRepository.OnMoodUpdateListener() {
                             @Override
                             public void onSuccess() {
@@ -431,6 +455,7 @@ public class EditMoodActivity extends AppCompatActivity {
                     mediaManager.getNewImageUri(),
                     mediaManager.getExistingImageId(),
                     dateTimeManager.getCalendar(),
+                    isPublic,  // Pass visibility value
                     new MoodRepository.OnMoodUpdateListener() {
                         @Override
                         public void onSuccess() {

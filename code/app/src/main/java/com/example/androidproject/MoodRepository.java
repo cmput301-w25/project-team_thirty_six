@@ -18,7 +18,7 @@ public class MoodRepository {
     private FirebaseFirestore db;
 
     /**
-     * Creats the mood repository
+     * Creates the mood repository
      */
     public MoodRepository() {
         db = FirebaseFirestore.getInstance();
@@ -26,10 +26,21 @@ public class MoodRepository {
 
     /**
      * Updates a mood document with optional image upload
+     * @param moodId Mood ID to update
+     * @param mood Mood type (e.g., "Happy", "Sad")
+     * @param color Color associated with the mood
+     * @param situation Social situation
+     * @param reason Reason for the mood
+     * @param location Location description
+     * @param newImageUri New image URI if any
+     * @param currentImageUrl Current image URL
+     * @param dateTime Date and time of the mood
+     * @param isPublic Visibility flag (true = public, false = private)
+     * @param listener Callback for update results
      */
     public void updateMood(String moodId, String mood, String color, String situation, String reason,
                            String location, Uri newImageUri, String currentImageUrl, Calendar dateTime,
-                           OnMoodUpdateListener listener) {
+                           boolean isPublic, OnMoodUpdateListener listener) {
         // Validate id is not null
         if (moodId == null) {
             if (listener != null) {
@@ -49,7 +60,7 @@ public class MoodRepository {
             imageRef.putFile(newImageUri)
                     .addOnSuccessListener(taskSnapshot -> {
                         // After successful upload, update the mood with all data
-                        updateMoodData(moodId, mood, color, situation, reason, location, moodId, dateTime, listener);
+                        updateMoodData(moodId, mood, color, situation, reason, location, moodId, dateTime, isPublic, listener);
                     })
                     .addOnFailureListener(e -> {
                         if (listener != null) {
@@ -60,7 +71,7 @@ public class MoodRepository {
             // No new image to upload, just update the mood data
             // Use current image URL if available, otherwise null
             String imageUrlToUse = (currentImageUrl == null) ? null : moodId;
-            updateMoodData(moodId, mood, color, situation, reason, location, imageUrlToUse, dateTime, listener);
+            updateMoodData(moodId, mood, color, situation, reason, location, imageUrlToUse, dateTime, isPublic, listener);
         }
     }
 
@@ -69,12 +80,15 @@ public class MoodRepository {
      */
     private void updateMoodData(String moodId, String mood, String color, String situation, String reason,
                                 String location, String imageUrl, Calendar dateTime,
-                                OnMoodUpdateListener listener) {
+                                boolean isPublic, OnMoodUpdateListener listener) {
         // Create the main mood document data
         Map<String, Object> updatedData = new HashMap<>();
         updatedData.put("mood", mood);
         updatedData.put("color", color);
         updatedData.put("timestamp", dateTime.getTimeInMillis());
+
+        // Add visibility field
+        updatedData.put("visibility", isPublic);
 
         // Only add fields if they are not empty
         if (situation != null && !situation.isEmpty()) {

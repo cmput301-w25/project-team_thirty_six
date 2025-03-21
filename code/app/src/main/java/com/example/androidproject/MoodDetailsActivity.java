@@ -11,8 +11,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -49,6 +47,7 @@ public class MoodDetailsActivity extends AppCompatActivity {
     // Data values
     private String moodId;
     private String userId;
+
 
     /**
      * Called when the activity is starting. Initializes UI components and loads mood details.
