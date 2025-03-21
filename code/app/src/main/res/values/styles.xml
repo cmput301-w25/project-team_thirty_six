@@ -27,4 +27,12 @@
         <item name="android:datePickerStyle">@android:style/Widget.Material.DatePicker</item>
         <item name="android:timePickerStyle">@android:style/Widget.Material.TimePicker</item>
     </style>
+
+    <style name="WhiteSearchViewStyle" parent="Widget.AppCompat.SearchView">
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat</item>
+        <item name="android:textColorPrimary">#FFFFFF</item>
+        <item name="android:textColorHint">#CCFFFFFF</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textCursorDrawable">@null</item>
+    </style>
 </resources>

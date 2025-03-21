@@ -1,9 +1,12 @@
 package com.example.androidproject;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ImageView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
@@ -45,6 +48,11 @@ public class SearchActivity extends AppCompatActivity {
 
         // Initialize views
         searchView = findViewById(R.id.searchView);
+        ImageView searchIcon = searchView.findViewById(androidx.appcompat.R.id.search_mag_icon);
+        if (searchIcon != null) {
+            searchIcon.setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
+        }
+
         recyclerView = findViewById(R.id.recyclerView);
 
         // Initialize list and adapter with empty list
