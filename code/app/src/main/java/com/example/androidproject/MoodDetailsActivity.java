@@ -3,26 +3,40 @@ package com.example.androidproject;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
+import java.sql.DatabaseMetaData;
 import java.text.DateFormatSymbols;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -42,6 +56,9 @@ public class MoodDetailsActivity extends AppCompatActivity {
     private TextView tvSocialSituation;
     private TextView tvTimestamp;
     private TextView btnEdit;
+    // Button for adding comments
+    private FloatingActionButton confirm_comment;
+    private TextInputEditText comment_text;
 
     // Firebase instance
     private FirebaseFirestore db;
@@ -49,6 +66,12 @@ public class MoodDetailsActivity extends AppCompatActivity {
     // Data values
     private String moodId;
     private String userId;
+    // Collection reference for the comments
+    private CollectionReference commentCollection;
+    private ArrayList<Comment> comments = new ArrayList<Comment>();
+    private LinearLayout commentListView;
+    // Creates a copy of the current class to toast inside a on click listener
+    private MoodDetailsActivity current = this;
 
     /**
      * Called when the activity is starting. Initializes UI components and loads mood details.
@@ -70,6 +93,9 @@ public class MoodDetailsActivity extends AppCompatActivity {
         // Initialize Firebase and UI components
         db = FirebaseFirestore.getInstance();
         initializeViews();
+        // Sets the collection reference of comment
+        commentCollection = db.collection("Comments");
+        commentLoop();
 
         // Retrieve mood ID and user ID from intent
         if (getIntent().hasExtra("id") && getIntent().hasExtra("user")) {
@@ -100,6 +126,9 @@ public class MoodDetailsActivity extends AppCompatActivity {
         tvSocialSituation = findViewById(R.id.textView_mood_details_social_situation);
         tvTimestamp = findViewById(R.id.mood_timestamp);
         btnEdit = findViewById(R.id.button_edit);
+        confirm_comment = findViewById(R.id.confirm_comment_button);
+        comment_text = findViewById(R.id.comment_text);
+        commentListView = findViewById(R.id.linearCommentView);
 
         // Hide optional fields initially
         tvReason.setVisibility(View.GONE);
@@ -109,6 +138,7 @@ public class MoodDetailsActivity extends AppCompatActivity {
         // Always show edit button
         // NEED TO IMPLEMENT CHECK FOR USER AUTH
         btnEdit.setVisibility(View.VISIBLE);
+
 
         /**
          * Sets an OnClickListener for the edit button.
@@ -121,6 +151,74 @@ public class MoodDetailsActivity extends AppCompatActivity {
             Intent editIntent = new Intent(MoodDetailsActivity.this, EditMoodActivity.class);
             editIntent.putExtra("moodId", moodId);
             startActivity(editIntent);
+        });
+
+        // Creates the functionality for the add comment button
+        confirm_comment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            /**
+             * When add commment is clicked post the comment to the database
+             */
+            public void onClick(View v) {
+                if (comment_text.getText().length() == 0) {
+                    // If the text is empty prevents from submitting
+                    CharSequence error_text = "Cannot post empty comment.";
+                    Toast.makeText(current,error_text,Toast.LENGTH_SHORT).show();
+                } else {
+                    // Gets the comment info
+                    String commentTextData = comment_text.getText().toString();
+                    // Adds the comment to the database
+                    Database.getInstance().addComment(userId,moodId,commentTextData);
+                    comment_text.setText("");
+                }
+            }
+        });
+    }
+
+    /**
+     * Creates the comment loop functionality
+     */
+    private void commentLoop(){
+        // Adds a snapshot listener to the comment collection
+        commentCollection.addSnapshotListener((value, error) -> {
+            // Queries the database for only comments with mood id of the mood
+            commentCollection.whereEqualTo("moodID",moodId).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                /**
+                 * On success listener for the query
+                 * @param queryDocumentSnapshots
+                 */
+                @Override
+                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                    // Removes everything from comments
+                    comments.clear();
+                    commentListView.removeAllViews();
+                    // Creates a list of documents
+                    List<DocumentSnapshot> docList = queryDocumentSnapshots.getDocuments();
+                    // Loops through the documents
+                    for (int i = 0; i < docList.size(); i++){
+                        // Gets the current document
+                        DocumentSnapshot currentDoc = docList.get(i);
+                        // Makes a comment out of the document
+                        Comment comment = new Comment(currentDoc.get("username").toString(),currentDoc.get("moodID").toString(),currentDoc.get("text").toString());
+                        // Adds comment to temp list
+                        comments.add(comment);
+                        Log.e("User",comments.get(i).getUsername());
+                        Log.e("Text",comments.get(i).getText());
+                    }
+                    // Loops through all the comments
+                    for (int i = 0; i < comments.size(); i++) {
+                        Comment comment  = comments.get(i);
+                        View view = LayoutInflater.from(current).inflate(R.layout.comment_layout,null);
+                        // Gets the elements of the display
+                        TextView username_text = view.findViewById(R.id.comment_username_display);
+                        TextView text_text = view.findViewById(R.id.comment_text_display);
+                        // Changes the views
+                        username_text.setText(comment.getUsername());
+                        text_text.setText(comment.getText());
+                        commentListView.addView(view);
+                    }
+                }
+            });
         });
     }
 
