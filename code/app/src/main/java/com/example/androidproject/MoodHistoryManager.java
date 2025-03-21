@@ -1,5 +1,6 @@
 package com.example.androidproject;
 
+import android.location.Location;
 import android.net.Uri;
 import android.util.Log;
 
@@ -72,6 +73,33 @@ public class MoodHistoryManager {
         // Handle nullable fields
         if (document.getString("image") != null) {
             moodState.setImage(Uri.parse(document.getString("image")));
+        }
+        // ✅ Reconstruct location from Firestore
+        if (document.contains("location")) {
+            Object locationObj = document.get("location");
+
+            if (locationObj instanceof Map) {
+                Map<String, Object> locationMap = (Map<String, Object>) locationObj;
+                if (locationMap.containsKey("latitude")  && locationMap.containsKey("longitude")) {
+                    double lat = locationMap.get("latitude") != null ? (double) locationMap.get("latitude") : 0.0;
+                    double lon = locationMap.get("longitude") != null ? (double) locationMap.get("longitude") : 0.0;
+
+                    // ✅ Debug log to check extracted values
+                    Log.d("FirestoreDebug", "Extracted location - Latitude: " + lat + ", Longitude: " + lon);
+
+                    // Reconstruct Location object
+                    Location loc = new Location("");
+                    loc.setLatitude(lat);
+                    loc.setLongitude(lon);
+                    moodState.setLocation(loc); // ✅ Set reconstructed Location object
+                } else {
+                    Log.w("FirestoreDebug", "Location map exists but missing latitude/longitude keys.");
+                }
+            } else {
+                Log.w("FirestoreDebug", "Location field found but not in expected Map format.");
+            }
+        } else {
+            Log.w("FirestoreDebug", "No location field found in Firestore document.");
         }
 
         return moodState;

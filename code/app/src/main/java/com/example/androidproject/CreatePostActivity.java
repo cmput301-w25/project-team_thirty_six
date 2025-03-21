@@ -29,7 +29,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.GeoPoint;
 import android.Manifest;
 import android.content.pm.PackageManager;
-import com.example.androidproject.LocationHelper;
 
 import android.widget.Toast;
 
@@ -40,13 +39,13 @@ import androidx.core.content.ContextCompat;
  * Creates the functionality to create a post
  */
 public class CreatePostActivity extends AppCompatActivity {
-    LocationHelper locationHelper;
     Button moodDropdown;
     EditText reasonText;
     Button aloneButton;
     Button crowdButton;
     Button groupButton;
     Button confirmButton;
+    ImageButton locationButton;
     ImageButton imageButton;
     MoodSelectionAdapter dropdownAdapter;
     ListView dropdownList;
@@ -57,6 +56,8 @@ public class CreatePostActivity extends AppCompatActivity {
     CreatePostActivity current;
     String user;
     MoodState newMood;
+
+    Location tempLocation;
 
 
     @Override
@@ -75,17 +76,6 @@ public class CreatePostActivity extends AppCompatActivity {
         // Sets content view
         setContentView(R.layout.activity_add_mood);
 
-        LocationPermissionFragment locationFragment = new LocationPermissionFragment();
-//        locationFragment.startTrackingLocation();
-
-        locationFragment.show(getSupportFragmentManager(), "LocationPermissionFragment"); // ✅ Shows fragment
-
-// ✅ Once permission is handled inside the fragment, trigger tracking
-        locationFragment.setOnPermissionGrantedListener(() -> {
-            Log.d("CreatePostActivity", "Starting location tracking...");
-            locationFragment.startTrackingLocation();
-        });
-
 
         // Gets the nav bar
         if (savedInstanceState == null) {
@@ -101,6 +91,7 @@ public class CreatePostActivity extends AppCompatActivity {
         groupButton = findViewById(R.id.add_mood_group_button);
         dropdownList = findViewById(R.id.add_mood_select_mood_list);
         confirmButton = findViewById(R.id.add_confirm_button);
+        locationButton = findViewById(R.id.add_mood_location_button);
         imageButton = findViewById(R.id.add_mood_image_button);
         //Sets drop down status to false to start
         dropdownStatus = Boolean.FALSE;
@@ -232,6 +223,35 @@ public class CreatePostActivity extends AppCompatActivity {
             }
         });
 
+        locationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LocationPermissionFragment locationFragment = new LocationPermissionFragment();
+                locationFragment.show(getSupportFragmentManager(), "LocationPermissionFragment"); // Shows fragment
+
+                // Once permission is granted inside the fragment, trigger tracking
+                locationFragment.setOnPermissionGrantedListener(() -> {
+                    Log.d("CreatePostActivity", "Starting location tracking...");
+                    locationFragment.startTrackingLocation();
+
+                    // Now, safely call getLastKnownLocation() since fragment is fully attached
+                    locationFragment.getLastKnownLocation(new LocationPermissionFragment.OnLocationReceivedListener() {
+
+                        @Override
+                        public void onLocationReceived(Location location) {
+                            tempLocation = location;
+                            Log.d("CreatePostActivity", "Mood location set to: " + location.getLatitude() + ", " + location.getLongitude());
+                        }
+
+                        @Override
+                        public void onLocationFailure(String errorMessage) {
+                            tempLocation = null;
+                        }
+                    });
+                });
+            }
+        });
+
 
         // Sets the confirm on click listener
         confirmButton.setOnClickListener(new View.OnClickListener() {
@@ -257,25 +277,10 @@ public class CreatePostActivity extends AppCompatActivity {
                     }
                     // Sets the username
                     newMood.setUser(user);
-
-                    locationFragment.getLastKnownLocation(new LocationPermissionFragment.OnLocationReceivedListener() {
-                        @Override
-                        public void onLocationReceived(Location location) {
-                            newMood.setLocation(location);
-                            Log.d("CreatePostActivity", "Mood location set to: " + location.getLatitude() + ", " + location.getLongitude());
-                            Database.getInstance().addMood(newMood);
-                        }
-
-                        @Override
-                        public void onLocationFailure(String errorMessage) {
-                            Log.e("CreatePostActivity", "Failed to get location: " + errorMessage);
-                            Database.getInstance().addMood(newMood); // Still save without location
-                        }
-                    });
 //
-
+                    newMood.setLocation(tempLocation);
                     // Adds mood to database
-//                    Database.getInstance().addMood(newMood);
+                    Database.getInstance().addMood(newMood);
                     // Adds images to database
                     if (chosenImage != null) {
                         Database.getInstance().addImage(chosenImage, "images/" + newMood.getId(), getContentResolver());

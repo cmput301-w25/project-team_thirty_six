@@ -29,12 +29,6 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        new Handler().postDelayed(() -> {
-            if (!isFinishing() && !isDestroyed()) {  // ✅ Prevents crash
-                LocationPermissionFragment locationFragment = new LocationPermissionFragment();
-                locationFragment.show(getSupportFragmentManager(), "locationFragment");
-            }
-        }, 1000);
     }
 
     public void loginPage(View v) {
