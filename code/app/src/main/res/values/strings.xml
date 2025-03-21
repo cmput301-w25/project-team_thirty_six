@@ -16,10 +16,15 @@
     <string name="next">Next</string>
     <string name="previous">Previous</string>
     <string name="username">%s</string>
-    <string name ="Profile">Profile</string>
-    <string name ="followers_format">0 followers</string>
-    <string name ="following_format">0 following</string>
-    <string name ="follow_requests">Follow requests:</string>
+    <string name="Profile">Profile</string>
+    <string name="followers_format">0 followers</string>
+    <string name="following_format">0 following</string>
+    <string name="follow_requests">Follow requests:</string>
+    <string name="follow_button_follow">Follow</string>
+    <string name="follow_button_requested">Requested</string>
+    <string name="follow_button_unfollow">unfollow</string>
+
+
 
     <string name="lorem_ipsum">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris
@@ -81,6 +86,7 @@
     <string name="edit_button">Edit</string>
     <string name="mood_details_activity_header">Mood Details</string>
     <string name="back_button">back button</string>
+    <string name="recycler_view_for_searched_users">recycler view for searched users</string>
     <string name="visibility">Visibility</string>
 
     <!-- Add this string-array in your strings.xml -->

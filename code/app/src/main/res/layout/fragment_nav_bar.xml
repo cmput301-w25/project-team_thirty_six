@@ -30,18 +30,19 @@
             android:clickable="true"
             android:contentDescription="Home"
             android:focusable="true"
-            android:src="@drawable/homesymbol" />
+            android:src="@drawable/homesymbol"
+            app:tint="@color/white" />
 
         <ImageView
-            android:id="@+id/btn_feed"
+            android:id="@+id/btn_search"
             android:layout_width="0dp"
-            android:layout_height="24dp"
+            android:layout_height="18dp"
             android:layout_weight="1"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:clickable="true"
             android:contentDescription="Feed"
             android:focusable="true"
-            android:src="@drawable/feedsymbol" />
+            android:src="@drawable/search_symbol" />
 
         <ImageView
             android:id="@+id/btn_create"
