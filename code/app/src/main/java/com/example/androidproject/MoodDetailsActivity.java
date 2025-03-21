@@ -58,7 +58,7 @@ public class MoodDetailsActivity extends AppCompatActivity {
     private TextView tvTimestamp;
     private TextView btnEdit;
     // Button for adding comments
-    private FloatingActionButton confirm_comment;
+    private ImageButton confirm_comment;
     private TextInputEditText comment_text;
 
     // Firebase instance

@@ -237,20 +237,18 @@
                             android:textSize="16sp" />
                     </com.google.android.material.textfield.TextInputLayout>
 
-                    <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    <ImageButton
                         android:id="@+id/confirm_comment_button"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
-                        android:layout_gravity="bottom|end"
+                        android:layout_gravity="center_vertical"
                         android:layout_marginEnd="8dp"
-                        android:layout_marginBottom="4dp"
-                        android:clickable="true"
-                        android:contentDescription="@string/send_comment"
-                        app:backgroundTint="#00aeff"
-                        app:fabSize="mini"
-                        app:maxImageSize="20dp"
-                        app:srcCompat="@drawable/plussymbol"
-                        app:tint="#FFFFFF" />
+                        android:layout_marginBottom="2dp"
+                        android:background="@drawable/button_confirm_background"
+                        android:padding="10dp"
+                        android:src="@drawable/plussymbol"
+                        android:scaleType="centerInside"
+                        android:contentDescription="@string/send_comment" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
@@ -265,10 +263,10 @@
                 app:cardBackgroundColor="#26324151"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/comment_input_card"
-                app:layout_constraintBottom_toBottomOf="parent">
+                app:layout_constraintTop_toBottomOf="@+id/comment_input_card">
 
                 <LinearLayout
                     android:id="@+id/linearCommentView"
