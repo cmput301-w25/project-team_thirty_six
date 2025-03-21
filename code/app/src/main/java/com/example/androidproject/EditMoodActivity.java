@@ -3,6 +3,7 @@ package com.example.androidproject;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputFilter;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -365,6 +366,7 @@ public class EditMoodActivity extends AppCompatActivity {
             StorageReference imageRef = storage.getReference().child("images/" + imageToDeleteId);
 
             imageRef.delete().addOnSuccessListener(aVoid -> {
+                Log.e("TEST","7");
                 moodRepository.updateMood(
                         id,
                         chosenMood,
@@ -391,7 +393,9 @@ public class EditMoodActivity extends AppCompatActivity {
                             }
                         }
                 );
+                finish();
             }).addOnFailureListener(e -> {
+                Log.e("TEST","5");
                 moodRepository.updateMood(
                         id,
                         chosenMood,
@@ -419,6 +423,7 @@ public class EditMoodActivity extends AppCompatActivity {
                         }
                 );
             });
+            finish();
         } else {
             // update the mood directly when there is no image to delete
             moodRepository.updateMood(
@@ -436,16 +441,17 @@ public class EditMoodActivity extends AppCompatActivity {
                         public void onSuccess() {
                             Toast.makeText(EditMoodActivity.this,
                                     "Mood updated successfully!", Toast.LENGTH_SHORT).show();
-                            finish();
                         }
 
                         @Override
                         public void onFailure(Exception e) {
+                            Log.e("TEST","3");
                             Toast.makeText(EditMoodActivity.this,
                                     "Failed to update mood. Please try again.", Toast.LENGTH_SHORT).show();
                         }
                     }
             );
+            finish();
         }
     }
 
@@ -458,7 +464,6 @@ public class EditMoodActivity extends AppCompatActivity {
             public void onSuccess() {
                 Toast.makeText(EditMoodActivity.this,
                         "Mood deleted successfully", Toast.LENGTH_SHORT).show();
-                finish();
             }
 
             @Override
@@ -467,6 +472,7 @@ public class EditMoodActivity extends AppCompatActivity {
                         "Failed to delete mood: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+        finish();
     }
 
     /**
