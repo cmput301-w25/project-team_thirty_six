@@ -92,7 +92,7 @@ public class EditMoodActivity extends AppCompatActivity {
 
         // Text inputs
         reasonText = findViewById(R.id.editReason);
-        reasonText.setFilters(new InputFilter[] { new InputFilter.LengthFilter(20)});
+        reasonText.setFilters(new InputFilter[] { new InputFilter.LengthFilter(200)});
 
         // Social situation elements
         socialSituationRadioGroup = findViewById(R.id.socialSituationRadioGroup);
@@ -370,7 +370,7 @@ public class EditMoodActivity extends AppCompatActivity {
         }
         // Get reason text and validate length
         String reason = reasonText.getText() != null ? reasonText.getText().toString().trim() : "";
-        if (reason.length() > 20) {
+        if (reason.length() > 200) {
             Toast.makeText(this, "Reason must be 20 characters or less.", Toast.LENGTH_SHORT).show();
             return;
         }
