@@ -14,6 +14,7 @@ import java.util.List;
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder> {
     private List<User> users;
     private Context context;
+    private String currentUser;
 
     /**
      * Constructor for UserAdapter
@@ -21,9 +22,10 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
      * @param users List of user objects to display
      * @param context The activity context
      */
-    public UserAdapter(List<User> users, Context context) {
+    public UserAdapter(List<User> users, Context context, String currentUser) {
         this.users = users;
         this.context = context;
+        this.currentUser = currentUser;
     }
 
     /**
@@ -38,6 +40,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     @Override
     public UserViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.search_user_item, parent, false);
+
         return new UserViewHolder(view);
     }
 
@@ -53,9 +56,9 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         holder.username.setText(user.getUsername());
 
         holder.itemView.setOnClickListener(v -> {
-            Intent intent = new Intent(context, ProfileActivity.class);
-            intent.putExtra("username", user.getUsername());
-            intent.putExtra("userId", user.getUsername());
+            Intent intent = new Intent(context, OtherProfileActivity.class);
+            intent.putExtra("otherUser", user.getUsername());
+            intent.putExtra("currentUser", currentUser);
             context.startActivity(intent);
         });
     }

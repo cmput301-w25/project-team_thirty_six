@@ -10,9 +10,14 @@ import androidx.annotation.NonNull;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldPath;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -115,7 +120,7 @@ public class UserManager {
             Log.w("UserManager", "Could not connect to database");
         });
 
-        fetchUserData(username);
+        fetchCurrentUserData(username);
 
     }
 
@@ -123,8 +128,7 @@ public class UserManager {
      * Fetches the user data from the database and populates the currentUser object.
      * @param username The username of the user to fetch.
      */
-    //not needed any more
-    public void fetchUserData(String username) {
+    public void fetchCurrentUserData(String username) {
         Task<QuerySnapshot> query = database.getUsers().whereEqualTo("username", username).get();
         query.addOnSuccessListener(queryDocumentSnapshots -> {
             if (!queryDocumentSnapshots.isEmpty()) {
@@ -138,5 +142,46 @@ public class UserManager {
             Log.w("UserManager", "Error fetching user data: " + e.getMessage());
         });
     }
+
+    /**
+     * Fetches the other user data from the database and returns a populated user object.
+     * @param username The username of the otherUser to fetch.
+     */
+    // The following function was taken from chatGPT by Rhiyon Naderi on Thursday March 20
+    // Query: how to have this return currentUser instead of setting the classes' variable?
+    // Context: This was asked in reference the fetchCurrentUserData function that was written above
+    public Task<User> fetchOtherUserData(String username) {
+        return database.getUsers().whereEqualTo("username", username).get()
+                .continueWith(task -> {
+                    if (task.isSuccessful()){
+                        QuerySnapshot queryDocumentSnapshots = task.getResult();
+                        // if the query was not empty
+                        if (!queryDocumentSnapshots.isEmpty()){
+                            return queryDocumentSnapshots.toObjects(User.class).get(0);
+                        }
+                    }
+                    // if the query was empty
+                    return null;
+                });
+
+    }
+
+
+    public void sendFollowRequest(String senderUsername, String receiverUsername){
+        // Gets the recievers DocumentReference
+        DocumentReference docRef = database.getUsers().document(receiverUsername);
+        docRef.update("followRequests", FieldValue.arrayUnion(senderUsername))
+                .addOnSuccessListener(documentReferenceUpdate -> {
+                    Log.d("UserManager", "Follow Request Sent");
+                }).addOnFailureListener(failure -> {
+                    Log.e("UserManager", "Follow Request failed to send");
+                });
+    }
+
+    //public User get(String senderUsername, String receiverUsername){
+    //    DocumentReference docRef = database.getUsers().document(receiverUsername);
+        //ArrayList<String> reciever_follow_requests = docRef.
+
+    //}
 
 }

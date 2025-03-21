@@ -59,6 +59,9 @@ public class Database {
         newDoc.set(mood);
     }
 
+    public void addFollowRequest(String requesterUsername){
+    }
+
     /**
      *  Adds an image to the database
      * @param uri
@@ -83,6 +86,7 @@ public class Database {
         // Adds stream to storage
         newStorage.putStream(newSteam);
     }
+
     public CollectionReference getUsers() {
         return users;
     }

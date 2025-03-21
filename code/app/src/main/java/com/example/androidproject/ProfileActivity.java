@@ -25,6 +25,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     private UserManager userManager;
     private String currentUsername;
+    private String otherUsername;
 
     private User currentUser;
 
@@ -43,11 +44,15 @@ public class ProfileActivity extends AppCompatActivity {
         // Retrieve the currentUser from the Intent
         currentUsername = (String) getIntent().getStringExtra("currentUser");
 
+        // If it is looking at your own profile
         if (currentUsername != null) {
             Log.d("ProfileActivity", "Current user: " + currentUsername);
+            populateCurrentUserProfile(currentUsername);
+
         } else {
-            Log.e("ProfileActivity", "No user data found");
+            Log.e("ProfileActivity", "No currentUser data found");
         }
+
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
@@ -55,18 +60,20 @@ public class ProfileActivity extends AppCompatActivity {
                     .commit();
         }
 
-        populateProfile(currentUsername);
         userManager = new UserManager(this);
+
 
     }
 
     /**
-     * Adds the profile info
+     * Populates the user in user profile info
      * @param currentUsername
      */
-    private void populateProfile(String currentUsername) {
+    private void populateCurrentUserProfile(String currentUsername) {
         TextView userNameTextView = findViewById(R.id.displayUsername);
         userNameTextView.setText(currentUsername);
     }
+
+
 
 }

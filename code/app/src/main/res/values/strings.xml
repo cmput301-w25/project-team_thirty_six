@@ -16,10 +16,15 @@
     <string name="next">Next</string>
     <string name="previous">Previous</string>
     <string name="username">%s</string>
-    <string name ="Profile">Profile</string>
-    <string name ="followers_format">0 followers</string>
-    <string name ="following_format">0 following</string>
-    <string name ="follow_requests">Follow requests:</string>
+    <string name="Profile">Profile</string>
+    <string name="followers_format">0 followers</string>
+    <string name="following_format">0 following</string>
+    <string name="follow_requests">Follow requests:</string>
+    <string name="follow_button_follow">Follow</string>
+    <string name="follow_button_requested">Requested</string>
+    <string name="follow_button_unfollow">unfollow</string>
+
+
 
     <string name="lorem_ipsum">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris

@@ -23,16 +23,20 @@ public class SearchActivity extends AppCompatActivity {
     private UserAdapter userAdapter;
     private List<User> userList;
     private FirebaseFirestore db;
+    private String currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
+        // Retrieve the currentUser from the Intent
+        currentUser = (String) getIntent().getStringExtra("currentUser");
+
         // Add navbar
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.nav_bar_container, new NavBarFragment())
+                    .add(R.id.nav_bar_container, NavBarFragment.newInstance(currentUser))
                     .commit();
         }
 
@@ -45,7 +49,7 @@ public class SearchActivity extends AppCompatActivity {
 
         // Initialize list and adapter with empty list
         userList = new ArrayList<>();
-        userAdapter = new UserAdapter(userList, this);
+        userAdapter = new UserAdapter(userList, this, currentUser);
 
         // Setup RecyclerView
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
