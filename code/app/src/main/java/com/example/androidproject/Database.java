@@ -61,6 +61,9 @@ public class Database {
         newDoc.set(mood);
     }
 
+    public void addFollowRequest(String requesterUsername){
+    }
+
     /**
      *  Adds an image to the database
      * @param uri
