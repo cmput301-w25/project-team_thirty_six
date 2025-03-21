@@ -17,6 +17,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
@@ -72,6 +73,7 @@ public class MoodDetailsActivity extends AppCompatActivity {
     private LinearLayout commentListView;
     // Creates a copy of the current class to toast inside a on click listener
     private MoodDetailsActivity current = this;
+
 
     /**
      * Called when the activity is starting. Initializes UI components and loads mood details.

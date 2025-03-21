@@ -81,6 +81,7 @@
     <string name="edit_button">Edit</string>
     <string name="mood_details_activity_header">Mood Details</string>
     <string name="back_button">back button</string>
+    <string name="visibility">Visibility</string>
 
     <!-- Add this string-array in your strings.xml -->
     <string-array name="moods_array">
