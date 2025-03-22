@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultCallback;
@@ -56,6 +57,7 @@ public class CreatePostActivity extends AppCompatActivity {
     RadioButton privateButton;
     RadioButton publicButton;
     LinearLayout imageButton;
+    LinearLayout locationButton;
     MoodSelectionAdapter dropdownAdapter;
     ListView dropdownList;
     CardView imagePreviewCard;
@@ -67,7 +69,9 @@ public class CreatePostActivity extends AppCompatActivity {
     Boolean imageStatus = Boolean.FALSE;
     CreatePostActivity current;
     String user;
-    MoodState newMood;
+    Location moodLocation;
+    Boolean locationState = Boolean.FALSE;
+    TextView locationStateText;
 
 
     @Override
@@ -86,17 +90,6 @@ public class CreatePostActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         // Sets content view
         setContentView(R.layout.activity_add_mood);
-
-        LocationPermissionFragment locationFragment = new LocationPermissionFragment();
-//        locationFragment.startTrackingLocation();
-
-        locationFragment.show(getSupportFragmentManager(), "LocationPermissionFragment"); // ✅ Shows fragment
-
-// ✅ Once permission is handled inside the fragment, trigger tracking
-        locationFragment.setOnPermissionGrantedListener(() -> {
-            Log.d("CreatePostActivity", "Starting location tracking...");
-            locationFragment.startTrackingLocation();
-        });
 
 
         // Gets the nav bar
@@ -120,6 +113,8 @@ public class CreatePostActivity extends AppCompatActivity {
         imagePreview = findViewById(R.id.moodImageView);
         privateButton = findViewById(R.id.addPrivate);
         publicButton = findViewById(R.id.addPublic);
+        locationButton = findViewById(R.id.add_location_button);
+        locationStateText  = findViewById(R.id.location_state_text);
         //Sets drop down status to false to start
         dropdownStatus = Boolean.FALSE;
         //Taken from https://developer.android.com/training/basics/intents/result
@@ -270,6 +265,45 @@ public class CreatePostActivity extends AppCompatActivity {
             }
         });
 
+        locationButton.setOnClickListener(new View.OnClickListener() {
+            /**
+             * Allows a user to attach a location to the mood
+             * @param v The view that was clicked.
+             */
+            @Override
+            public void onClick(View v) {
+
+                if (locationState == Boolean.FALSE) {
+                    LocationPermissionFragment locationFragment = new LocationPermissionFragment();
+                    locationFragment.show(getSupportFragmentManager(), "LocationPermissionFragment"); // Shows fragment
+
+                    // Once permission is granted inside the fragment, trigger tracking
+                    locationFragment.setOnPermissionGrantedListener(() -> {
+                        Log.d("CreatePostActivity", "Starting location tracking...");
+                        locationFragment.startTrackingLocation();
+
+                    locationFragment.getLastKnownLocation(new LocationPermissionFragment.OnLocationReceivedListener() {
+                        @Override
+                        public void onLocationReceived(Location location) {
+                            moodLocation = location;
+                            locationStateText.setText("Remove Location");
+                            locationState = Boolean.TRUE;
+                            Log.d("CreatePostActivity", "Mood location set to: " + location.getLatitude() + ", " + location.getLongitude());
+                        }
+
+                        @Override
+                        public void onLocationFailure(String errorMessage) {
+                            Log.e("CreatePostActivity", "Failed to get location: " + errorMessage);
+                        }
+                    });});
+                } else {
+                    moodLocation = null;
+                    locationStateText.setText("Add Location");
+                    locationState = Boolean.FALSE;
+                }
+            }
+        });
+
         // Sets the confirm on click listener
         confirmButton.setOnClickListener(new View.OnClickListener() {
             /**
@@ -293,6 +327,10 @@ public class CreatePostActivity extends AppCompatActivity {
                     if (reasonText.getText().length() != 0) {
                         newMood.setReason(reasonText.getText().toString());
                     }
+                    // Sets the location
+                    if (moodLocation != null) {
+                        newMood.setLocation(moodLocation);
+                    }
                     // Sets the post to public if public is chosen
                     if (publicButton.isChecked()) {
                         newMood.setVisibility(Boolean.TRUE);
@@ -302,25 +340,8 @@ public class CreatePostActivity extends AppCompatActivity {
                     }
                     // Sets the username
                     newMood.setUser(user);
-
-                    locationFragment.getLastKnownLocation(new LocationPermissionFragment.OnLocationReceivedListener() {
-                        @Override
-                        public void onLocationReceived(Location location) {
-                            newMood.setLocation(location);
-                            Log.d("CreatePostActivity", "Mood location set to: " + location.getLatitude() + ", " + location.getLongitude());
-                            Database.getInstance().addMood(newMood);
-                        }
-
-                        @Override
-                        public void onLocationFailure(String errorMessage) {
-                            Log.e("CreatePostActivity", "Failed to get location: " + errorMessage);
-                            Database.getInstance().addMood(newMood); // Still save without location
-                        }
-                    });
-//
-
                     // Adds mood to database
-//                    Database.getInstance().addMood(newMood);
+                    Database.getInstance().addMood(newMood);
                     // Adds images to database
                     if (chosenImage != null) {
                         Database.getInstance().addImage(chosenImage, "images/" + newMood.getId(), getContentResolver());
