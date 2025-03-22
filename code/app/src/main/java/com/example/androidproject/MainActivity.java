@@ -28,13 +28,6 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
-        new Handler().postDelayed(() -> {
-            if (!isFinishing() && !isDestroyed()) {  // ✅ Prevents crash
-                LocationPermissionFragment locationFragment = new LocationPermissionFragment();
-                locationFragment.show(getSupportFragmentManager(), "locationFragment");
-            }
-        }, 1000);
     }
 
     public void loginPage(View v) {

@@ -104,8 +104,8 @@ public class LocationPermissionFragment extends DialogFragment {
 
         LocationRequest locationRequest = LocationRequest.create();
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        locationRequest.setInterval(3000);
-        locationRequest.setFastestInterval(3000);
+        locationRequest.setInterval(5000);
+        locationRequest.setFastestInterval(0);
 
         locationCallback = new LocationCallback() {
             @Override
