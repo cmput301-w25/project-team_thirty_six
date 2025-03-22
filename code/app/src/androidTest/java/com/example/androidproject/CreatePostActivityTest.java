@@ -54,14 +54,14 @@ public class CreatePostActivityTest {
      */
     public void successfulAddTest() {
         // Gets the mood dropdown and selects anger
-        onView(withId(R.id.add_select_mood_dropdown)).perform(ViewActions.click());
+        onView(withId(R.id.AddMoodSelectMood)).perform(ViewActions.click());
         onView(withText("Anger")).perform(ViewActions.click());
 
         //Sets the text and group for mood view
-        onView(withId(R.id.add_reason)).perform(ViewActions.typeText("TEST TEXT"));
+        onView(withId(R.id.addReason)).perform(ViewActions.typeText("TEST TEXT"));
         closeSoftKeyboard();
-        onView(withId(R.id.add_mood_group_button)).perform(ViewActions.click());
-        onView(withId(R.id.add_confirm_button)).perform(ViewActions.click());
+        onView(withId(R.id.AddradioGroup)).perform(ViewActions.click());
+        onView(withId(R.id.add_done_button)).perform(ViewActions.click());
         // Checks the database
         Task<QuerySnapshot> query = FirebaseFirestore.getInstance().collection("Moods").get();
         query.addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -94,11 +94,11 @@ public class CreatePostActivityTest {
     public void noMoodAddTest() {
 
         //Sets the text and group for mood view
-        onView(withId(R.id.add_reason)).perform(ViewActions.typeText("TEST TEXT"));
+        onView(withId(R.id.addReason)).perform(ViewActions.typeText("TEST TEXT"));
         closeSoftKeyboard();
-        onView(withId(R.id.add_mood_group_button)).perform(ViewActions.click());
+        onView(withId(R.id.AddradioGroup)).perform(ViewActions.click());
         // Clicks the button
-        onView(withId(R.id.add_confirm_button)).perform(ViewActions.click());
+        onView(withId(R.id.add_done_button)).perform(ViewActions.click());
         // Checks the database to ensure it was not added
         Task<QuerySnapshot> query = FirebaseFirestore.getInstance().collection("Moods").get();
         query.addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {

@@ -9,17 +9,21 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.cardview.widget.CardView;
 
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -47,13 +51,20 @@ public class CreatePostActivity extends AppCompatActivity {
     Button crowdButton;
     Button groupButton;
     Button confirmButton;
-    ImageButton imageButton;
+    Button pairButton;
+    Button cancelButton;
+    RadioButton privateButton;
+    RadioButton publicButton;
+    LinearLayout imageButton;
     MoodSelectionAdapter dropdownAdapter;
     ListView dropdownList;
+    CardView imagePreviewCard;
+    ImageView imagePreview;
     String chosenMood;
     String chosenSituation;
     Uri chosenImage;
     Boolean dropdownStatus;
+    Boolean imageStatus = Boolean.FALSE;
     CreatePostActivity current;
     String user;
     MoodState newMood;
@@ -61,9 +72,10 @@ public class CreatePostActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Sets current
+        current = this;
         // Gets given data
         Bundle dataGiven = getIntent().getExtras();
-
         // If there is data gets the user
         if (dataGiven != null) {
             user = (String) dataGiven.get("currentUser");
@@ -94,14 +106,20 @@ public class CreatePostActivity extends AppCompatActivity {
                     .commit();
         }
         // Finds all of the views
-        moodDropdown = findViewById(R.id.add_select_mood_dropdown);
-        reasonText = findViewById(R.id.add_reason);
-        aloneButton = findViewById(R.id.add_mood_alone_button);
-        crowdButton = findViewById(R.id.add_mood_crowd_button);
-        groupButton = findViewById(R.id.add_mood_group_button);
+        moodDropdown = findViewById(R.id.AddMoodSelectMood);
+        reasonText = findViewById(R.id.addReason);
+        aloneButton = findViewById(R.id.AddradioAlone);
+        crowdButton = findViewById(R.id.AddradioCrowd);
+        groupButton = findViewById(R.id.AddradioGroup);
+        pairButton = findViewById(R.id.AddradioPair);
         dropdownList = findViewById(R.id.add_mood_select_mood_list);
-        confirmButton = findViewById(R.id.add_confirm_button);
-        imageButton = findViewById(R.id.add_mood_image_button);
+        confirmButton = findViewById(R.id.add_done_button);
+        cancelButton = findViewById(R.id.add_cancel_button);
+        imageButton = findViewById(R.id.AddImagebutton);
+        imagePreviewCard = findViewById(R.id.imagePreviewCardView);
+        imagePreview = findViewById(R.id.moodImageView);
+        privateButton = findViewById(R.id.addPrivate);
+        publicButton = findViewById(R.id.addPublic);
         //Sets drop down status to false to start
         dropdownStatus = Boolean.FALSE;
         //Taken from https://developer.android.com/training/basics/intents/result
@@ -119,6 +137,13 @@ public class CreatePostActivity extends AppCompatActivity {
                     public void onActivityResult(Uri uri) {
                         // End of citation
                         chosenImage = uri;
+                        imagePreviewCard.setVisibility(View.VISIBLE);
+                        imagePreview.setImageURI(chosenImage);
+                        if (uri != null) {
+                            findViewById(R.id.add_image_text).setVisibility(View.INVISIBLE);
+                            findViewById(R.id.remove_image_text).setVisibility(View.VISIBLE);
+                            imageStatus = Boolean.TRUE;
+                        }
                     }
                 });
         //Adds all the moods for the dropdowns
@@ -146,18 +171,10 @@ public class CreatePostActivity extends AppCompatActivity {
                 // If the drop down is open close it
                 if (dropdownStatus) {
                     dropdownList.setVisibility(View.GONE);
-                    aloneButton.setVisibility(View.VISIBLE);
-                    crowdButton.setVisibility(View.VISIBLE);
-                    groupButton.setVisibility(View.VISIBLE);
-                    confirmButton.setVisibility(View.VISIBLE);
                 } else {
                     // If the drop down is closed make it visible
                     dropdownList.setVisibility(View.VISIBLE);
                     dropdownList.bringToFront();
-                    aloneButton.setVisibility(View.INVISIBLE);
-                    crowdButton.setVisibility(View.INVISIBLE);
-                    groupButton.setVisibility(View.INVISIBLE);
-                    confirmButton.setVisibility(View.INVISIBLE);
                 }
                 dropdownStatus = !dropdownStatus;
             }
@@ -177,10 +194,6 @@ public class CreatePostActivity extends AppCompatActivity {
                 chosenMood = moodList.get(position);
                 dropdownStatus = Boolean.FALSE;
                 dropdownList.setVisibility(View.GONE);
-                aloneButton.setVisibility(View.VISIBLE);
-                crowdButton.setVisibility(View.VISIBLE);
-                groupButton.setVisibility(View.VISIBLE);
-                confirmButton.setVisibility(View.VISIBLE);
                 moodDropdown.setText(chosenMood);
             }
         });
@@ -193,6 +206,17 @@ public class CreatePostActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 chosenSituation = "Alone";
+            }
+        });
+        // Sets the pair option button
+        pairButton.setOnClickListener(new View.OnClickListener() {
+            /**
+             * Creates an option to choose the alone option
+             * @param v The view of alone button.
+             */
+            @Override
+            public void onClick(View v) {
+                chosenSituation = "Pair";
             }
         });
         // Sets the pair option button
@@ -225,13 +249,26 @@ public class CreatePostActivity extends AppCompatActivity {
              */
             @Override
             public void onClick(View v) {
-                // Creates the flags that we need
-                launcher.launch("image/*");
-                Log.e("TEST", "adasdasd");
-                Log.e("TEST", "JOASDADadasdasd");
+                // Runs if an image hasn't already been selected
+                if (!imageStatus) {
+                    // Creates the flags that we need
+                    launcher.launch("image/*");
+                    Log.e("TEST", "adasdasd");
+                    Log.e("TEST", "JOASDADadasdasd");
+                } else {
+                    // Sets the status of if there is an image to false
+                    imageStatus = Boolean.FALSE;
+                    // Stops showing the image preview
+                    imagePreviewCard.setVisibility(View.INVISIBLE);
+                    imagePreview.setImageDrawable(null);
+                    // Removes the image
+                    chosenImage = null;
+                    // Displays text saying to add image
+                    findViewById(R.id.add_image_text).setVisibility(View.VISIBLE);
+                    findViewById(R.id.remove_image_text).setVisibility(View.INVISIBLE);
+                }
             }
         });
-
 
         // Sets the confirm on click listener
         confirmButton.setOnClickListener(new View.OnClickListener() {
@@ -243,10 +280,11 @@ public class CreatePostActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // Gives an error message if trying to enter without setting mood
                 if (chosenMood == null) {
-                    confirmButton.setError("");
+                    CharSequence sequence = "Cannot Continue Without Mood.";
+                    Toast.makeText(current,sequence, Toast.LENGTH_SHORT).show();
                 } else {
                     // Creates the new mood state
-                    newMood = new MoodState(chosenMood);
+                    MoodState newMood = new MoodState(chosenMood);
                     // Adds chosen situation if it was specified
                     if (chosenSituation != null) {
                         newMood.setSituation(chosenSituation);
@@ -254,6 +292,13 @@ public class CreatePostActivity extends AppCompatActivity {
                     // Adds reason if it was specified
                     if (reasonText.getText().length() != 0) {
                         newMood.setReason(reasonText.getText().toString());
+                    }
+                    // Sets the post to public if public is chosen
+                    if (publicButton.isChecked()) {
+                        newMood.setVisibility(Boolean.TRUE);
+                    } else if (privateButton.isChecked()){
+                        // Sets the post to private
+                        newMood.setVisibility(Boolean.FALSE);
                     }
                     // Sets the username
                     newMood.setUser(user);
@@ -284,6 +329,13 @@ public class CreatePostActivity extends AppCompatActivity {
                     }
                     finish();
                 }
+            }
+        });
+        // Sets the cancel button functionality
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
             }
         });
 

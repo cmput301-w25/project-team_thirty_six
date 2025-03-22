@@ -16,7 +16,7 @@ import android.widget.ImageView;
  * Nav bar fragment functionality
  */
 public class NavBarFragment extends Fragment {
-    private ImageView btnHome, btnFeed, btnMap, btnProfile, btnCreate;
+    private ImageView btnHome, btnSearch, btnMap, btnProfile, btnCreate;
     private String currentUser;
 
     /**
@@ -67,14 +67,14 @@ public class NavBarFragment extends Fragment {
 
         // Finds all of the button views
         btnHome = view.findViewById(R.id.btn_home);
-        btnFeed = view.findViewById(R.id.btn_feed);
+        btnSearch = view.findViewById(R.id.btn_search);
         btnMap = view.findViewById(R.id.btn_map);
         btnProfile = view.findViewById(R.id.btn_profile);
         btnCreate = view.findViewById(R.id.btn_create);
 
         //set on click listeners for each nav bar button
         btnHome.setOnClickListener(v -> openActivity(HomePageActivity.class));
-        //btnFeed.setOnClickListener(v -> openActivity(FeedActivity.class));
+        btnSearch.setOnClickListener(v -> openActivity(SearchActivity.class));
         //btnMap.setOnClickListener(v -> openActivity(MapActivity.class));
         btnProfile.setOnClickListener(v -> openActivity(ProfileActivity.class));
         btnCreate.setOnClickListener(v -> openActivity(CreatePostActivity.class));

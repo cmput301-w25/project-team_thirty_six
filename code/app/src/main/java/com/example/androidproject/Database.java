@@ -19,6 +19,7 @@ public class Database {
     private static Database dbInstance; // Used to make sure there is only a singular instance of the database throughout all classes
     private CollectionReference moods;
     private CollectionReference users;
+    private CollectionReference comments;
 
 
 
@@ -30,6 +31,7 @@ public class Database {
         database = FirebaseFirestore.getInstance();
         moods = database.collection("Moods");
         users = database.collection("Users");
+        comments = database.collection("Comments");
     }
 
     /**
@@ -59,6 +61,9 @@ public class Database {
         newDoc.set(mood);
     }
 
+    public void addFollowRequest(String requesterUsername){
+    }
+
     /**
      *  Adds an image to the database
      * @param uri
@@ -82,6 +87,23 @@ public class Database {
         }
         // Adds stream to storage
         newStorage.putStream(newSteam);
+    }
+
+    /**
+     *  Adds a comment to the database
+     * @param username
+     *      the username of the commenter
+     * @param moodID
+     *      the mood id of the mood it is attached to
+     * @param text
+     *      the text of the comment
+     */
+    public void addComment(String username, String moodID, String text){
+        // Creates the comment
+        Comment comment = new Comment(username,moodID,text);
+        // Adds it to the database
+        DocumentReference newDoc = comments.document();
+        newDoc.set(comment);
     }
     public CollectionReference getUsers() {
         return users;

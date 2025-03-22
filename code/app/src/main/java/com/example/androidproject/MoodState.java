@@ -32,6 +32,7 @@ public class MoodState {
     protected String reason;
     protected Uri image;
     protected Location location;
+    protected Boolean visibility;
 
     /**
      * Adds all the moods to the mood list for simplicity
@@ -225,5 +226,13 @@ public class MoodState {
             map.put("location", null);
         }
         return map;
+    }
+
+    public Boolean getVisibility() {
+        return visibility;
+    }
+
+    public void setVisibility(Boolean visibility) {
+        this.visibility = visibility;
     }
 }

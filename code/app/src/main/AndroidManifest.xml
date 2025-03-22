@@ -27,6 +27,10 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
         <activity
+            android:name=".OtherProfileActivity"
+            android:exported="false"
+            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar" />
+        <activity
             android:name=".HomePageActivity"
             android:exported="false" />
         <activity
@@ -40,6 +44,9 @@
             android:name=".SignUpActivity"
             android:exported="false" />
         <activity
+            android:name=".SearchActivity"
+            android:exported="true" />
+        <activity
             android:name=".LoginActivity"
             android:exported="false" />
         <activity
@@ -48,7 +55,8 @@
         <activity
             android:name=".EditMoodActivity"
             android:parentActivityName=".MoodDetailsActivity" />
-        <activity android:name=".MoodDetailsActivity"
+        <activity
+            android:name=".MoodDetailsActivity"
             android:exported="true" />
         <activity
             android:name=".SplashScreenActivity"

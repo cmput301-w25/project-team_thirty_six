@@ -12,6 +12,7 @@ public class User implements Serializable {
     String password;
     // No setter for these 3 as their logic is handled in the add and delete functions
     ArrayList<User> following;
+    ArrayList<String> followRequests;
     static ArrayList<MoodState> moodHistory;
     MoodState mostRecentMood;
 
@@ -25,6 +26,7 @@ public class User implements Serializable {
         // Initialize fields if needed
         this.following = new ArrayList<>();
         this.moodHistory = new ArrayList<>();
+        this.followRequests = new ArrayList<String>();
     }
 
     /**
@@ -38,6 +40,8 @@ public class User implements Serializable {
         this.password = password;
         this.following = new ArrayList<>();
         this.moodHistory = new ArrayList<>();
+        this.followRequests = new ArrayList<String>();
+
     }
 
 
@@ -177,6 +181,8 @@ public class User implements Serializable {
     public String getPassword() {
         return password;
     }
+
+    public ArrayList<String> getFollowRequests() {return followRequests;}
 
     public void setUsername(String username) {
         this.username = username;
