@@ -1,5 +1,8 @@
 package com.example.androidproject;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -8,6 +11,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import java.util.ArrayList;
@@ -37,11 +42,11 @@ public class LocationMapActivity extends AppCompatActivity {
         }
         Log.d(TAG, "User: " + currentUser);
 
-//        if (savedInstanceState == null) {
-//            getSupportFragmentManager().beginTransaction()
-//                    .add(R.id.nav_bar_container, NavBarFragment.newInstance(currentUser))
-//                    .commit();
-//        }
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.nav_bar_container, NavBarFragment.newInstance(currentUser))
+                    .commit();
+        }
         // Initialize MoodHistoryManager and list
         moodHistoryManager = new MoodHistoryManager();
         moodHistory = new ArrayList<>();
@@ -59,6 +64,8 @@ public class LocationMapActivity extends AppCompatActivity {
                 @Override
                 public void onMapReady(GoogleMap googleMap) {
                     mMap = googleMap;
+                    // Enables zoomin because it way annoying me
+                    mMap.getUiSettings().setZoomControlsEnabled(Boolean.TRUE);
                     isMapReady = true;
                     Log.d(TAG, "Google Map is ready.");
 
@@ -129,12 +136,18 @@ public class LocationMapActivity extends AppCompatActivity {
                     // ✅ Log every mood's location data
                     Log.d(TAG, "Mood: " + mood.getMood() + " | Lat: " + lat + " | Lon: " + lon);
 
+                    // Gets the emoji to display
+                    Bitmap decodedEmoji = BitmapFactory.decodeResource(getResources(),mood.getEmoji());
+                    Bitmap tempEmoji = Bitmap.createScaledBitmap(decodedEmoji,200,200,Boolean.FALSE);
+                    BitmapDescriptor emoji = BitmapDescriptorFactory.fromBitmap(tempEmoji);
                     // ✅ Ensure latitude and longitude are valid
                     if (lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180) {
                         LatLng adjustedLocation = getOffsetLocation(lat, lon);
                         mMap.addMarker(new MarkerOptions()
                                 .position(adjustedLocation)
-                                .title(mood.getMood()));
+                                .title(mood.getMood()))
+                                // Makes emojis on the map
+                                .setIcon(emoji);
 
                         Log.d(TAG, "Added marker at: " + adjustedLocation.toString() + " for mood: " + mood.getMood());
 
@@ -155,5 +168,13 @@ public class LocationMapActivity extends AppCompatActivity {
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(firstValidLocation, 10));
             }
         }
+    }
+
+    /**
+     * Closes the view to conserve memory
+     */
+    protected void onPause(){
+        super.onPause();
+        finish();
     }
 }
