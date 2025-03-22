@@ -29,16 +29,23 @@ public class UserManager {
 
     private Database database;
     private static User currentUser;
+    private static UserManager instance;
     private Context context; // The activity that is calling the UserManager
 
     /**
      * Constructor for UserManager, gets the database instance so that it can be used in the login/signup process
      */
     public UserManager(Context context){
-        Log.d("myTag", "Made it to UserManager");
-
         this.database = Database.getInstance();
         this.context = context;
+
+    }
+
+    public static UserManager getInstance(Context context){
+        if (instance == null) {
+            instance = new UserManager(context);
+        }
+        return instance;
     }
 
     /**
@@ -178,10 +185,29 @@ public class UserManager {
                 });
     }
 
-    //public User get(String senderUsername, String receiverUsername){
-    //    DocumentReference docRef = database.getUsers().document(receiverUsername);
-        //ArrayList<String> reciever_follow_requests = docRef.
+    public void acceptFollowRequest(String acceptorUsername, String requesterUsername){
+        DocumentReference acceptorDocRef = database.getUsers().document(acceptorUsername);
+        DocumentReference requesterDocRef = database.getUsers().document(requesterUsername);
 
-    //}
+        // Add the acceptor to the requester's following list in firebase
+        requesterDocRef.update("following", FieldValue.arrayUnion(acceptorUsername))
+
+                // If user added to following list then we get rid of them from the acceptors followRequest list in firebase
+                .addOnSuccessListener(documentReferenceUpdate -> {
+                    Log.d("UserManager", "requestor now has the currentUser in their database following list");
+                    acceptorDocRef.update("followRequests", FieldValue.arrayRemove(requesterUsername))
+                            .addOnSuccessListener(documentReferenceDelete -> {
+                        Log.d("UserManager", "currentUser no longer has a follow request from " + requesterUsername);
+
+                    // Failiure mesaging
+                    }).addOnFailureListener(e -> {
+                        Log.e("UserManager", "Failed to get rid of" + requesterUsername +"from currentUser's follow requests");
+                            });
+                // Failure messaging
+                }).addOnFailureListener(failure -> {
+                    Log.e("UserManager", "Follow Request failed to send");
+                });
+    }
+
 
 }

@@ -11,7 +11,7 @@ public class User implements Serializable {
     String username;
     String password;
     // No setter for these 3 as their logic is handled in the add and delete functions
-    ArrayList<User> following;
+    ArrayList<String> following;
     ArrayList<String> followRequests;
     static ArrayList<MoodState> moodHistory;
     MoodState mostRecentMood;
@@ -24,7 +24,7 @@ public class User implements Serializable {
      */
     public User() {
         // Initialize fields if needed
-        this.following = new ArrayList<>();
+        this.following = new ArrayList<String>();
         this.moodHistory = new ArrayList<>();
         this.followRequests = new ArrayList<String>();
     }
@@ -130,13 +130,13 @@ public class User implements Serializable {
      * @param user
      *      User that you are trying to follow
      */
-    public void addFollowing(User user){
+    public void addFollowing(String username){
         // Throws an error if you are already following the user
-        if (following.contains(user)){
+        if (following.contains(username)){
             throw new IllegalArgumentException();
         }
         // Adds the user to following list
-        following.add(user);
+        following.add(username);
     }
 
     /**
@@ -144,13 +144,13 @@ public class User implements Serializable {
      * @param user
      *      User that you are no longer following
      */
-    public void removeFollowing(User user){
+    public void removeFollowing(String username){
         // Throws an error if you are not following the user
-        if (!following.contains(user)){
+        if (!following.contains(username)){
             throw new IllegalArgumentException();
         }
         // Removes the user to following list
-        following.remove(user);
+        following.remove(username);
     }
 
     /**
@@ -170,7 +170,7 @@ public class User implements Serializable {
         return username;
     }
 
-    public ArrayList<User> getFollowing() {
+    public ArrayList<String> getFollowing() {
         return following;
     }
 
