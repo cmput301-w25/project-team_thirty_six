@@ -10,6 +10,7 @@ import com.google.firebase.storage.StorageReference;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.ArrayList;
 
 /**
  * Creates a database class to allow interacting with the database
@@ -108,5 +109,7 @@ public class Database {
     public CollectionReference getUsers() {
         return users;
     }
+
+
 }
 
