@@ -2,9 +2,18 @@ package com.example.androidproject;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -15,6 +24,8 @@ import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -25,6 +36,8 @@ public class LocationMapActivity extends AppCompatActivity {
     private String currentUser;
     private static final String TAG = "LocationMapActivity";
     private GoogleMap mMap;
+    ImageButton followingFilter;
+    ImageButton moodFilter;
     private boolean isMapReady = false;
 
     @Override
@@ -53,6 +66,13 @@ public class LocationMapActivity extends AppCompatActivity {
 
         // ✅ Load map fragment before fetching moods
         initializeMap();
+
+        // Gets the filtering buttons
+        followingFilter = findViewById(R.id.following_button_map);
+        moodFilter = findViewById(R.id.map_filter);
+
+        // Creates the on click listener for mood filters
+        moodFilter.setOnClickListener(v -> showFilterDialog());
     }
 
     private void initializeMap() {
@@ -168,6 +188,101 @@ public class LocationMapActivity extends AppCompatActivity {
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(firstValidLocation, 10));
             }
         }
+    }
+    /**
+     * Filters the mood history by the most recent week.
+     */
+    public void filterByRecentWeek() {
+        moodHistory = Filter.filterByRecentWeek(moodHistory);
+        updateMapMarkers();
+    }
+
+    /**
+     * Filters the mood history by a specific emotional state.
+     *
+     * @param emotionalState
+     *        The emotional state to filter by.
+     */
+    public void filterByEmotionalState(String emotionalState) {
+        moodHistory = Filter.filterByEmotionalState(moodHistory, emotionalState);
+        updateMapMarkers();
+    }
+
+    /**
+     * Filters the mood history by a keyword in the reason text.
+     *
+     * @param keyword
+     *      The keyword to filter by.
+     */
+    public void filterByKeyword(String keyword) {
+        moodHistory = Filter.filterByKeyword(moodHistory, keyword);
+        updateMapMarkers();
+    }
+
+    /**
+     * Shows the filter dialog with options.
+     */
+    public void showFilterDialog() {
+        // Inflate the custom layout
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_filter, null);
+
+        CheckBox checkRecentWeek = dialogView.findViewById(R.id.check_recent_week);
+        CheckBox checkFilterMood = dialogView.findViewById(R.id.check_filter_mood);
+        CheckBox checkFilterKeyword = dialogView.findViewById(R.id.check_filter_keyword);
+        Spinner spinnerMoods = dialogView.findViewById(R.id.spinner_moods);
+        EditText editKeyword = dialogView.findViewById(R.id.edit_keyword);
+
+        editKeyword.setHintTextColor(Color.LTGRAY);  // Light gray for hint text for contrast
+        editKeyword.setTextColor(Color.WHITE);
+        spinnerMoods.setBackgroundColor(Color.GRAY);
+
+        // Set custom title with white text color
+        TextView titleTextView = new TextView(this);
+        titleTextView.setText("Filter by");
+        titleTextView.setTextColor(Color.WHITE);
+        titleTextView.setTextSize(18);
+        titleTextView.setPadding(350, 50, 16, 16);  //Add padding for better look
+
+        // Get the mood options from the string array
+        String[] moods = getResources().getStringArray(R.array.moods_array);
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, moods);
+        spinnerMoods.setAdapter(adapter);
+
+        // Show/hide spinner and edit text based on checkboxes
+        checkFilterMood.setOnCheckedChangeListener((buttonView, isChecked) ->
+                spinnerMoods.setVisibility(isChecked ? View.VISIBLE : View.GONE)
+        );
+
+        checkFilterKeyword.setOnCheckedChangeListener((buttonView, isChecked) ->
+                editKeyword.setVisibility(isChecked ? View.VISIBLE : View.GONE)
+        );
+
+        // Build the dialog with the custom style
+        new MaterialAlertDialogBuilder(this, R.style.CustomDialogStyle)  // Apply custom style here
+                .setCustomTitle(titleTextView)  // Set the custom title here
+                .setView(dialogView)
+                .setPositiveButton("Apply", (dialog, which) -> {
+                    if (checkRecentWeek.isChecked()) {
+                        filterByRecentWeek();
+                    }
+                    if (checkFilterMood.isChecked()) {
+                        String selectedMood = spinnerMoods.getSelectedItem().toString();
+                        filterByEmotionalState(selectedMood);
+                    }
+                    if (checkFilterKeyword.isChecked()) {
+                        String keyword = editKeyword.getText().toString().trim();
+                        if (!keyword.isEmpty()) {
+                            filterByKeyword(keyword);
+                        }
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .setNeutralButton("Reset", (dialog, which) -> {
+                    fetchMoodHistory(currentUser);
+                })
+                .show();
+
     }
 
     /**

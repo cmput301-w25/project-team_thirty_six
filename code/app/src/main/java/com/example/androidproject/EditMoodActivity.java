@@ -1,6 +1,8 @@
 package com.example.androidproject;
 
 import android.content.Intent;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.text.InputFilter;
 import android.view.View;
@@ -176,7 +178,11 @@ public class EditMoodActivity extends AppCompatActivity {
                     String color = document.getString("color");
                     String chosenSituation = document.getString("situation");
                     String reason = document.getString("reason");
-                    String location = document.getString("location");
+                    Double latitude = document.get("location.latitude", Double.class);
+                    Double longitude = document.get("location.longitude", Double.class);
+                    Location location = new Location(LocationManager.GPS_PROVIDER);
+                    location.setLatitude(latitude);
+                    location.setLongitude(longitude);
                     String imageUrl = document.getString("id");
                     Object dayTimeObj = document.get("dayTime");
                     Boolean visibility = document.getBoolean("visibility");
