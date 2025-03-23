@@ -1,5 +1,6 @@
 package com.example.androidproject;
 
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -15,7 +16,11 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.DrawableRes;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -25,6 +30,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -40,6 +46,7 @@ public class LocationMapActivity extends AppCompatActivity {
     ImageButton moodFilter;
     private boolean isMapReady = false;
     private boolean feedScreen = Boolean.FALSE;
+    private FloatingActionButton distanceFilter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +78,7 @@ public class LocationMapActivity extends AppCompatActivity {
         // Gets the filtering buttons
         followingFilter = findViewById(R.id.following_button_map);
         moodFilter = findViewById(R.id.map_filter);
+        distanceFilter = findViewById(R.id.distance_filter);
 
         // Creates the on click listener for mood filters
         moodFilter.setOnClickListener(v -> showFilterDialog());
@@ -87,12 +95,14 @@ public class LocationMapActivity extends AppCompatActivity {
                     // Fetches the mood history of the user and updates the markers
                     fetchMoodHistory(currentUser);
                     updateMapMarkers();
+                    followingFilter.setImageDrawable(ResourcesCompat.getDrawable(getResources(),R.drawable.feed,null));
                     // Sets feed status to false
                     feedScreen = Boolean.FALSE;
                 } else {
                     // Fetches the mood feed and updates the markers
                     fetchMoodFeed(currentUser);
                     updateMapMarkers();
+                    followingFilter.setImageDrawable(ResourcesCompat.getDrawable(getResources(),R.drawable.personal,null));
                     // Sets feed status to True
                     feedScreen = Boolean.TRUE;
                 }

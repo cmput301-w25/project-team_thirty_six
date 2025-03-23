@@ -33,7 +33,7 @@
         android:layout_marginBottom="22dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:scaleType="centerInside"
-        android:src="@drawable/account_circle"
+        android:src="@drawable/feed"
         android:tint="#FFFFFF"
         app:layout_constraintBottom_toTopOf="@+id/map_fragment"
         app:layout_constraintStart_toStartOf="parent"
@@ -66,8 +66,10 @@
         app:layout_constraintBottom_toBottomOf="@+id/nav_bar_container"
         app:layout_constraintCircleRadius="12dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView_mood_map" />
+        app:layout_constraintTop_toBottomOf="@+id/textView_mood_map"
+        app:layout_constraintVertical_bias="0.0" />
 
     <FrameLayout
         android:id="@+id/nav_bar_container"
@@ -78,5 +80,17 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/distance_filter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:clickable="true"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/following_button_map"
+        app:srcCompat="@drawable/filter_symbol" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
