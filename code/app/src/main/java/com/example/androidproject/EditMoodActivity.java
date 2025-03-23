@@ -5,6 +5,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.text.InputFilter;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -65,9 +66,18 @@ public class EditMoodActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_mood);
 
+        // Retrieve the currentUser from the Intent
+        String userId = (String) getIntent().getSerializableExtra("user");
+
+        if (userId != null) {
+            Log.d("MoodDetailsActivity", "Current user: " + userId);
+        } else {
+            Log.e("MoodDetailsActivity", "No user data found");
+        }
+
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.nav_bar_container, new NavBarFragment())
+                    .add(R.id.nav_bar_container, NavBarFragment.newInstance(userId))
                     .commit();
         }
 

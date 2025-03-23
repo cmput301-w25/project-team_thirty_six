@@ -86,9 +86,18 @@ public class MoodDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mood_details);
 
+        // Retrieve the currentUser from the Intent
+        userId = (String) getIntent().getSerializableExtra("user");
+
+        if (userId != null) {
+            Log.d("MoodDetailsActivity", "Current user: " + userId);
+        } else {
+            Log.e("MoodDetailsActivity", "No user data found");
+        }
+
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.nav_bar_container, new NavBarFragment())
+                    .add(R.id.nav_bar_container, NavBarFragment.newInstance(userId))
                     .commit();
         }
 
@@ -152,6 +161,7 @@ public class MoodDetailsActivity extends AppCompatActivity {
         btnEdit.setOnClickListener(v -> {
             Intent editIntent = new Intent(MoodDetailsActivity.this, EditMoodActivity.class);
             editIntent.putExtra("moodId", moodId);
+            editIntent.putExtra("user",userId);
             startActivity(editIntent);
         });
 

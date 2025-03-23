@@ -11,7 +11,7 @@ public class User implements Serializable {
     String username;
     String password;
     // No setter for these 3 as their logic is handled in the add and delete functions
-    ArrayList<User> following;
+    ArrayList<String> following;
     ArrayList<String> followRequests;
     static ArrayList<MoodState> moodHistory;
     MoodState mostRecentMood;
@@ -130,7 +130,7 @@ public class User implements Serializable {
      * @param user
      *      User that you are trying to follow
      */
-    public void addFollowing(User user){
+    public void addFollowing(String user){
         // Throws an error if you are already following the user
         if (following.contains(user)){
             throw new IllegalArgumentException();
@@ -144,7 +144,7 @@ public class User implements Serializable {
      * @param user
      *      User that you are no longer following
      */
-    public void removeFollowing(User user){
+    public void removeFollowing(String user){
         // Throws an error if you are not following the user
         if (!following.contains(user)){
             throw new IllegalArgumentException();
@@ -170,7 +170,7 @@ public class User implements Serializable {
         return username;
     }
 
-    public ArrayList<User> getFollowing() {
+    public ArrayList<String> getFollowing() {
         return following;
     }
 

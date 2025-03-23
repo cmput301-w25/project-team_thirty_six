@@ -263,6 +263,8 @@ public class LocationMapActivity extends AppCompatActivity {
                 .setCustomTitle(titleTextView)  // Set the custom title here
                 .setView(dialogView)
                 .setPositiveButton("Apply", (dialog, which) -> {
+                    // Fetches mood history to reset the list
+                    fetchMoodHistory(currentUser);
                     if (checkRecentWeek.isChecked()) {
                         filterByRecentWeek();
                     }
