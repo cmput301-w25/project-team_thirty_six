@@ -4,6 +4,9 @@ plugins {
     id("com.google.gms.google-services")
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
+
+
 }
 
 android {
@@ -12,8 +15,8 @@ android {
 
     defaultConfig {
         applicationId = "com.example.androidproject"
-        minSdk = 26
-        targetSdk = 35
+        minSdk = 23
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
@@ -36,6 +39,8 @@ android {
     buildFeatures {
         compose = true
         viewBinding = true
+        buildConfig = true
+
     }
 }
 
@@ -83,5 +88,13 @@ dependencies {
     debugImplementation(libs.ui.tooling)
     debugImplementation(libs.ui.test.manifest)
     androidTestImplementation(libs.espresso.intents)
+    implementation("com.google.android.gms:play-services-maps:18.1.0")
+    implementation("com.google.android.gms:play-services-location:17.0.0")
+    implementation("com.google.android.gms:play-services-basement:18.3.0")
 
 }
+secrets {
+    propertiesFileName = "secrets.properties"
+    defaultPropertiesFileName = "local.defaults.properties"
+}
+

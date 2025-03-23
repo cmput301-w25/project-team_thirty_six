@@ -1,8 +1,11 @@
 package com.example.androidproject;
 
 import android.content.Intent;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.text.InputFilter;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -63,9 +66,18 @@ public class EditMoodActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_mood);
 
+        // Retrieve the currentUser from the Intent
+        String userId = (String) getIntent().getSerializableExtra("user");
+
+        if (userId != null) {
+            Log.d("MoodDetailsActivity", "Current user: " + userId);
+        } else {
+            Log.e("MoodDetailsActivity", "No user data found");
+        }
+
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.nav_bar_container, new NavBarFragment())
+                    .add(R.id.nav_bar_container, NavBarFragment.newInstance(userId))
                     .commit();
         }
 
@@ -176,7 +188,11 @@ public class EditMoodActivity extends AppCompatActivity {
                     String color = document.getString("color");
                     String chosenSituation = document.getString("situation");
                     String reason = document.getString("reason");
-                    String location = document.getString("location");
+                    Double latitude = document.get("location.latitude", Double.class);
+                    Double longitude = document.get("location.longitude", Double.class);
+                    Location location = new Location(LocationManager.GPS_PROVIDER);
+                    location.setLatitude(latitude);
+                    location.setLongitude(longitude);
                     String imageUrl = document.getString("id");
                     Object dayTimeObj = document.get("dayTime");
                     Boolean visibility = document.getBoolean("visibility");

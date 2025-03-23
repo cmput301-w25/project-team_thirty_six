@@ -1,4 +1,6 @@
 package com.example.androidproject;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,23 +13,39 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.cardview.widget.CardView;
 
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.Collection;
+//import com.google.android.gms.location.FusedLocationProviderClient;
+//import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.GeoPoint;
+import android.Manifest;
+import android.content.pm.PackageManager;
+import com.example.androidproject.LocationHelper;
+
+import android.widget.Toast;
+
+import androidx.core.content.ContextCompat;
+
 
 /**
  * Creates the functionality to create a post
  */
 public class CreatePostActivity extends AppCompatActivity {
+    LocationHelper locationHelper;
     Button moodDropdown;
     EditText reasonText;
     Button aloneButton;
@@ -39,6 +57,7 @@ public class CreatePostActivity extends AppCompatActivity {
     RadioButton privateButton;
     RadioButton publicButton;
     LinearLayout imageButton;
+    LinearLayout locationButton;
     MoodSelectionAdapter dropdownAdapter;
     ListView dropdownList;
     CardView imagePreviewCard;
@@ -50,6 +69,11 @@ public class CreatePostActivity extends AppCompatActivity {
     Boolean imageStatus = Boolean.FALSE;
     CreatePostActivity current;
     String user;
+    Location moodLocation;
+    Boolean locationState = Boolean.FALSE;
+    TextView locationStateText;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // Sets current
@@ -66,6 +90,8 @@ public class CreatePostActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         // Sets content view
         setContentView(R.layout.activity_add_mood);
+
+
         // Gets the nav bar
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
@@ -87,6 +113,8 @@ public class CreatePostActivity extends AppCompatActivity {
         imagePreview = findViewById(R.id.moodImageView);
         privateButton = findViewById(R.id.addPrivate);
         publicButton = findViewById(R.id.addPublic);
+        locationButton = findViewById(R.id.add_location_button);
+        locationStateText  = findViewById(R.id.location_state_text);
         //Sets drop down status to false to start
         dropdownStatus = Boolean.FALSE;
         //Taken from https://developer.android.com/training/basics/intents/result
@@ -124,7 +152,7 @@ public class CreatePostActivity extends AppCompatActivity {
         moodList.add("Shame");
         moodList.add("Surprise");
         // Sets the adapter for the list
-        dropdownAdapter = new MoodSelectionAdapter(this,moodList);
+        dropdownAdapter = new MoodSelectionAdapter(this, moodList);
         dropdownList.setAdapter(dropdownAdapter);
 
         //Sets the moodDropdown button action
@@ -237,6 +265,45 @@ public class CreatePostActivity extends AppCompatActivity {
             }
         });
 
+        locationButton.setOnClickListener(new View.OnClickListener() {
+            /**
+             * Allows a user to attach a location to the mood
+             * @param v The view that was clicked.
+             */
+            @Override
+            public void onClick(View v) {
+
+                if (locationState == Boolean.FALSE) {
+                    LocationPermissionFragment locationFragment = new LocationPermissionFragment();
+                    locationFragment.show(getSupportFragmentManager(), "LocationPermissionFragment"); // Shows fragment
+
+                    // Once permission is granted inside the fragment, trigger tracking
+                    locationFragment.setOnPermissionGrantedListener(() -> {
+                        Log.d("CreatePostActivity", "Starting location tracking...");
+                        locationFragment.startTrackingLocation();
+
+                    locationFragment.getLastKnownLocation(new LocationPermissionFragment.OnLocationReceivedListener() {
+                        @Override
+                        public void onLocationReceived(Location location) {
+                            moodLocation = location;
+                            locationStateText.setText("Remove Location");
+                            locationState = Boolean.TRUE;
+                            Log.d("CreatePostActivity", "Mood location set to: " + location.getLatitude() + ", " + location.getLongitude());
+                        }
+
+                        @Override
+                        public void onLocationFailure(String errorMessage) {
+                            Log.e("CreatePostActivity", "Failed to get location: " + errorMessage);
+                        }
+                    });});
+                } else {
+                    moodLocation = null;
+                    locationStateText.setText("Add Location");
+                    locationState = Boolean.FALSE;
+                }
+            }
+        });
+
         // Sets the confirm on click listener
         confirmButton.setOnClickListener(new View.OnClickListener() {
             /**
@@ -257,8 +324,12 @@ public class CreatePostActivity extends AppCompatActivity {
                         newMood.setSituation(chosenSituation);
                     }
                     // Adds reason if it was specified
-                    if (reasonText.getText().length() != 0 ) {
+                    if (reasonText.getText().length() != 0) {
                         newMood.setReason(reasonText.getText().toString());
+                    }
+                    // Sets the location
+                    if (moodLocation != null) {
+                        newMood.setLocation(moodLocation);
                     }
                     // Sets the post to public if public is chosen
                     if (publicButton.isChecked()) {
@@ -273,9 +344,9 @@ public class CreatePostActivity extends AppCompatActivity {
                     Database.getInstance().addMood(newMood);
                     // Adds images to database
                     if (chosenImage != null) {
-                        Database.getInstance().addImage(chosenImage,"images/" + newMood.getId(), getContentResolver());
-                        CollectionReference moodCol  = FirebaseFirestore.getInstance().collection("Moods");
-                        moodCol.document(newMood.getId()).update("image",Uri.parse("images/" + newMood.getId()));
+                        Database.getInstance().addImage(chosenImage, "images/" + newMood.getId(), getContentResolver());
+                        CollectionReference moodCol = FirebaseFirestore.getInstance().collection("Moods");
+                        moodCol.document(newMood.getId()).update("image", Uri.parse("images/" + newMood.getId()));
                     }
                     finish();
                 }
@@ -288,5 +359,6 @@ public class CreatePostActivity extends AppCompatActivity {
                 finish();
             }
         });
+
     }
 }
