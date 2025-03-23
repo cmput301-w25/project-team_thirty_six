@@ -39,6 +39,7 @@ public class LocationMapActivity extends AppCompatActivity {
     ImageButton followingFilter;
     ImageButton moodFilter;
     private boolean isMapReady = false;
+    private boolean feedScreen = Boolean.FALSE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +74,30 @@ public class LocationMapActivity extends AppCompatActivity {
 
         // Creates the on click listener for mood filters
         moodFilter.setOnClickListener(v -> showFilterDialog());
+        // Creates an on click listener for the feed display
+        followingFilter.setOnClickListener(new View.OnClickListener() {
+            /**
+             * Creates the on click listener that changes screen to feed screen
+             * @param v The view that was clicked.
+             */
+            @Override
+            public void onClick(View v) {
+                // If we are currently on feed switch to users own
+                if (feedScreen) {
+                    // Fetches the mood history of the user and updates the markers
+                    fetchMoodHistory(currentUser);
+                    updateMapMarkers();
+                    // Sets feed status to false
+                    feedScreen = Boolean.FALSE;
+                } else {
+                    // Fetches the mood feed and updates the markers
+                    fetchMoodFeed(currentUser);
+                    updateMapMarkers();
+                    // Sets feed status to True
+                    feedScreen = Boolean.TRUE;
+                }
+            }
+        });
     }
 
     private void initializeMap() {
@@ -103,6 +128,36 @@ public class LocationMapActivity extends AppCompatActivity {
         Log.d(TAG, "Fetching mood history for user: " + username);
 
         moodHistoryManager.fetchMoodHistory(username, new MoodHistoryManager.MoodHistoryCallback() {
+            @Override
+            public void onCallback(ArrayList<MoodState> retrievedMoods) {
+                if (retrievedMoods != null) {
+                    moodHistory.clear();
+                    moodHistory.addAll(retrievedMoods);
+                    Log.d(TAG, "Fetched " + moodHistory.size() + " moods.");
+                } else {
+                    Log.e(TAG, "No moods found.");
+                    Toast.makeText(LocationMapActivity.this, "No moods found for user.", Toast.LENGTH_SHORT).show();
+                }
+
+                // ✅ Only update markers if the map is ready
+                if (isMapReady) {
+                    updateMapMarkers();
+                } else {
+                    Log.w(TAG, "Map is not ready yet. Markers will be added once map is loaded.");
+                }
+            }
+        });
+    }
+
+    /**
+     * Gets the feed of a user
+     * @param username
+     *      the name of the user who's feed we are checking
+     */
+    private void fetchMoodFeed(String username) {
+        Log.d(TAG, "Fetching mood history for user: " + username);
+
+        moodHistoryManager.fetchMoodFeed(username, new MoodHistoryManager.MoodHistoryCallback() {
             @Override
             public void onCallback(ArrayList<MoodState> retrievedMoods) {
                 if (retrievedMoods != null) {
@@ -264,7 +319,6 @@ public class LocationMapActivity extends AppCompatActivity {
                 .setView(dialogView)
                 .setPositiveButton("Apply", (dialog, which) -> {
                     // Fetches mood history to reset the list
-                    fetchMoodHistory(currentUser);
                     if (checkRecentWeek.isChecked()) {
                         filterByRecentWeek();
                     }
@@ -281,7 +335,13 @@ public class LocationMapActivity extends AppCompatActivity {
                 })
                 .setNegativeButton("Cancel", null)
                 .setNeutralButton("Reset", (dialog, which) -> {
-                    fetchMoodHistory(currentUser);
+                    if (feedScreen) {
+                        // Fetches the mood history of the user and updates the markers
+                        fetchMoodFeed(currentUser);
+                    } else {
+                        // Fetches the mood feed and updates the markers
+                        fetchMoodHistory(currentUser);
+                    }
                 })
                 .show();
 
