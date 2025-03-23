@@ -103,9 +103,12 @@ public class UserManager {
     }
 
     /**
+     * Handles the login verifcation in the database.
+     * Ensures that the username and password entered match then fetches the user's data.
+     * If they do not match then it displays a toast.
      *
-     * @param username
-     * @param password
+     * @param username the username that the user entered
+     * @param password the password that the user entered
      */
     public void loginUser(String username, String password, LoginCallback callback){
         // Creates the query for a matching username and password
@@ -174,6 +177,11 @@ public class UserManager {
     }
 
 
+    /**
+     * Sends a follow request to a user in the database
+     * @param senderUsername the user who is sending the follow request
+     * @param receiverUsername the user who is receiving the database
+     */
     public void sendFollowRequest(String senderUsername, String receiverUsername){
         // Gets the recievers DocumentReference
         DocumentReference docRef = database.getUsers().document(receiverUsername);
@@ -185,6 +193,12 @@ public class UserManager {
                 });
     }
 
+    /**
+     * A function to handle accepting a follow request in firebase. Called in the FollowRequestAdapter
+     * when the accept button is pressed. It is
+     * @param acceptorUsername the username of the current logged in user who is accepting the follow request
+     * @param requesterUsername the user name who is being rejected. This is the name that is removed from rejectorUsernames followRequest list in firebase.
+     */
     public void acceptFollowRequest(String acceptorUsername, String requesterUsername){
         DocumentReference acceptorDocRef = database.getUsers().document(acceptorUsername);
         DocumentReference requesterDocRef = database.getUsers().document(requesterUsername);
@@ -209,5 +223,49 @@ public class UserManager {
                 });
     }
 
+    /**
+     * A function to handle deleting a follow request from firebase. Called in the FollowRequestAdapter
+     * when the reject button is pressed.
+     * @param rejectorUsername the username of the current logged in user.
+     * @param requesterUsername the user name who is being rejected. This is the name that is removed from rejectorUsernames followRequest list in firebase.
+     */
+    public void rejectFollowRequest(String rejectorUsername, String requesterUsername){
+
+        DocumentReference rejectorDocRef = database.getUsers().document(rejectorUsername);
+
+        // Removing a follow request from the database.
+        rejectorDocRef.update("followRequests", FieldValue.arrayRemove(requesterUsername))
+                .addOnSuccessListener(documentReferenceUpdate -> {
+                    Log.d("UserManager", rejectorUsername + " successfully rejected a follow request from: " + requesterUsername);
+                })
+
+                // on Failiure write out error message.
+                .addOnFailureListener(e -> {
+                    Log.e("UserManager", "Failed to remove a follow request error message: " + e);
+                });
+    }
+
+
+    /**
+     * A function to handle revoking a follow request from firebase. Called in OtherProfileActivity
+     * when the follow button is pressed when it says "requested".
+     * @param cancelerUsername the username of the current logged in user that is revoking their follow request
+     * @param receiverUsername the user who's followRequest list is being changed to not have the cancelerUsername in it.
+     */
+    public void cancelFollowRequest(String cancelerUsername, String receiverUsername){
+
+        DocumentReference receiverDocRef = database.getUsers().document(receiverUsername);
+
+        // Removing a follow request from the database.
+        receiverDocRef.update("followRequests", FieldValue.arrayRemove(cancelerUsername))
+                .addOnSuccessListener(documentReferenceUpdate -> {
+                    Log.d("UserManager", cancelerUsername + " successfully revoked their follow request to : " + receiverUsername);
+                })
+
+                // on Failiure write out error message.
+                .addOnFailureListener(e -> {
+                    Log.e("UserManager", "Failed to remove a follow request error message: " + e);
+                });
+    }
 
 }

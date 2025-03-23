@@ -117,7 +117,10 @@ public class OtherProfileActivity extends AppCompatActivity {
             followButton.setText(R.string.follow_button_requested);
 
         } else if (followButtonText.equals(getString(R.string.follow_button_requested))){
+            userManager.cancelFollowRequest(currentUsername, otherUsername);
             followButton.setText(R.string.follow_button_follow);
+
         }
+
     }
 }
