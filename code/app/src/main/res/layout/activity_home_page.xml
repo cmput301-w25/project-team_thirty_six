@@ -71,7 +71,7 @@
             android:layout_marginEnd="32dp"
             android:background="@drawable/intro_btn_background"
             android:onClick="viewMoodHistory"
-            android:text="View Mood History"
+            android:text="View Feed"
             android:textColor="@color/white"
             android:textSize="22sp"
             android:textStyle="normal"
