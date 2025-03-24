@@ -249,7 +249,6 @@ public class MoodDetailsActivity extends AppCompatActivity {
                 if (document.exists()) {
                     // Extract the username from the mood document
                     String moodOwner = document.getString("user");
-                    Log.d(TAG, "Mood owner: " + moodOwner + ", Current user: " + userId);
 
                     tvUsername.setText(moodOwner != null && !moodOwner.isEmpty() ? moodOwner : "User");
 
