@@ -23,6 +23,8 @@
     <string name="follow_button_follow">Follow</string>
     <string name="follow_button_requested">Requested</string>
     <string name="follow_button_unfollow">unfollow</string>
+    <string name="follow_request_text">%s wants to follow you</string>
+
 
 
 

@@ -29,16 +29,23 @@ public class UserManager {
 
     private Database database;
     private static User currentUser;
+    private static UserManager instance;
     private Context context; // The activity that is calling the UserManager
 
     /**
      * Constructor for UserManager, gets the database instance so that it can be used in the login/signup process
      */
     public UserManager(Context context){
-        Log.d("myTag", "Made it to UserManager");
-
         this.database = Database.getInstance();
         this.context = context;
+
+    }
+
+    public static UserManager getInstance(Context context){
+        if (instance == null) {
+            instance = new UserManager(context);
+        }
+        return instance;
     }
 
     /**
@@ -96,9 +103,12 @@ public class UserManager {
     }
 
     /**
+     * Handles the login verifcation in the database.
+     * Ensures that the username and password entered match then fetches the user's data.
+     * If they do not match then it displays a toast.
      *
-     * @param username
-     * @param password
+     * @param username the username that the user entered
+     * @param password the password that the user entered
      */
     public void loginUser(String username, String password, LoginCallback callback){
         // Creates the query for a matching username and password
@@ -167,6 +177,11 @@ public class UserManager {
     }
 
 
+    /**
+     * Sends a follow request to a user in the database
+     * @param senderUsername the user who is sending the follow request
+     * @param receiverUsername the user who is receiving the database
+     */
     public void sendFollowRequest(String senderUsername, String receiverUsername){
         // Gets the recievers DocumentReference
         DocumentReference docRef = database.getUsers().document(receiverUsername);
@@ -178,10 +193,79 @@ public class UserManager {
                 });
     }
 
-    //public User get(String senderUsername, String receiverUsername){
-    //    DocumentReference docRef = database.getUsers().document(receiverUsername);
-        //ArrayList<String> reciever_follow_requests = docRef.
+    /**
+     * A function to handle accepting a follow request in firebase. Called in the FollowRequestAdapter
+     * when the accept button is pressed. It is
+     * @param acceptorUsername the username of the current logged in user who is accepting the follow request
+     * @param requesterUsername the user name who is being rejected. This is the name that is removed from rejectorUsernames followRequest list in firebase.
+     */
+    public void acceptFollowRequest(String acceptorUsername, String requesterUsername){
+        DocumentReference acceptorDocRef = database.getUsers().document(acceptorUsername);
+        DocumentReference requesterDocRef = database.getUsers().document(requesterUsername);
 
-    //}
+        // Add the acceptor to the requester's following list in firebase
+        requesterDocRef.update("following", FieldValue.arrayUnion(acceptorUsername))
+
+                // If user added to following list then we get rid of them from the acceptors followRequest list in firebase
+                .addOnSuccessListener(documentReferenceUpdate -> {
+                    Log.d("UserManager", "requestor now has the currentUser in their database following list");
+                    acceptorDocRef.update("followRequests", FieldValue.arrayRemove(requesterUsername))
+                            .addOnSuccessListener(documentReferenceDelete -> {
+                        Log.d("UserManager", "currentUser no longer has a follow request from " + requesterUsername);
+
+                    // Failiure mesaging
+                    }).addOnFailureListener(e -> {
+                        Log.e("UserManager", "Failed to get rid of" + requesterUsername +"from currentUser's follow requests");
+                            });
+                // Failure messaging
+                }).addOnFailureListener(failure -> {
+                    Log.e("UserManager", "Follow Request failed to send");
+                });
+    }
+
+    /**
+     * A function to handle deleting a follow request from firebase. Called in the FollowRequestAdapter
+     * when the reject button is pressed.
+     * @param rejectorUsername the username of the current logged in user.
+     * @param requesterUsername the user name who is being rejected. This is the name that is removed from rejectorUsernames followRequest list in firebase.
+     */
+    public void rejectFollowRequest(String rejectorUsername, String requesterUsername){
+
+        DocumentReference rejectorDocRef = database.getUsers().document(rejectorUsername);
+
+        // Removing a follow request from the database.
+        rejectorDocRef.update("followRequests", FieldValue.arrayRemove(requesterUsername))
+                .addOnSuccessListener(documentReferenceUpdate -> {
+                    Log.d("UserManager", rejectorUsername + " successfully rejected a follow request from: " + requesterUsername);
+                })
+
+                // on Failiure write out error message.
+                .addOnFailureListener(e -> {
+                    Log.e("UserManager", "Failed to remove a follow request error message: " + e);
+                });
+    }
+
+
+    /**
+     * A function to handle revoking a follow request from firebase. Called in OtherProfileActivity
+     * when the follow button is pressed when it says "requested".
+     * @param cancelerUsername the username of the current logged in user that is revoking their follow request
+     * @param receiverUsername the user who's followRequest list is being changed to not have the cancelerUsername in it.
+     */
+    public void cancelFollowRequest(String cancelerUsername, String receiverUsername){
+
+        DocumentReference receiverDocRef = database.getUsers().document(receiverUsername);
+
+        // Removing a follow request from the database.
+        receiverDocRef.update("followRequests", FieldValue.arrayRemove(cancelerUsername))
+                .addOnSuccessListener(documentReferenceUpdate -> {
+                    Log.d("UserManager", cancelerUsername + " successfully revoked their follow request to : " + receiverUsername);
+                })
+
+                // on Failiure write out error message.
+                .addOnFailureListener(e -> {
+                    Log.e("UserManager", "Failed to remove a follow request error message: " + e);
+                });
+    }
 
 }
