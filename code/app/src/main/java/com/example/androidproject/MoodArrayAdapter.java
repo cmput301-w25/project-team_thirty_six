@@ -57,6 +57,16 @@ public class MoodArrayAdapter extends ArrayAdapter<MoodState> {
             String state = moodState.getMood();
             String date = moodState.formatDateTime();
             int emoji = moodState.getEmoji();
+            String username = moodState.getUser();
+
+            TextView usernameTextView = view.findViewById(R.id.mood_event_username);
+            if (usernameTextView != null) {
+                if (username != null && !username.isEmpty()) {
+                    usernameTextView.setText(username);
+                } else {
+                    usernameTextView.setText("Unknown User");
+                }
+            }
 
             moodTextView.setText(state);
             dateTextView.setText(date);
