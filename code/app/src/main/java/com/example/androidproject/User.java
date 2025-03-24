@@ -157,6 +157,34 @@ public class User implements Serializable {
     }
 
     /**
+     * Adds a user to the follower list
+     * @param username
+     *      User that you are trying to follow
+     */
+    public void addFollower(String username){
+        // Throws an error the username is already following the currentUser
+        if (followers.contains(username)){
+            throw new IllegalArgumentException();
+        }
+        // Adds the user to follower list
+        followers.add(username);
+    }
+
+    /**
+     * Removes a user from the follower list
+     * @param username
+     *      User to remove from follower list
+     */
+    public void removeFollowers(String username){
+        // Throws an error if you are not following the user
+        if (!followers.contains(username)){
+            throw new IllegalArgumentException();
+        }
+        // Removes the user from the follower list
+        followers.remove(username);
+    }
+
+    /**
      * Tests the password to ensure that the user is authenticated
      * @param testPassword
      *      Password given by the user

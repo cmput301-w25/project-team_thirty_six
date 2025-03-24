@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -34,7 +35,19 @@ public class FollowRequestFragment extends Fragment {
 
         ImageButton backButton = view.findViewById(R.id.button_back);
         backButton.setOnClickListener(v -> {
+
+            // Setup the follower string
+            int followerCount = UserManager.getCurrentUser().getFollowers().size();
+            String followersString = String.format("%d followers", followerCount);
+
+            // Display the follower string
+            TextView followersTextView = requireActivity().findViewById(R.id.followerAmountTextView);
+            followersTextView.setText(followersString);
+
             requireActivity().getSupportFragmentManager().popBackStack();
+
+
+
         });
 
         listView = view.findViewById(R.id.follow_request_list_view);
