@@ -90,6 +90,8 @@ public class OtherProfileActivity extends AppCompatActivity {
         TextView userNameTextView = findViewById(R.id.displayUsername);
         userNameTextView.setText(otherUsername);
 
+        
+
         // The following code makes the sets the follow button to either "follow", "requested" or "following"
         // depending on if the currentUser is following them, or has requested them or not.
         Button followButton = findViewById(R.id.follow_following_button);

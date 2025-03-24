@@ -195,7 +195,7 @@ public class UserManager {
 
     /**
      * A function to handle accepting a follow request in firebase. Called in the FollowRequestAdapter
-     * when the accept button is pressed. It is
+     * when the accept button is pressed. It adds the acceptor to requestors following list and requester to acceptors followers list
      * @param acceptorUsername the username of the current logged in user who is accepting the follow request
      * @param requesterUsername the user name who is being rejected. This is the name that is removed from rejectorUsernames followRequest list in firebase.
      */
@@ -208,17 +208,32 @@ public class UserManager {
 
                 // If user added to following list then we get rid of them from the acceptors followRequest list in firebase
                 .addOnSuccessListener(documentReferenceUpdate -> {
-                    Log.d("UserManager", "requestor now has the currentUser in their database following list");
-                    acceptorDocRef.update("followRequests", FieldValue.arrayRemove(requesterUsername))
-                            .addOnSuccessListener(documentReferenceDelete -> {
-                        Log.d("UserManager", "currentUser no longer has a follow request from " + requesterUsername);
 
-                    // Failiure mesaging
-                    }).addOnFailureListener(e -> {
-                        Log.e("UserManager", "Failed to get rid of" + requesterUsername +"from currentUser's follow requests");
+                    Log.d("UserManager", "requestor now has the currentUser in their database following list");
+                    // Get rid of requester in the followRequest list of acceptor
+                    acceptorDocRef.update("followRequests", FieldValue.arrayRemove(requesterUsername))
+
+                            .addOnSuccessListener(documentReferenceDelete -> {
+
+                                Log.d("UserManager", "currentUser no longer has a follow request from " + requesterUsername);
+                                // Add requester to the acceptor's follower list
+                                acceptorDocRef.update("followers", FieldValue.arrayUnion(requesterUsername))
+
+                                        .addOnSuccessListener(documentReferenceUpdate1 -> {
+                                            Log.d("UserManager", "currentUser now has " + requesterUsername + " in their followers list");
+                                        })
+                                        .addOnFailureListener(e -> { // 3rd nested update failed
+                                            Log.e("UserManager", "Could not add user to follower list error message: " + e);
+                                        });
+
+                                // Failure messaging
+                            }).addOnFailureListener(e -> { // 2nd nested update failed
+
+                                Log.e("UserManager", "Failed to get rid of" + requesterUsername +"from currentUser's follow requests");
                             });
-                // Failure messaging
-                }).addOnFailureListener(failure -> {
+                    // Failure messaging
+                }).addOnFailureListener(failure -> { // 1st update failed
+
                     Log.e("UserManager", "Follow Request failed to send");
                 });
     }
