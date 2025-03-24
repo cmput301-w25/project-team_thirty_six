@@ -73,7 +73,7 @@ public class MoodHistoryActivity extends AppCompatActivity {
         completeMoodHistory = new ArrayList<>();
 
         // Initialize the adapter with an empty list
-        moodAdapter = new MoodArrayAdapter(this, moodHistory);
+        moodAdapter = new MoodArrayAdapter(this, moodHistory, currentUser);
         moodListView = findViewById(R.id.mood_list);
         moodListView.setAdapter(moodAdapter);
 
@@ -272,7 +272,7 @@ public class MoodHistoryActivity extends AppCompatActivity {
         completeMoodHistory = new ArrayList<>();
 
         // Initialize the adapter with an empty list
-        moodAdapter = new MoodArrayAdapter(this, moodHistory);
+        moodAdapter = new MoodArrayAdapter(this, moodHistory, currentUser);
         moodListView = findViewById(R.id.mood_list);
         moodListView.setAdapter(moodAdapter);
 

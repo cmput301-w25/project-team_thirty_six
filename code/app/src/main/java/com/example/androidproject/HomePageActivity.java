@@ -60,7 +60,7 @@ public class HomePageActivity extends AppCompatActivity {
         recentMoodsList = findViewById(R.id.recentMoodsList);
         moodDataList = new ArrayList<>();
         // Use the existing MoodArrayAdapter
-        moodAdapter = new MoodArrayAdapter(this, moodDataList);
+        moodAdapter = new MoodArrayAdapter(this, moodDataList, currentUser);
         recentMoodsList.setAdapter(moodAdapter);
 
         // Load recent moods from other users
@@ -71,7 +71,7 @@ public class HomePageActivity extends AppCompatActivity {
      * Fetches and displays the three most recent mood events from other users
      */
     private void fetchOtherUsersMoods() {
-        // First, get a list of users (excluding the current user)
+        // First get a list of users
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("Users")
                 .limit(10)  // Limit to 10 users to avoid excessive queries
@@ -110,7 +110,6 @@ public class HomePageActivity extends AppCompatActivity {
         final ArrayList<MoodState> allMoods = new ArrayList<>();
 
         for (String username : users) {
-            // Use the same method as MoodHistoryActivity but for other users
             moodHistoryManager.fetchMoodHistory(username, new MoodHistoryManager.MoodHistoryCallback() {
                 @Override
                 public void onCallback(ArrayList<MoodState> userMoods) {
@@ -125,7 +124,7 @@ public class HomePageActivity extends AppCompatActivity {
                         }
                     }
 
-                    // If all queries completed, process and display the moods
+                    // If all queries completed, display moods
                     if (completedQueries[0] == totalUsers) {
                         processMoods(allMoods);
                     }
@@ -147,7 +146,7 @@ public class HomePageActivity extends AppCompatActivity {
         // Clear current data
         moodDataList.clear();
 
-        // Sort by date (newest first) - using Collections.sort for compatibility
+        // Sort by date
         Collections.sort(moods, new Comparator<MoodState>() {
             @Override
             public int compare(MoodState m1, MoodState m2) {
