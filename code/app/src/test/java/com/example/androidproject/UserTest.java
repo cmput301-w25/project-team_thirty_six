@@ -118,13 +118,13 @@ public class UserTest {
         User newUser = new User("Test","Passtest");
 
         // Tests adding a follower
-        User newerUser = new User("Test2","Passtest2");
+        String newerUser = "Test2";
         newUser.addFollowing(newerUser);
         assertTrue(newUser.getFollowing().contains(newerUser));
         assertEquals(newUser.getFollowing().size(),1);
 
         // Tests adding a second follower
-        User newestUser = new User("Test3","Passtest3");
+        String newestUser = "Test3";
         newUser.addFollowing(newestUser);
         assertTrue(newUser.getFollowing().contains(newestUser));
         assertEquals(newUser.getFollowing().size(),2);
@@ -138,11 +138,11 @@ public class UserTest {
         User newUser = new User("Test","Passtest");
 
         // Tests adding a follower
-        User newerUser = new User("Test2","Passtest2");
+        String newerUser = "Test2";
         newUser.addFollowing(newerUser);
 
         // Tests adding a second follower
-        User newestUser = new User("Test3","Passtest3");
+        String newestUser = "Test3";
         newUser.addFollowing(newestUser);
 
         assertEquals(newUser.getFollowing().size(),2);
@@ -164,7 +164,7 @@ public class UserTest {
     public void deleteInvalidFollowerTest() {
         User newUser = new User("Test", "Passtest");
         assertThrows(IllegalArgumentException.class, () -> {
-            newUser.removeFollowing(newUser);
+            newUser.removeFollowing("HHFSDFSDG");
         });
     }
 

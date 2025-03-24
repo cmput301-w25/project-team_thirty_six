@@ -75,7 +75,7 @@ public class NavBarFragment extends Fragment {
         //set on click listeners for each nav bar button
         btnHome.setOnClickListener(v -> openActivity(HomePageActivity.class));
         btnSearch.setOnClickListener(v -> openActivity(SearchActivity.class));
-        //btnMap.setOnClickListener(v -> openActivity(MapActivity.class));
+        btnMap.setOnClickListener(v -> openActivity(LocationMapActivity.class));
         btnProfile.setOnClickListener(v -> openActivity(ProfileActivity.class));
         btnCreate.setOnClickListener(v -> openActivity(CreatePostActivity.class));
         return view;

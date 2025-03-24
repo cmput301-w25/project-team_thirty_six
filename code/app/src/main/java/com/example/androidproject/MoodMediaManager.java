@@ -3,6 +3,7 @@ package com.example.androidproject;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
 import android.net.Uri;
 import android.view.View;
 import android.widget.ImageView;
@@ -36,7 +37,7 @@ public class MoodMediaManager {
     private Uri newImageUri;  // Only set when user selects a new image
     private String existingImageId;  // The ID of an existing image in Firebase
     private boolean hasImage = false;  // Flag to track if we have any image
-    private String location;
+    private Location location;
     private String imageToDeleteId = null; // Track image ID to delete
 
     /**
@@ -164,10 +165,10 @@ public class MoodMediaManager {
     /**
      * Sets location from existing data
      */
-    public void setLocation(String location) {
+    public void setLocation(Location location) {
         this.location = location;
-        if (location != null && !location.isEmpty()) {
-            locationTextView.setText(location);
+        if (location != null) {
+            locationTextView.setText(location.toString());
             locationPreviewCardView.setVisibility(View.VISIBLE);
         }
     }
@@ -230,7 +231,7 @@ public class MoodMediaManager {
     /**
      * Gets the current location
      */
-    public String getLocation() {
+    public Location getLocation() {
         return location;
     }
 

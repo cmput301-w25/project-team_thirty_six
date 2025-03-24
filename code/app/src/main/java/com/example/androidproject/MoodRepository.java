@@ -1,5 +1,6 @@
 package com.example.androidproject;
 
+import android.location.Location;
 import android.net.Uri;
 import android.util.Log;
 
@@ -39,7 +40,7 @@ public class MoodRepository {
      * @param listener Callback for update results
      */
     public void updateMood(String moodId, String mood, String color, String situation, String reason,
-                           String location, Uri newImageUri, String currentImageUrl, Calendar dateTime,
+                           Location location, Uri newImageUri, String currentImageUrl, Calendar dateTime,
                            boolean isPublic, OnMoodUpdateListener listener) {
         // Validate id is not null
         if (moodId == null) {
@@ -79,7 +80,7 @@ public class MoodRepository {
      * Helper method to update mood data in Firestore
      */
     private void updateMoodData(String moodId, String mood, String color, String situation, String reason,
-                                String location, String imageUrl, Calendar dateTime,
+                                Location location, String imageUrl, Calendar dateTime,
                                 boolean isPublic, OnMoodUpdateListener listener) {
         // Create the main mood document data
         Map<String, Object> updatedData = new HashMap<>();
@@ -99,7 +100,7 @@ public class MoodRepository {
             updatedData.put("reason", reason);
         }
 
-        if (location != null && !location.isEmpty()) {
+        if (location != null) {
             updatedData.put("location", location);
         }
 

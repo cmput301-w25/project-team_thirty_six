@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:background="@android:color/white"
+    android:gravity="center_horizontal"> <!-- Center content horizontally -->
+
+    <TextView
+        android:id="@+id/permissionMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="This app requires location access to provide better services. Please grant permission."
+        android:textSize="16sp"
+        android:textAlignment="center"
+        android:textColor="@android:color/black"
+        android:paddingBottom="15dp" />
+
+    <Button
+        android:id="@+id/allowButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Allow"
+        android:textColor="@android:color/white"
+        android:backgroundTint="@android:color/darker_gray"
+        android:layout_marginTop="10dp"
+        android:padding="10dp" />
+
+    <Button
+        android:id="@+id/denyButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Deny"
+        android:textColor="@android:color/white"
+        android:backgroundTint="@android:color/darker_gray"
+        android:layout_marginTop="5dp"
+        android:padding="10dp" />
+
+</LinearLayout>
