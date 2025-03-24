@@ -7,4 +7,7 @@
     <color name="green">#34e3c4</color>
     <color name='bluish_teal'>#6658779D</color>
     <color name='darker_bluish_teal'>#58779D</color>
+    <color name='semi_transparent_blue'>#442596be</color>
+    <color name='clear'>#00FFFFFF</color>
+
 </resources>

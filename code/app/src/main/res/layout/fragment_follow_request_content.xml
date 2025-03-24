@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
     <LinearLayout
         android:id="@+id/follow_request_linear_layout"
         android:layout_width="match_parent"
@@ -33,12 +34,14 @@
             android:id="@+id/accept_button"
             android:layout_width="27dp"
             android:layout_height="27dp"
+            android:background="@color/clear"
             android:src="@drawable/check_mark" />
 
         <ImageButton
             android:id="@+id/cancel_button"
             android:layout_width="27dp"
             android:layout_height="27dp"
+            android:background="@color/clear"
             android:src="@drawable/cancel_button"/>
 
 

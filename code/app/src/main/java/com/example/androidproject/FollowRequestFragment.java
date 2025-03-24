@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
@@ -30,6 +31,11 @@ public class FollowRequestFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_follow_requests, container, false);
 
     // end of taken code
+
+        ImageButton backButton = view.findViewById(R.id.button_back);
+        backButton.setOnClickListener(v -> {
+            requireActivity().getSupportFragmentManager().popBackStack();
+        });
 
         listView = view.findViewById(R.id.follow_request_list_view);
         assert listView != null;

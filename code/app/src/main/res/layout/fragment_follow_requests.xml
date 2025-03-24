@@ -1,15 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/frameLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".FollowRequestAdapter">
+    tools:context=".FollowRequestAdapter"
+    android:background="@drawable/gradient_color_background">
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="Follow Requests"
+        android:textColor="@color/white"
+        android:textSize="24dp"
+        android:gravity="center_horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/follow_request_list_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </TextView>
+
+    <ImageButton
+        android:id="@+id/button_back"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:background="#00FFFFFF"
+        android:src="@drawable/outline_arrow_back_24"
+        app:layout_constraintBottom_toTopOf="@+id/follow_request_list_view"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
 
     <!-- TODO: Update blank fragment layout -->
     <ListView
         android:id="@+id/follow_request_list_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/black"/>
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView4">
 
-</FrameLayout>
+    </ListView>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
