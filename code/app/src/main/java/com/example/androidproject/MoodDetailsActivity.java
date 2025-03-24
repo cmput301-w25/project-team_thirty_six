@@ -151,7 +151,6 @@ public class MoodDetailsActivity extends AppCompatActivity {
         tvSocialSituation.setVisibility(View.GONE);
         ivMoodImage.setVisibility(View.GONE);
 
-        // Hide edit button by default - it will be shown in loadMoodDetails
         // only if the current user is the owner of the mood
         btnEdit.setVisibility(View.GONE);
 

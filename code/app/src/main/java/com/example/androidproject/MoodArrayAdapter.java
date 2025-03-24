@@ -76,7 +76,7 @@ public class MoodArrayAdapter extends ArrayAdapter<MoodState> {
                 String hexColor = "#" + moodState.getColor(); // Prepend '#' to the hex color
                 moodTextView.setTextColor(Color.parseColor(hexColor));
 
-                // Set click listener for the button with proper user information
+                // Set click listener for view more button
                 viewMoreButton.setOnClickListener(v -> {
                     Log.d("MoodAdapter", "Opening details for mood: " + moodState.getId() +
                             ", Mood Owner: " + moodOwner +
