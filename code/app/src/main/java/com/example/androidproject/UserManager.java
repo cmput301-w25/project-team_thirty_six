@@ -238,6 +238,33 @@ public class UserManager {
                 });
     }
 
+    public void unfollowUser(String currentUsername, String userToBeUnfollowed){
+        DocumentReference currentUserDocRef = database.getUsers().document(currentUsername);
+        DocumentReference userToBeUnfollowedDocRef = database.getUsers().document(userToBeUnfollowed);
+
+        // Unfollow userToBeUnfollowed (get rid of them in currentUser's following list)
+        currentUserDocRef.update("following", FieldValue.arrayRemove(userToBeUnfollowed))
+
+                .addOnSuccessListener(currentUserDocRef1 -> {
+
+                    userToBeUnfollowedDocRef.update("followers", FieldValue.arrayRemove(currentUsername))
+                            .addOnSuccessListener(userToBeUnfollowedDocRef1 -> {
+
+                                Log.d("User Manager", currentUsername + " Successfully unfollowed " + userToBeUnfollowed);
+                            })
+
+                            .addOnFailureListener(e -> {
+                                Log.e("UserManager", "Could not remove a user from a follower list error message: " + e);
+                            });
+
+                }).addOnFailureListener(e -> {
+
+                    Log.e("UserManager", "Could not remove a user from a following list error message: " + e);
+
+                });
+
+    }
+
     /**
      * A function to handle deleting a follow request from firebase. Called in the FollowRequestAdapter
      * when the reject button is pressed.
