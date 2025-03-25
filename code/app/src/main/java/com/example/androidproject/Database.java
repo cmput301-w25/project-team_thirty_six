@@ -9,6 +9,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 
 /**
@@ -74,19 +75,31 @@ public class Database {
      *      content resolver to properly locate image
      */
     public void addImage(Uri uri, String id, ContentResolver resolver){
-        // Gets the firebase instance
-        FirebaseStorage currentFirebase = FirebaseStorage.getInstance();
-        // Gets a child for the id
-        StorageReference newStorage = currentFirebase.getReference().child(id);
-        InputStream newSteam = null;
         try {
-            // Gets a new stream to add
-            newSteam = resolver.openInputStream(uri);
-        } catch (FileNotFoundException e) {
+            InputStream stream = resolver.openInputStream(uri);
+            int imageSize = stream.available();
+            stream.close();
+
+            if (imageSize >= 65536) {
+                throw new IllegalArgumentException("Image size exceeds 64KB limit");
+            }
+
+            // Gets the firebase instance
+            FirebaseStorage currentFirebase = FirebaseStorage.getInstance();
+            // Gets a child for the id
+            StorageReference newStorage = currentFirebase.getReference().child(id);
+            InputStream newSteam = null;
+            try {
+                // Gets a new stream to add
+                newSteam = resolver.openInputStream(uri);
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+            // Adds stream to storage
+            newStorage.putStream(newSteam);
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        // Adds stream to storage
-        newStorage.putStream(newSteam);
     }
 
     /**
