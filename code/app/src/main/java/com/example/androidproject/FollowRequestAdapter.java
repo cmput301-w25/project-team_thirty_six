@@ -27,8 +27,9 @@ public class FollowRequestAdapter extends ArrayAdapter<String> {
         super(context, 0, requestList);
         this.context = context;
         this.requestList = requestList;
-        this.currentUser = currentUser;
         this.userManager = new UserManager(getContext());
+        this.currentUser = userManager.getCurrentUser();
+
 
     }
 
@@ -52,8 +53,13 @@ public class FollowRequestAdapter extends ArrayAdapter<String> {
         // It calls the user manager function to handle accepting follow requests
         acceptButton.setOnClickListener(view1 ->{
             String currentUsername = currentUser.getUsername();
+
+            // Accept for the user document in firebase
             userManager.acceptFollowRequest(currentUsername, currentRequesterUsername);
+
+            // Accept for the user object in the app
             currentUser.getFollowRequests().remove(currentRequesterUsername);
+            currentUser.addFollower(currentRequesterUsername);
             notifyDataSetChanged();
         });
 

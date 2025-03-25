@@ -13,6 +13,7 @@ public class User implements Serializable {
     // No setter for these 3 as their logic is handled in the add and delete functions
     ArrayList<String> following;
     ArrayList<String> followRequests;
+    ArrayList<String> followers;
     static ArrayList<MoodState> moodHistory;
     MoodState mostRecentMood;
 
@@ -27,6 +28,7 @@ public class User implements Serializable {
         this.following = new ArrayList<String>();
         this.moodHistory = new ArrayList<>();
         this.followRequests = new ArrayList<String>();
+        this.followers = new ArrayList<String>();
     }
 
     /**
@@ -41,6 +43,7 @@ public class User implements Serializable {
         this.following = new ArrayList<>();
         this.moodHistory = new ArrayList<>();
         this.followRequests = new ArrayList<String>();
+        this.followers = new ArrayList<String>();
 
     }
 
@@ -127,7 +130,7 @@ public class User implements Serializable {
 
     /**
      * Adds a user to the following list
-     * @param user
+     * @param username
      *      User that you are trying to follow
      */
     public void addFollowing(String username){
@@ -141,7 +144,7 @@ public class User implements Serializable {
 
     /**
      * Removes a user from the following list
-     * @param user
+     * @param username
      *      User that you are no longer following
      */
     public void removeFollowing(String username){
@@ -151,6 +154,34 @@ public class User implements Serializable {
         }
         // Removes the user to following list
         following.remove(username);
+    }
+
+    /**
+     * Adds a user to the follower list
+     * @param username
+     *      User that you are trying to follow
+     */
+    public void addFollower(String username){
+        // Throws an error the username is already following the currentUser
+        if (followers.contains(username)){
+            throw new IllegalArgumentException();
+        }
+        // Adds the user to follower list
+        followers.add(username);
+    }
+
+    /**
+     * Removes a user from the follower list
+     * @param username
+     *      User to remove from follower list
+     */
+    public void removeFollowers(String username){
+        // Throws an error if you are not following the user
+        if (!followers.contains(username)){
+            throw new IllegalArgumentException();
+        }
+        // Removes the user from the follower list
+        followers.remove(username);
     }
 
     /**
@@ -172,6 +203,9 @@ public class User implements Serializable {
 
     public ArrayList<String> getFollowing() {
         return following;
+    }
+    public ArrayList<String> getFollowers(){
+        return followers;
     }
 
     public MoodState getMostRecentMood() {

@@ -57,22 +57,23 @@ public class ProfileActivity extends AppCompatActivity {
         userManager = new UserManager(this);
 
         // Retrieve the otherUser object from the database and store it into otherUser
-        userManager.fetchOtherUserData(currentUsername)
-                .addOnSuccessListener(user ->{
-                    if (user != null){
-                        this.currentUser = user;
-                        // populate the profile
-                        populateCurrentUserProfile(currentUsername);
+        //userManager.fetchOtherUserData(currentUsername)
+        //        .addOnSuccessListener(user ->{
+        //            if (user != null){
+        //                this.currentUser = user;
+        //                // populate the profile
+        //                populateCurrentUserProfile(currentUsername);
+        //
+        //            }
+        //            else{
+        //                Log.e("CurrentProfileActivity", "Failed to retrieve currentUser's contents");
+        //            }
+        //        }).addOnFailureListener(e -> {
+        //            Log.e("CurrentProfileActivity", "fetchCurrentUserData error: " + e.toString());
+        //        });
 
-                    }
-                    else{
-                        Log.e("CurrentProfileActivity", "Failed to retrieve currentUser's contents");
-                    }
-                }).addOnFailureListener(e -> {
-                    Log.e("CurrentProfileActivity", "fetchCurrentUserData error: " + e.toString());
-                });
-
-
+        this.currentUser = UserManager.getCurrentUser();
+        populateCurrentUserProfile(currentUsername);
 
 
         if (savedInstanceState == null) {
@@ -91,6 +92,24 @@ public class ProfileActivity extends AppCompatActivity {
     private void populateCurrentUserProfile(String currentUsername) {
         TextView userNameTextView = findViewById(R.id.displayUsername);
         userNameTextView.setText(currentUsername);
+
+        // Setup follower and following strings
+        int followingCount = currentUser.getFollowing().size();
+        int followerCount = currentUser.getFollowers().size();
+        String followingString = String.format("%d following", followingCount);
+        String followersString = String.format("%d followers", followerCount);
+
+        // Populate the follower and following strings
+        TextView followersTextView = findViewById(R.id.followerAmountTextView);
+        TextView followingTextView = findViewById(R.id.followingAmountTextView);
+        followersTextView.setText(followersString);
+        followingTextView.setText(followingString);
+    }
+
+    public void updateFollowerCount(String currentUsername){
+        int followerCount = currentUser.getFollowers().size();
+        String followersString = String.format("%d followers", followerCount);
+
     }
 
     public void followRequestsOnClick(View view) {
@@ -99,6 +118,11 @@ public class ProfileActivity extends AppCompatActivity {
 
         Fragment listFragment = new FollowRequestFragment();
         listFragment.setArguments(bundle);
+
+        // The folowing code was obtained from ChatGPT on March 22, 2025.
+        // Taken by Rhiyon Naderi
+        // Query: how to open a list view fragment in an activities function
+
         // Get the FragmentManager and start a transaction.
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         // Replace the container with the new fragment.
@@ -107,7 +131,8 @@ public class ProfileActivity extends AppCompatActivity {
         transaction.addToBackStack(null);
         // Commit the transaction.
         transaction.commit();
-        Log.d("Profile Activity", "Reached");
+        // End of taken code. 
+
     }
     /**
      * Takes you to a page to view mood history
