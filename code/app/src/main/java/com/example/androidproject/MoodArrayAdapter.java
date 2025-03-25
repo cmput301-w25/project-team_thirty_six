@@ -48,16 +48,19 @@ public class MoodArrayAdapter extends ArrayAdapter<MoodState> {
         MoodState moodState = getItem(position);
 
         // Use view instead of convertView
+        TextView usernameTextView = view.findViewById(R.id.username_text);
         AppCompatButton viewMoreButton = view.findViewById(R.id.viewMoreDetails);
         TextView moodTextView = view.findViewById(R.id.text_mood);
         TextView dateTextView = view.findViewById(R.id.text_date);
         ImageView imageView = view.findViewById(R.id.image_mood);
 
         if (moodState != null) {
+            String username = moodState.getUser();
             String state = moodState.getMood();
             String date = moodState.formatDateTime();
             int emoji = moodState.getEmoji();
 
+            usernameTextView.setText(username);
             moodTextView.setText(state);
             dateTextView.setText(date);
             imageView.setImageResource(emoji);
