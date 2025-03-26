@@ -46,6 +46,7 @@ public class LocationMapActivity extends AppCompatActivity {
     ImageButton moodFilter;
     private boolean isMapReady = false;
     private boolean feedScreen = Boolean.FALSE;
+    private FeedManager feedManager;
     private FloatingActionButton distanceFilter;
 
     @Override
@@ -79,6 +80,7 @@ public class LocationMapActivity extends AppCompatActivity {
         followingFilter = findViewById(R.id.following_button_map);
         moodFilter = findViewById(R.id.map_filter);
         distanceFilter = findViewById(R.id.distance_filter);
+        feedManager = new FeedManager();
 
         // Creates the on click listener for mood filters
         moodFilter.setOnClickListener(v -> showFilterDialog());
@@ -94,14 +96,12 @@ public class LocationMapActivity extends AppCompatActivity {
                 if (feedScreen) {
                     // Fetches the mood history of the user and updates the markers
                     fetchMoodHistory(currentUser);
-                    updateMapMarkers();
                     followingFilter.setImageDrawable(ResourcesCompat.getDrawable(getResources(),R.drawable.feed,null));
                     // Sets feed status to false
                     feedScreen = Boolean.FALSE;
                 } else {
                     // Fetches the mood feed and updates the markers
                     fetchMoodFeed(currentUser);
-                    updateMapMarkers();
                     followingFilter.setImageDrawable(ResourcesCompat.getDrawable(getResources(),R.drawable.personal,null));
                     // Sets feed status to True
                     feedScreen = Boolean.TRUE;
@@ -166,25 +166,34 @@ public class LocationMapActivity extends AppCompatActivity {
      */
     private void fetchMoodFeed(String username) {
         Log.d(TAG, "Fetching mood history for user: " + username);
-
-        moodHistoryManager.fetchMoodFeed(username, new MoodHistoryManager.MoodHistoryCallback() {
+        // Gets the following list
+        feedManager.getFollowing(username, new FeedManager.FollowingCallback() {
+            /**
+             *  Callback that provides the following list
+             * @param following
+             *      following list
+             */
             @Override
-            public void onCallback(ArrayList<MoodState> retrievedMoods) {
-                if (retrievedMoods != null) {
-                    moodHistory.clear();
-                    moodHistory.addAll(retrievedMoods);
-                    Log.d(TAG, "Fetched " + moodHistory.size() + " moods.");
-                } else {
-                    Log.e(TAG, "No moods found.");
-                    Toast.makeText(LocationMapActivity.this, "No moods found for user.", Toast.LENGTH_SHORT).show();
-                }
+            public void onCallback(ArrayList<String> following) {
+                // Gets the feed using the following list
+                feedManager.fetchFeed(following, new FeedManager.FeedCallback() {
+                    /**
+                     * Callback for the feed
+                     * @param feed
+                     *      list of moods that make up the feed
+                     */
+                    @Override
+                    public void onCallback(ArrayList<MoodState> feed) {
+                        // Clears mood history and makes it equal to the feed
+                        Log.e("MOOD HISTORY SIZE", String.valueOf(moodHistory.size()));
+                        moodHistory.clear();
+                        Log.e("MOOD HISTORY SIZE", String.valueOf(moodHistory.size()));
+                        moodHistory = feed;
+                        Log.e("MOOD HISTORY SIZE", String.valueOf(moodHistory.size()));
 
-                // ✅ Only update markers if the map is ready
-                if (isMapReady) {
-                    updateMapMarkers();
-                } else {
-                    Log.w(TAG, "Map is not ready yet. Markers will be added once map is loaded.");
-                }
+                        updateMapMarkers();
+                    }
+                });
             }
         });
     }

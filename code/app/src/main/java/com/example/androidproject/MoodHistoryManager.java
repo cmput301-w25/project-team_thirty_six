@@ -1,5 +1,6 @@
 package com.example.androidproject;
 
+import android.location.LocationManager;
 import android.net.Uri;
 import android.util.Log;
 
@@ -53,76 +54,6 @@ public class MoodHistoryManager {
     }
 
     /**
-     * Fetches the mood history for a user while ignoring private moods from the "moods" collection.
-     *
-     * @param userId   The ID of the user.
-     * @param callback The callback to handle the result.
-     */
-    public void fetchMoodHistoryIgnorePrivate(String userId, MoodHistoryCallback callback) {
-        db.collection("Moods")
-                .whereEqualTo("user", userId) // Filter moods by the user ID
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    ArrayList<MoodState> moodHistory = new ArrayList<>();
-                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                        MoodState moodState = documentToMoodState(document);
-                        // Ignores all private moods in mood history
-                        if (moodState.visibility) {
-                            moodHistory.add(moodState);
-                        }
-                    }
-                    callback.onCallback(moodHistory); // Pass the fetched moods to the callback
-                })
-                .addOnFailureListener(e -> {
-                    Log.w("MoodHistoryManager", "Error fetching mood history", e);
-                    callback.onCallback(null); // Return null to indicate an error
-                });
-    }
-
-    /**
-     * Fetches the mood feed for a user from the "moods" collection.
-     *
-     * @param userId   The ID of the user.
-     * @param callback The callback to handle the result.
-     */
-    public void fetchMoodFeed(String userId, MoodHistoryCallback callback) {
-        // Gets the list of people the user is following
-        db.collection("Users")
-                .whereEqualTo("username",userId)// Finds the user
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    // Ensures the document list isn't empty
-                    if (queryDocumentSnapshots.size() == 0) {
-                        callback.onCallback(null);
-                    } else {
-                        // Gets the doc for the user
-                        DocumentSnapshot userDoc = queryDocumentSnapshots.getDocuments().get(0);
-                        ArrayList<String> followingList = (ArrayList<String>) userDoc.get("following");
-                        // Gets the array list for moodHistory
-                        ArrayList<MoodState> feedHistory = new ArrayList<>();
-                        for (int i = 0; i < followingList.size(); i++) {
-                            // Copies i for inside callback
-                            int finalI = i;
-                            fetchMoodHistoryIgnorePrivate(followingList.get(i), new MoodHistoryCallback() {
-                                /**
-                                 * Handles receiving data back from moodHistory
-                                 * @param moodHistory
-                                 */
-                                @Override
-                                public void onCallback(ArrayList<MoodState> moodHistory) {
-                                    Log.e("MOOD FEED SIZE",String.valueOf(moodHistory.size()));
-                                    feedHistory.addAll(moodHistory);
-                                    if (finalI == followingList.size() -1) {
-                                        callback.onCallback(feedHistory);
-                                    }
-                                }
-                            });
-                        }
-                    }
-                });
-    }
-
-    /**
      * Converts a Firestore document to a MoodState object.
      *
      * @param document The Firestore document representing a mood.
@@ -146,34 +77,20 @@ public class MoodHistoryManager {
         if (document.getString("image") != null) {
             moodState.setImage(Uri.parse(document.getString("image")));
         }
-        // ✅ Reconstruct location from Firestore
-        if (document.contains("location")) {
-            Object locationObj = document.get("location");
-
-            if (locationObj instanceof Map) {
-                Map<String, Object> locationMap = (Map<String, Object>) locationObj;
-                if (locationMap.containsKey("latitude")  && locationMap.containsKey("longitude")) {
-                    double lat = locationMap.get("latitude") != null ? (double) locationMap.get("latitude") : 0.0;
-                    double lon = locationMap.get("longitude") != null ? (double) locationMap.get("longitude") : 0.0;
-
-                    // ✅ Debug log to check extracted values
-                    Log.d("FirestoreDebug", "Extracted location - Latitude: " + lat + ", Longitude: " + lon);
-
-                    // Reconstruct Location object
-                    Location loc = new Location("");
-                    loc.setLatitude(lat);
-                    loc.setLongitude(lon);
-                    moodState.setLocation(loc); // ✅ Set reconstructed Location object
-                } else {
-                    Log.w("FirestoreDebug", "Location map exists but missing latitude/longitude keys.");
-                }
-            } else {
-                Log.w("FirestoreDebug", "Location field found but not in expected Map format.");
-            }
-        } else {
-            Log.w("FirestoreDebug", "No location field found in Firestore document.");
+        // Checks that the location isn't null
+        if (document.get("location") != null) {
+            // Gets the longitude and latitude
+            Double latitude = document.get("location.latitude", Double.class);
+            Double longitude = document.get("location.longitude", Double.class);
+            // makes the location
+            Location location = new Location(LocationManager.GPS_PROVIDER);
+            // Set sea level so that there is no invocation error
+            location.setMslAltitudeAccuracyMeters(0);
+            location.setMslAltitudeMeters(0);
+            location.setLatitude(latitude);
+            location.setLongitude(longitude);
+            moodState.setLocation(location);
         }
-
         return moodState;
     }
 

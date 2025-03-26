@@ -1,5 +1,7 @@
 package com.example.androidproject;
 
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.util.Log;
 
@@ -92,6 +94,22 @@ public class FeedManager {
         // Handle nullable fields
         if (document.getString("image") != null) {
             moodState.setImage(Uri.parse(document.getString("image")));
+        }
+
+        // Handles location
+        // Checks that the location isn't null
+        if (document.get("location") != null) {
+            // Gets the longitude and latitude
+            Double latitude = document.get("location.latitude", Double.class);
+            Double longitude = document.get("location.longitude", Double.class);
+            // makes the location
+            Location location = new Location(LocationManager.GPS_PROVIDER);
+            // Set sea level so that there is no invocation error
+            location.setMslAltitudeAccuracyMeters(0);
+            location.setMslAltitudeMeters(0);
+            location.setLatitude(latitude);
+            location.setLongitude(longitude);
+            moodState.setLocation(location);
         }
 
         return moodState;
