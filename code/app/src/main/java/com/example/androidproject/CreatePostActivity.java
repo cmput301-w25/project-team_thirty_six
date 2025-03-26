@@ -28,6 +28,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 //import com.google.android.gms.location.FusedLocationProviderClient;
@@ -294,6 +295,8 @@ public class CreatePostActivity extends AppCompatActivity {
                         @Override
                         public void onLocationReceived(Location location) {
                             moodLocation = location;
+                            moodLocation.setMslAltitudeAccuracyMeters(0);
+                            moodLocation.setMslAltitudeMeters(0);
                             locationStateText.setText("Remove Location");
                             locationState = Boolean.TRUE;
                             Log.d("CreatePostActivity", "Mood location set to: " + location.getLatitude() + ", " + location.getLongitude());
