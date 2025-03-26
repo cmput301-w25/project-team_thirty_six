@@ -18,21 +18,17 @@
         <!-- Date Text -->
 
         <TextView
-            android:id="@+id/username_text"
+            android:id="@+id/mood_event_username"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="119dp"
-            android:layout_marginTop="7dp"
-            android:layout_marginBottom="13dp"
             android:text="username"
             android:textColor="@color/white"
             android:textSize="18sp"
-            app:layout_constraintBottom_toTopOf="@+id/viewDetailsButton"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.078"
+            app:layout_constraintHorizontal_bias="0.13"
             app:layout_constraintStart_toStartOf="@+id/image_mood"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="1.0" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/text_date"

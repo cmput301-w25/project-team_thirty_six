@@ -134,4 +134,14 @@ public class ProfileActivity extends AppCompatActivity {
         // End of taken code. 
 
     }
+    /**
+     * Takes you to a page to view mood history
+     * @param view
+     */
+    public void viewMoodHistory(View view){
+        Intent i = new Intent(this, MoodHistoryActivity.class);
+        i.putExtra("currentUser",
+                (String) getIntent().getSerializableExtra("currentUser"));
+        startActivity(i);
+    }
 }

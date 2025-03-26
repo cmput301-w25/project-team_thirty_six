@@ -128,6 +128,23 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/view_mood_history"
+            style="@android:style/Widget.Button"
+            android:layout_width="226dp"
+            android:layout_height="45dp"
+            android:background="@drawable/intro_btn_background"
+            android:onClick="viewMoodHistory"
+            android:text="View Mood History"
+            android:textColor="@color/white"
+            android:textSize="22sp"
+            android:textStyle="normal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.497"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/follower_following_linearLayout"
+            app:layout_constraintVertical_bias="0.661" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
