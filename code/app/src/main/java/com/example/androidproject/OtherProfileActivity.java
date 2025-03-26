@@ -22,6 +22,7 @@ public class OtherProfileActivity extends AppCompatActivity {
     private String otherUsername;
     private Database database;
     private User otherUser;
+    private User currentUser;
 
     /**
      * Runs the
@@ -38,6 +39,9 @@ public class OtherProfileActivity extends AppCompatActivity {
         // Get the instance of the database that we have
         this.database = Database.getInstance();
         this.userManager = new UserManager(this);
+
+        // get the currentUser from the user manager
+        this.currentUser = UserManager.getCurrentUser();
 
         // Retrieve the otherUser from the Intent
         otherUsername = (String) getIntent().getStringExtra("otherUser");
@@ -90,6 +94,18 @@ public class OtherProfileActivity extends AppCompatActivity {
         TextView userNameTextView = findViewById(R.id.displayUsername);
         userNameTextView.setText(otherUsername);
 
+        // Setup follower and following strings
+        int followingCount = otherUser.getFollowing().size();
+        int followerCount = otherUser.getFollowers().size();
+        String followingString = String.format("%d following", followingCount);
+        String followersString = String.format("%d followers", followerCount);
+
+        // Populate the follower and following strings
+        TextView followersTextView = findViewById(R.id.followerAmountTextView);
+        TextView followingTextView = findViewById(R.id.followingAmountTextView);
+        followersTextView.setText(followersString);
+        followingTextView.setText(followingString);
+
         // The following code makes the sets the follow button to either "follow", "requested" or "following"
         // depending on if the currentUser is following them, or has requested them or not.
         Button followButton = findViewById(R.id.follow_following_button);
@@ -97,6 +113,8 @@ public class OtherProfileActivity extends AppCompatActivity {
         // TODO would probably have to get the current user object into this activity as well.
         if (otherUser.followRequests.contains(currentUsername)){
             followButton.setText(R.string.follow_button_requested);
+        } else if (currentUser.getFollowing().contains(otherUsername)){
+            followButton.setText(R.string.follow_button_unfollow);
         } else {
             followButton.setText(R.string.follow_button_follow);
         }
@@ -117,7 +135,31 @@ public class OtherProfileActivity extends AppCompatActivity {
             followButton.setText(R.string.follow_button_requested);
 
         } else if (followButtonText.equals(getString(R.string.follow_button_requested))){
+            userManager.cancelFollowRequest(currentUsername, otherUsername);
+            followButton.setText(R.string.follow_button_follow);
+
+        } else {
+            userManager.unfollowUser(currentUsername, otherUsername);
+            currentUser.removeFollowing(otherUsername);
+            otherUser.removeFollowers(currentUsername);
+            repopulateFollowerCount();
+
+
             followButton.setText(R.string.follow_button_follow);
         }
+
+    }
+
+    private void repopulateFollowerCount() {
+
+        // Setup follower string
+        int followerCount = otherUser.getFollowers().size();
+        String followersString = String.format("%d followers", followerCount);
+
+        // Populate the follower textView
+        TextView followersTextView = findViewById(R.id.followerAmountTextView);
+        followersTextView.setText(followersString);
+
+
     }
 }

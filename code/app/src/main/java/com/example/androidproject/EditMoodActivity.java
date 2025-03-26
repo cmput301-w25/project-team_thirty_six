@@ -30,6 +30,19 @@ import com.google.firebase.storage.StorageReference;
 import java.util.Calendar;
 import java.util.Map;
 
+/**
+ * EditMoodActivity provides functionality to modify existing mood events.
+ * The activity allows the user to modify the mood state, visibility, reason, social situation,
+ * date and time, and media attachments
+ *
+ * This activity interacts with the following components:
+ * - MoodDropDownManager: Handles the interface for selecting a mood
+ * - DateTimeManager: Manages the date and time selection
+ * - SocialSituationManager: Manages the social situation context
+ * - MoodMediaManager: Manages the image and location attachments
+ * - MoodRepository: Interfaces with the Firestore database for updating the mood event
+ * - NavBarFragment: Provides navigation capabilities
+ */
 public class EditMoodActivity extends AppCompatActivity {
     // UI elements
     private Button doneButton, cancelButton;
@@ -188,11 +201,17 @@ public class EditMoodActivity extends AppCompatActivity {
                     String color = document.getString("color");
                     String chosenSituation = document.getString("situation");
                     String reason = document.getString("reason");
-                    Double latitude = document.get("location.latitude", Double.class);
-                    Double longitude = document.get("location.longitude", Double.class);
-                    Location location = new Location(LocationManager.GPS_PROVIDER);
-                    location.setLatitude(latitude);
-                    location.setLongitude(longitude);
+                    Location location = null;
+                    // Checks that the location isn't null
+                    if (document.get("location") != null) {
+                        // Gets the longitude and latitude
+                        Double latitude = document.get("location.latitude", Double.class);
+                        Double longitude = document.get("location.longitude", Double.class);
+                        // makes the location
+                        location = new Location(LocationManager.GPS_PROVIDER);
+                        location.setLatitude(latitude);
+                        location.setLongitude(longitude);
+                    }
                     String imageUrl = document.getString("id");
                     Object dayTimeObj = document.get("dayTime");
                     Boolean visibility = document.getBoolean("visibility");

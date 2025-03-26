@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/main_background">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -104,11 +105,67 @@
                     app:layout_constraintTop_toBottomOf="@id/AddMoodSelectMood" />
 
                 <TextView
+                    android:id="@+id/textViewVisibilityLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="32dp"
+                    android:layout_marginTop="24dp"
+                    android:text="@string/visibility"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/add_mood_select_mood_list" />
+
+                <RadioGroup
+                    android:id="@+id/privateRadioGroup"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="30dp"
+                    android:orientation="horizontal"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textViewVisibilityLabel">
+
+                    <RadioButton
+                        android:id="@+id/addPrivate"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_marginEnd="4dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/edit_mood_radio_button_selector"
+                        android:button="@null"
+                        android:gravity="center"
+                        android:paddingStart="8dp"
+                        android:paddingEnd="8dp"
+                        android:text="Private"
+                        android:textColor="@color/white"
+                        android:textSize="12sp" />
+
+                    <RadioButton
+                        android:id="@+id/addPublic"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_marginStart="4dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/edit_mood_radio_button_selector"
+                        android:button="@null"
+                        android:checked="true"
+                        android:gravity="center"
+                        android:paddingStart="8dp"
+                        android:paddingEnd="8dp"
+                        android:text="Public"
+                        android:textColor="@color/white"
+                        android:textSize="12sp" />
+                </RadioGroup>
+
+                <TextView
                     android:id="@+id/textViewAddReasontext"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="28dp"
-                    android:layout_marginTop="36dp"
+                    android:layout_marginStart="32dp"
+                    android:layout_marginTop="132dp"
                     android:text="@string/reason"
                     android:textColor="@color/white"
                     android:textSize="18sp"
@@ -131,7 +188,7 @@
                 <EditText
                     android:id="@+id/addReason"
                     android:layout_width="346dp"
-                    android:layout_height="103dp"
+                    android:layout_height="135dp"
                     android:layout_marginStart="30dp"
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="30dp"
@@ -379,50 +436,6 @@
 
                 </RadioGroup>
 
-                <RadioGroup
-                    android:id="@+id/privateRadioGroup"
-                    android:layout_width="230dp"
-                    android:layout_height="50dp"
-                    android:layout_marginTop="18dp"
-                    android:orientation="horizontal"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/socialSituationRadioGroup">
-
-                    <RadioButton
-                        android:id="@+id/addPrivate"
-                        android:layout_width="match_parent"
-                        android:layout_height="48dp"
-                        android:layout_marginRight="10dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/edit_mood_radio_button_selector"
-                        android:button="@null"
-                        android:gravity="center"
-                        android:paddingStart="8dp"
-                        android:paddingEnd="8dp"
-                        android:text="Private"
-                        android:textColor="@color/white"
-                        android:textSize="12sp" />
-
-                    <RadioButton
-                        android:id="@+id/addPublic"
-                        android:layout_width="match_parent"
-                        android:layout_height="48dp"
-                        android:layout_marginLeft="10dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/edit_mood_radio_button_selector"
-                        android:button="@null"
-                        android:checked="true"
-                        android:gravity="center"
-                        android:paddingStart="8dp"
-                        android:paddingEnd="8dp"
-                        android:text="Public"
-                        android:textColor="@color/white"
-                        android:textSize="12sp"
-                        tools:layout_editor_absoluteX="181dp"
-                        tools:layout_editor_absoluteY="518dp" />
-
-                </RadioGroup>
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>

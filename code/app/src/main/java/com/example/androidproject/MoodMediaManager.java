@@ -5,15 +5,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.net.Uri;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.cardview.widget.CardView;
 
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Manages media operations like images and location for mood editing
@@ -96,23 +101,56 @@ public class MoodMediaManager {
         if (resultCode == Activity.RESULT_OK && data != null) {
             Uri selectedImage = data.getData();
             if (selectedImage != null) {
-                // Clear any pending deletion
-                imageToDeleteId = null;
+                // Check image size before proceeding
+                InputStream inputStream = null;
+                try {
+                    inputStream = context.getContentResolver().openInputStream(selectedImage);
+                    if (inputStream == null) {
+                        Toast.makeText(context, "Unable to access the selected image",
+                                Toast.LENGTH_SHORT).show();
+                        return;
+                    }
 
-                // Store the new image URI and clear any existing image ID
-                newImageUri = selectedImage;
-                existingImageId = null;
-                hasImage = true;
+                    int imageSize = inputStream.available();
 
-                // Display the selected image
-                Picasso.get()
-                        .load(selectedImage)
-                        .into(moodImageView);
+                    if (imageSize >= 65536) {
+                        // Image is too large
+                        Toast.makeText(context, "Image size exceeds 64KB limit. Please select a smaller image.",
+                                Toast.LENGTH_LONG).show();
+                        return;
+                    }
 
-                imagePreviewCardView.setVisibility(View.VISIBLE);
+                    // Clear any pending deletion
+                    imageToDeleteId = null;
 
-                // switch to the remove image mode
-                showRemoveImageOption();
+                    // Store the new image URI and clear any existing image ID
+                    newImageUri = selectedImage;
+                    existingImageId = null;
+                    hasImage = true;
+
+                    // Display the selected image
+                    Picasso.get()
+                            .load(selectedImage)
+                            .into(moodImageView);
+
+                    imagePreviewCardView.setVisibility(View.VISIBLE);
+
+                    // switch to the remove image mode
+                    showRemoveImageOption();
+
+                } catch (IOException e) {
+                    Toast.makeText(context, "Error checking image size: " + e.getMessage(),
+                            Toast.LENGTH_SHORT).show();
+                } finally {
+                    if (inputStream != null) {
+                        try {
+                            inputStream.close();
+                        } catch (IOException e) {
+                            // Log the error but continue
+                            Log.e("MoodMediaManager", "Error closing input stream", e);
+                        }
+                    }
+                }
             }
         }
     }

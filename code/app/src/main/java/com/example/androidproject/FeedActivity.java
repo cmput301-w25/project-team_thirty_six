@@ -26,37 +26,35 @@ import java.util.Comparator;
 import android.content.Intent;
 
 /**
- * MoodHistoryActivity is an activity that displays the mood history of a user.
+ * FeedActivity is an activity that displays the mood history of a user.
  * It allows users to view, filter, and manage their mood entries.
  */
+public class FeedActivity extends AppCompatActivity {
 
-public class MoodHistoryActivity extends AppCompatActivity {
-
-    private ArrayList<MoodState> moodHistory;
-    private ArrayList<MoodState> completeMoodHistory;
+    private ArrayList<MoodState> feed;
+    private ArrayList<String> following;
+    private ArrayList<MoodState> completeFeed;
     private MoodArrayAdapter moodAdapter;
 
     private ListView moodListView;
 
-    private MoodHistoryManager moodHistoryManager;
+    private FeedManager feedManager;
 
     private String currentUser;
 
     @Override
-    /**
-     * Runs the body of mood history
-     */
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_mood_history);
+        setContentView(R.layout.activity_feed);
 
         // Retrieve the currentUser from the Intent
         currentUser = (String) getIntent().getSerializableExtra("currentUser");
 
+
         if (currentUser != null) {
-            Log.d("MoodHistoryActivity", "Current user: " + currentUser);
+            Log.d("FeedActivity", "Current user: " + currentUser);
         } else {
-            Log.e("MoodHistoryActivity", "No user data found");
+            Log.e("FeedActivity", "No user data found");
         }
 
         if (savedInstanceState == null) {
@@ -65,52 +63,68 @@ public class MoodHistoryActivity extends AppCompatActivity {
                     .commit();
         }
 
-        // Initialize MoodHistoryManager
-        moodHistoryManager = new MoodHistoryManager();
+        // Initialize feedManager
+        feedManager = new FeedManager();
 
         // Initialize mood history lists
-        moodHistory = new ArrayList<>();
-        completeMoodHistory = new ArrayList<>();
+        feed = new ArrayList<>();
+        completeFeed = new ArrayList<>();
 
         // Initialize the adapter with an empty list
-        moodAdapter = new MoodArrayAdapter(this, moodHistory, currentUser);
+        moodAdapter = new MoodArrayAdapter(this, feed, currentUser);
         moodListView = findViewById(R.id.mood_list);
         moodListView.setAdapter(moodAdapter);
 
-        // Fetch mood history for the current user
-        fetchMoodHistory(currentUser); // remember add user authentication to make sure usernames are unique
+        // Fetch the following list asynchronously
+        fetchFollowingAndFeed();
 
         // Set up the filter button
         ImageButton filterButton = findViewById(R.id.filter_button);
         filterButton.setOnClickListener(view -> showFilterDialog());
-
     }
 
     /**
-     * Fetches mood history from Firestore and updates the UI.
-     *
-     * @param username
-     *      The username of the user whose mood history is to be fetched.
+     * Fetches the following list and then fetches the feed for the followed users.
      */
-    private void fetchMoodHistory(String username) {
-        moodHistoryManager.fetchMoodHistory(username, new MoodHistoryManager.MoodHistoryCallback() {
+    private void fetchFollowingAndFeed() {
+        feedManager.getFollowing(currentUser, new FeedManager.FollowingCallback() {
             @Override
-            public void onCallback(ArrayList<MoodState> moodHistory) {
-                if (moodHistory != null) {
-                    // Update the mood history lists
-                    MoodHistoryActivity.this.moodHistory.clear();
-                    MoodHistoryActivity.this.moodHistory.addAll(moodHistory);
+            public void onCallback(ArrayList<String> followingList) {
+                if (followingList != null) {
+                    following = followingList;
+                    Log.d("FeedActivity", "Following list: " + following);
 
-                    completeMoodHistory.clear();
-                    completeMoodHistory.addAll(moodHistory);
+                    // Now fetch the feed for the followed users
+                    fetchFeed();
+                } else {
+                    Log.e("FeedActivity", "Failed to fetch following list");
+                }
+            }
+        });
+    }
+
+    /**
+     * Fetches feed from Firestore and updates the UI.
+     */
+    private void fetchFeed() {
+        feedManager.fetchFeed(following, new FeedManager.FeedCallback() {
+            @Override
+            public void onCallback(ArrayList<MoodState> feed) {
+                if (feed != null) {
+                    // Update the mood history lists
+                    FeedActivity.this.feed.clear();
+                    FeedActivity.this.feed.addAll(feed);
+
+                    completeFeed.clear();
+                    completeFeed.addAll(feed);
 
                     // Sort the mood history by date and time
-                    sortMoodHistory();
+                    sortFeed();
 
                     // Notify the adapter that the data has changed
                     moodAdapter.notifyDataSetChanged();
                 } else {
-                    Log.e("MoodState", "Failed to fetch mood history");
+                    Log.e("FeedActivity", "Failed to fetch feed");
                 }
             }
         });
@@ -119,8 +133,8 @@ public class MoodHistoryActivity extends AppCompatActivity {
     /**
      * Sorts the mood history by date and time in reverse chronological order.
      */
-    private void sortMoodHistory() {
-        moodHistory.sort(new Comparator<MoodState>() {
+    private void sortFeed() {
+        feed.sort(new Comparator<MoodState>() {
             @Override
             public int compare(MoodState m1, MoodState m2) {
                 return m2.getDayTime().compareTo(m1.getDayTime()); // Reverse order
@@ -128,7 +142,7 @@ public class MoodHistoryActivity extends AppCompatActivity {
         });
         moodAdapter.notifyDataSetChanged(); // Refresh the adapter
 
-        completeMoodHistory.sort(new Comparator<MoodState>() {
+        completeFeed.sort(new Comparator<MoodState>() {
             @Override
             public int compare(MoodState m1, MoodState m2) {
                 return m2.getDayTime().compareTo(m1.getDayTime()); // Reverse order
@@ -141,7 +155,7 @@ public class MoodHistoryActivity extends AppCompatActivity {
      * Filters the mood history by the most recent week.
      */
     public void filterByRecentWeek() {
-        ArrayList<MoodState> filteredMoods = Filter.filterByRecentWeek(moodHistory);
+        ArrayList<MoodState> filteredMoods = Filter.filterByRecentWeek(feed);
         moodAdapter.clear();
         moodAdapter.addAll(filteredMoods);
         moodAdapter.notifyDataSetChanged();
@@ -150,11 +164,10 @@ public class MoodHistoryActivity extends AppCompatActivity {
     /**
      * Filters the mood history by a specific emotional state.
      *
-     * @param emotionalState
-     *        The emotional state to filter by.
+     * @param emotionalState The emotional state to filter by.
      */
     public void filterByEmotionalState(String emotionalState) {
-        ArrayList<MoodState> filteredMoods = Filter.filterByEmotionalState(moodHistory, emotionalState);
+        ArrayList<MoodState> filteredMoods = Filter.filterByEmotionalState(feed, emotionalState);
         moodAdapter.clear();
         moodAdapter.addAll(filteredMoods);
         moodAdapter.notifyDataSetChanged();
@@ -163,11 +176,10 @@ public class MoodHistoryActivity extends AppCompatActivity {
     /**
      * Filters the mood history by a keyword in the reason text.
      *
-     * @param keyword
-     *      The keyword to filter by.
+     * @param keyword The keyword to filter by.
      */
     public void filterByKeyword(String keyword) {
-        ArrayList<MoodState> filteredMoods = Filter.filterByKeyword(moodHistory, keyword);
+        ArrayList<MoodState> filteredMoods = Filter.filterByKeyword(feed, keyword);
         moodAdapter.clear();
         moodAdapter.addAll(filteredMoods);
         moodAdapter.notifyDataSetChanged();
@@ -195,7 +207,7 @@ public class MoodHistoryActivity extends AppCompatActivity {
         titleTextView.setText("Filter by");
         titleTextView.setTextColor(Color.WHITE);
         titleTextView.setTextSize(18);
-        titleTextView.setPadding(350, 50, 16, 16);  //Add padding for better look
+        titleTextView.setPadding(350, 50, 16, 16);  // Add padding for better look
 
         // Get the mood options from the string array
         String[] moods = getResources().getStringArray(R.array.moods_array);
@@ -236,48 +248,42 @@ public class MoodHistoryActivity extends AppCompatActivity {
                     displayAllMoods();
                 })
                 .show();
-
     }
-
 
     /**
      * Resets the mood history to display all moods.
      */
     private void displayAllMoods() {
-        moodHistory.clear();
-        moodHistory.addAll(completeMoodHistory); // Restore all moods from the original list
+        feed.clear();
+        feed.addAll(completeFeed); // Restore all moods from the original list
         moodAdapter.notifyDataSetChanged();
     }
 
     @Override
-    /**
-     * Resets the mood history once edit is called
-     */
-    protected void onResume(){
+    protected void onResume() {
         super.onResume();
         // Retrieve the currentUser from the Intent
         currentUser = (String) getIntent().getSerializableExtra("currentUser");
 
         if (currentUser != null) {
-            Log.d("MoodHistoryActivity", "Current user: " + currentUser);
+            Log.d("FeedActivity", "Current user: " + currentUser);
         } else {
-            Log.e("MoodHistoryActivity", "No user data found");
+            Log.e("FeedActivity", "No user data found");
         }
 
-        // Initialize MoodHistoryManager
-        moodHistoryManager = new MoodHistoryManager();
+        // Initialize feedManager
+        feedManager = new FeedManager();
 
         // Initialize mood history lists
-        moodHistory = new ArrayList<>();
-        completeMoodHistory = new ArrayList<>();
+        feed = new ArrayList<>();
+        completeFeed = new ArrayList<>();
 
         // Initialize the adapter with an empty list
-        moodAdapter = new MoodArrayAdapter(this, moodHistory, currentUser);
+        moodAdapter = new MoodArrayAdapter(this, feed, currentUser);
         moodListView = findViewById(R.id.mood_list);
         moodListView.setAdapter(moodAdapter);
 
         // Fetch mood history for the current user
-        fetchMoodHistory(currentUser); // remember add user authentication to make sure usernames are unique
+        fetchFollowingAndFeed(); // Fetch following list and then fetch feed
     }
-
 }

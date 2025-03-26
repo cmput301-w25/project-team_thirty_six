@@ -2,6 +2,7 @@ package com.example.androidproject;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -42,8 +43,13 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * Activity to display details of a selected mood post.
+ * MoodDetailsActivity displays comprehensive information about a selected mood post.
  * Retrieves mood details from Firestore and updates the UI
+ *
+ * This activity interacts with the following components:
+ * - EditMoodActivity: Target activity for handling edit operations
+ * - Database: Manages commment storage
+ * - NavbarFragment: Provides navigation capabilities
  */
 public class MoodDetailsActivity extends AppCompatActivity {
 
@@ -74,6 +80,7 @@ public class MoodDetailsActivity extends AppCompatActivity {
     // Creates a copy of the current class to toast inside a on click listener
     private MoodDetailsActivity current = this;
 
+    private static final String TAG = "MoodDetailsActivity";
 
     /**
      * Called when the activity is starting. Initializes UI components and loads mood details.
@@ -87,12 +94,16 @@ public class MoodDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_mood_details);
 
         // Retrieve the currentUser from the Intent
-        userId = (String) getIntent().getSerializableExtra("user");
+        String currentLoggedInUser = getIntent().getStringExtra("user");
 
-        if (userId != null) {
-            Log.d("MoodDetailsActivity", "Current user: " + userId);
+        if (currentLoggedInUser != null) {
+            Log.d(TAG, "Current user: " + currentLoggedInUser);
+            userId = currentLoggedInUser;
         } else {
-            Log.e("MoodDetailsActivity", "No user data found");
+            Log.e(TAG, "No user data found");
+            Toast.makeText(this, "Error: User not found!", Toast.LENGTH_LONG).show();
+            finish();
+            return;
         }
 
         if (savedInstanceState == null) {
@@ -104,14 +115,14 @@ public class MoodDetailsActivity extends AppCompatActivity {
         // Initialize Firebase and UI components
         db = FirebaseFirestore.getInstance();
         initializeViews();
+
         // Sets the collection reference of comment
         commentCollection = db.collection("Comments");
         commentLoop();
 
-        // Retrieve mood ID and user ID from intent
-        if (getIntent().hasExtra("id") && getIntent().hasExtra("user")) {
+        // Retrieve mood ID from intent
+        if (getIntent().hasExtra("id")) {
             moodId = getIntent().getStringExtra("id");
-            userId = getIntent().getStringExtra("user");
             loadMoodDetails();
         } else {
             Toast.makeText(this, "Mood details not available", Toast.LENGTH_SHORT).show();
@@ -146,10 +157,8 @@ public class MoodDetailsActivity extends AppCompatActivity {
         tvSocialSituation.setVisibility(View.GONE);
         ivMoodImage.setVisibility(View.GONE);
 
-        // Always show edit button
-        // NEED TO IMPLEMENT CHECK FOR USER AUTH
-        btnEdit.setVisibility(View.VISIBLE);
-
+        // only if the current user is the owner of the mood
+        btnEdit.setVisibility(View.GONE);
 
         /**
          * Sets an OnClickListener for the edit button.
@@ -161,7 +170,7 @@ public class MoodDetailsActivity extends AppCompatActivity {
         btnEdit.setOnClickListener(v -> {
             Intent editIntent = new Intent(MoodDetailsActivity.this, EditMoodActivity.class);
             editIntent.putExtra("moodId", moodId);
-            editIntent.putExtra("user",userId);
+            editIntent.putExtra("user", userId);
             startActivity(editIntent);
         });
 
@@ -175,12 +184,12 @@ public class MoodDetailsActivity extends AppCompatActivity {
                 if (comment_text.getText().length() == 0) {
                     // If the text is empty prevents from submitting
                     CharSequence error_text = "Cannot post empty comment.";
-                    Toast.makeText(current,error_text,Toast.LENGTH_SHORT).show();
+                    Toast.makeText(current, error_text, Toast.LENGTH_SHORT).show();
                 } else {
                     // Gets the comment info
                     String commentTextData = comment_text.getText().toString();
                     // Adds the comment to the database
-                    Database.getInstance().addComment(userId,moodId,commentTextData);
+                    Database.getInstance().addComment(userId, moodId, commentTextData);
                     comment_text.setText("");
                 }
             }
@@ -190,11 +199,11 @@ public class MoodDetailsActivity extends AppCompatActivity {
     /**
      * Creates the comment loop functionality
      */
-    private void commentLoop(){
+    private void commentLoop() {
         // Adds a snapshot listener to the comment collection
         commentCollection.addSnapshotListener((value, error) -> {
             // Queries the database for only comments with mood id of the mood
-            commentCollection.whereEqualTo("moodID",moodId).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            commentCollection.whereEqualTo("moodID", moodId).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                 /**
                  * On success listener for the query
                  * @param queryDocumentSnapshots
@@ -207,20 +216,20 @@ public class MoodDetailsActivity extends AppCompatActivity {
                     // Creates a list of documents
                     List<DocumentSnapshot> docList = queryDocumentSnapshots.getDocuments();
                     // Loops through the documents
-                    for (int i = 0; i < docList.size(); i++){
+                    for (int i = 0; i < docList.size(); i++) {
                         // Gets the current document
                         DocumentSnapshot currentDoc = docList.get(i);
                         // Makes a comment out of the document
-                        Comment comment = new Comment(currentDoc.get("username").toString(),currentDoc.get("moodID").toString(),currentDoc.get("text").toString());
+                        Comment comment = new Comment(currentDoc.get("username").toString(), currentDoc.get("moodID").toString(), currentDoc.get("text").toString());
                         // Adds comment to temp list
                         comments.add(comment);
-                        Log.e("User",comments.get(i).getUsername());
-                        Log.e("Text",comments.get(i).getText());
+                        Log.e("User", comments.get(i).getUsername());
+                        Log.e("Text", comments.get(i).getText());
                     }
                     // Loops through all the comments
                     for (int i = 0; i < comments.size(); i++) {
-                        Comment comment  = comments.get(i);
-                        View view = LayoutInflater.from(current).inflate(R.layout.comment_layout,null);
+                        Comment comment = comments.get(i);
+                        View view = LayoutInflater.from(current).inflate(R.layout.comment_layout, null);
                         // Gets the elements of the display
                         TextView username_text = view.findViewById(R.id.comment_username_display);
                         TextView text_text = view.findViewById(R.id.comment_text_display);
@@ -245,8 +254,16 @@ public class MoodDetailsActivity extends AppCompatActivity {
                 DocumentSnapshot document = task.getResult();
                 if (document.exists()) {
                     // Extract the username from the mood document
-                    String username = document.getString("user");
-                    tvUsername.setText(username != null && !username.isEmpty() ? username : "User");
+                    String moodOwner = document.getString("user");
+
+                    tvUsername.setText(moodOwner != null && !moodOwner.isEmpty() ? moodOwner : "User");
+
+                    // Only show edit button if the current user is the owner of the mood
+                    if (moodOwner != null && moodOwner.equals(userId)) {
+                        btnEdit.setVisibility(View.VISIBLE);
+                    } else {
+                        btnEdit.setVisibility(View.GONE);
+                    }
 
                     // Call updateUIWithMoodData with the new document
                     updateUIWithMoodData(document);
@@ -323,17 +340,22 @@ public class MoodDetailsActivity extends AppCompatActivity {
                     // Create a reference to the image file
                     StorageReference imageRef = storage.getReference().child("images/" + imageUrl);
                     // Get the download URL and load it
-                    imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                        ivMoodImage.setVisibility(View.VISIBLE);
-                        Picasso.get()
-                                .load(uri)
-                                .placeholder(R.drawable.error_placeholder_image)
-                                .error(R.drawable.error_placeholder_image)
-                                .into(ivMoodImage);
-                    }).addOnFailureListener(e -> {
-                        ivMoodImage.setVisibility(View.GONE);
-                    });
+                    imageRef.getDownloadUrl()
+                            .addOnSuccessListener(uri -> {
+                                ivMoodImage.setVisibility(View.VISIBLE);
+                                Picasso.get()
+                                        .load(uri)
+                                        .placeholder(R.drawable.error_placeholder_image)
+                                        .error(R.drawable.error_placeholder_image)
+                                        .into(ivMoodImage);
+                            })
+                            .addOnFailureListener(e -> {
+                                // Log the error but don't crash
+                                Log.w(TAG, "Image not found in storage: " + e.getMessage());
+                                ivMoodImage.setVisibility(View.GONE);
+                            });
                 } catch (Exception e) {
+                    Log.w(TAG, "Error setting up image loading: " + e.getMessage());
                     ivMoodImage.setVisibility(View.GONE);
                 }
             } else {
@@ -366,10 +388,14 @@ public class MoodDetailsActivity extends AppCompatActivity {
         String dayTimeStr = document.getString("dayTime");
         if (dayTimeStr != null) {
             try {
-                LocalDateTime dateTime = LocalDateTime.parse(dayTimeStr);
+                LocalDateTime dateTime = null;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    dateTime = LocalDateTime.parse(dayTimeStr);
+                }
                 formatTimestampFromLocalDateTime(dateTime);
                 return;
             } catch (Exception e) {
+                Log.w(TAG, "Error parsing date string: " + e.getMessage());
             }
         }
 
@@ -410,6 +436,7 @@ public class MoodDetailsActivity extends AppCompatActivity {
 
             tvTimestamp.setText(formattedTime);
         } catch (Exception e) {
+            Log.w(TAG, "Error formatting timestamp from map: " + e.getMessage());
             tvTimestamp.setText("Unknown time");
         }
     }
@@ -421,9 +448,15 @@ public class MoodDetailsActivity extends AppCompatActivity {
      */
     private void formatTimestampFromLocalDateTime(LocalDateTime dateTime) {
         try {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM d, yyyy 'at' h:mm a", Locale.getDefault());
-            tvTimestamp.setText(dateTime.format(formatter));
+            DateTimeFormatter formatter = null;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                formatter = DateTimeFormatter.ofPattern("MMMM d, yyyy 'at' h:mm a", Locale.getDefault());
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                tvTimestamp.setText(dateTime.format(formatter));
+            }
         } catch (Exception e) {
+            Log.w(TAG, "Error formatting LocalDateTime: " + e.getMessage());
             tvTimestamp.setText("Unknown time");
         }
     }

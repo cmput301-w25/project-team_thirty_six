@@ -26,6 +26,8 @@ import androidx.cardview.widget.CardView;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 //import com.google.android.gms.location.FusedLocationProviderClient;
@@ -132,6 +134,12 @@ public class CreatePostActivity extends AppCompatActivity {
                     public void onActivityResult(Uri uri) {
                         // End of citation
                         chosenImage = uri;
+
+                        if (!isImageSizeValid(chosenImage)) {
+                            chosenImage = null;
+                            return;
+                        }
+
                         imagePreviewCard.setVisibility(View.VISIBLE);
                         imagePreview.setImageURI(chosenImage);
                         if (uri != null) {
@@ -360,5 +368,24 @@ public class CreatePostActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private boolean isImageSizeValid(Uri chosenImage) {
+        try {
+            InputStream inputStream = getContentResolver().openInputStream(chosenImage);
+            int imageSize = inputStream.available();
+            inputStream.close();
+
+            if (imageSize >= 65536) {
+                Toast.makeText(this, "Image size exceeds 64KB limit. Please select a smaller image.",
+                        Toast.LENGTH_LONG).show();
+                return false;
+            }
+            return true;
+        } catch (IOException e) {
+            Toast.makeText(this, "Error checking image size: " + e.getMessage(),
+                    Toast.LENGTH_SHORT).show();
+            return false;
+        }
     }
 }

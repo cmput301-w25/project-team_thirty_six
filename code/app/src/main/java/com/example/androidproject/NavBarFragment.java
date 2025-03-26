@@ -59,7 +59,7 @@ public class NavBarFragment extends Fragment {
 
         if (getArguments() != null){
             currentUser = (String) getArguments().getString("currentUser");
-//            Log.d("NavBarFragment", currentUser);
+//             Log.d("NavBarFragment", currentUser);
         }
         Log.d("NavBarFragment", "not current user");
 

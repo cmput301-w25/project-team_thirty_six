@@ -120,21 +120,6 @@ public class MoodHistoryManager {
                         }
                     }
                 });
-        db.collection("Moods")
-                .whereEqualTo("user", userId) // Filter moods by the user ID
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    ArrayList<MoodState> moodHistory = new ArrayList<>();
-                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                        MoodState moodState = documentToMoodState(document);
-                        moodHistory.add(moodState);
-                    }
-                    callback.onCallback(moodHistory); // Pass the fetched moods to the callback
-                })
-                .addOnFailureListener(e -> {
-                    Log.w("MoodHistoryManager", "Error fetching mood history", e);
-                    callback.onCallback(null); // Return null to indicate an error
-                });
     }
 
     /**
