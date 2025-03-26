@@ -23,16 +23,8 @@ import java.util.ArrayList;
 public class MoodArrayAdapter extends ArrayAdapter<MoodState> {
     private String loggedInUser; // The currently logged-in user
 
-    /**
-     * For creating the array adapter
-     *
-     * @param context      The context
-     * @param moods        The list of moods to display
 
-     */
-    public MoodArrayAdapter(Context context, ArrayList<MoodState> moods) {
-        super(context, 0, moods);
-    }
+
 
     /**
      * For creating the array adapter

@@ -71,7 +71,7 @@ public class FeedActivity extends AppCompatActivity {
         completeFeed = new ArrayList<>();
 
         // Initialize the adapter with an empty list
-        moodAdapter = new MoodArrayAdapter(this, feed);
+        moodAdapter = new MoodArrayAdapter(this, feed, currentUser);
         moodListView = findViewById(R.id.mood_list);
         moodListView.setAdapter(moodAdapter);
 
@@ -279,7 +279,7 @@ public class FeedActivity extends AppCompatActivity {
         completeFeed = new ArrayList<>();
 
         // Initialize the adapter with an empty list
-        moodAdapter = new MoodArrayAdapter(this, feed);
+        moodAdapter = new MoodArrayAdapter(this, feed, currentUser);
         moodListView = findViewById(R.id.mood_list);
         moodListView.setAdapter(moodAdapter);
 
