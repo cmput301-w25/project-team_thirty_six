@@ -167,12 +167,13 @@ public class HomePageActivity extends AppCompatActivity {
     }
 
     /**
-     * Takes you to a page to view mood history
-     * @param view The view that was clicked
-     */
-    public void viewMoodHistory(View view) {
-        Intent i = new Intent(this, MoodHistoryActivity.class);
+     //     * Takes you to a page to view mood history
+     //     * @param view The view that was clicked
+     //     */
+    public void viewFeed(View view) {
+        Intent i = new Intent(this, FeedActivity.class);
         i.putExtra("currentUser", currentUser);
         startActivity(i);
     }
+
 }

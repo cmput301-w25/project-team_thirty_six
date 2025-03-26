@@ -48,8 +48,8 @@ public class FeedActivity extends AppCompatActivity {
         setContentView(R.layout.activity_feed);
 
         // Retrieve the currentUser from the Intent
-        // currentUser = (String) getIntent().getSerializableExtra("currentUser");
-        currentUser = "testUser50"; // Hardcoded for testing
+        currentUser = (String) getIntent().getSerializableExtra("currentUser");
+
 
         if (currentUser != null) {
             Log.d("FeedActivity", "Current user: " + currentUser);
@@ -263,8 +263,7 @@ public class FeedActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         // Retrieve the currentUser from the Intent
-//        currentUser = (String) getIntent().getSerializableExtra("currentUser");
-        currentUser = "testUser50";
+        currentUser = (String) getIntent().getSerializableExtra("currentUser");
 
         if (currentUser != null) {
             Log.d("FeedActivity", "Current user: " + currentUser);

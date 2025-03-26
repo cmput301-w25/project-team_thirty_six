@@ -28,6 +28,17 @@ public class MoodArrayAdapter extends ArrayAdapter<MoodState> {
      *
      * @param context      The context
      * @param moods        The list of moods to display
+
+     */
+    public MoodArrayAdapter(Context context, ArrayList<MoodState> moods) {
+        super(context, 0, moods);
+    }
+
+    /**
+     * For creating the array adapter
+     *
+     * @param context      The context
+     * @param moods        The list of moods to display
      * @param loggedInUser The currently logged-in user
      */
     public MoodArrayAdapter(Context context, ArrayList<MoodState> moods, String loggedInUser) {

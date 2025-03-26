@@ -70,7 +70,7 @@
             android:layout_marginStart="32dp"
             android:layout_marginEnd="32dp"
             android:background="@drawable/intro_btn_background"
-            android:onClick="viewMoodHistory"
+            android:onClick="viewFeed"
             android:text="View Feed"
             android:textColor="@color/white"
             android:textSize="22sp"
