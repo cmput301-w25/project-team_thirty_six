@@ -209,6 +209,9 @@ public class EditMoodActivity extends AppCompatActivity {
                         Double longitude = document.get("location.longitude", Double.class);
                         // makes the location
                         location = new Location(LocationManager.GPS_PROVIDER);
+                        // Set sea level so that there is no invocation error
+                        location.setMslAltitudeAccuracyMeters(0);
+                        location.setMslAltitudeMeters(0);
                         location.setLatitude(latitude);
                         location.setLongitude(longitude);
                     }

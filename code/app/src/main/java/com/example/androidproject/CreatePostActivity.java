@@ -295,6 +295,7 @@ public class CreatePostActivity extends AppCompatActivity {
                         @Override
                         public void onLocationReceived(Location location) {
                             moodLocation = location;
+                            // Set sea level so that there is no invocation error
                             moodLocation.setMslAltitudeAccuracyMeters(0);
                             moodLocation.setMslAltitudeMeters(0);
                             locationStateText.setText("Remove Location");
