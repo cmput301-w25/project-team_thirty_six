@@ -47,6 +47,7 @@ public class FeedManager {
         for (String user : following) {
             db.collection("Moods")
                     .whereEqualTo("user", user) // Filter moods by the user ID
+                    .whereEqualTo("visibility",Boolean.TRUE)// Filter out private moods
                     .get()
                     .addOnSuccessListener(queryDocumentSnapshots -> {
                         for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
