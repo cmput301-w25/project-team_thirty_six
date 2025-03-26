@@ -2,6 +2,7 @@ package com.example.androidproject;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -42,8 +43,13 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * Activity to display details of a selected mood post.
+ * MoodDetailsActivity displays comprehensive information about a selected mood post.
  * Retrieves mood details from Firestore and updates the UI
+ *
+ * This activity interacts with the following components:
+ * - EditMoodActivity: Target activity for handling edit operations
+ * - Database: Manages commment storage
+ * - NavbarFragment: Provides navigation capabilities
  */
 public class MoodDetailsActivity extends AppCompatActivity {
 
@@ -382,7 +388,10 @@ public class MoodDetailsActivity extends AppCompatActivity {
         String dayTimeStr = document.getString("dayTime");
         if (dayTimeStr != null) {
             try {
-                LocalDateTime dateTime = LocalDateTime.parse(dayTimeStr);
+                LocalDateTime dateTime = null;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    dateTime = LocalDateTime.parse(dayTimeStr);
+                }
                 formatTimestampFromLocalDateTime(dateTime);
                 return;
             } catch (Exception e) {
@@ -439,8 +448,13 @@ public class MoodDetailsActivity extends AppCompatActivity {
      */
     private void formatTimestampFromLocalDateTime(LocalDateTime dateTime) {
         try {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM d, yyyy 'at' h:mm a", Locale.getDefault());
-            tvTimestamp.setText(dateTime.format(formatter));
+            DateTimeFormatter formatter = null;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                formatter = DateTimeFormatter.ofPattern("MMMM d, yyyy 'at' h:mm a", Locale.getDefault());
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                tvTimestamp.setText(dateTime.format(formatter));
+            }
         } catch (Exception e) {
             Log.w(TAG, "Error formatting LocalDateTime: " + e.getMessage());
             tvTimestamp.setText("Unknown time");

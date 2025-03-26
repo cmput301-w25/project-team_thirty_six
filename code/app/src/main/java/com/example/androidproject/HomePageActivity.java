@@ -9,26 +9,28 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.androidproject.MoodArrayAdapter;
-import com.example.androidproject.MoodHistoryActivity;
-import com.example.androidproject.MoodHistoryManager;
-import com.example.androidproject.MoodState;
-import com.example.androidproject.NavBarFragment;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Collections;
+import java.util.Comparator;
+
 /**
- * Creates the home page activity functions
+ * The HomePageActivity serves as the main landing page after the user logs in or signs up. This
+ * activity displays the three most recent mood events posted by users that the current user follows
+ *
+ * This class interacts with the following components:
+ * - FeedManager: Used to fetch the following list and mood events
+ * - MoodArrayAdapter: Displays mood events in a list view
+ * - FeedActivity: Displays the entire following feed
+ * - MoodState: Model for the mood events
+ * - NavBarFragment: Navigation capabilities
  */
 public class HomePageActivity extends AppCompatActivity {
     private String currentUser;
     private ListView recentMoodsList;
     private MoodArrayAdapter moodAdapter;
     private ArrayList<MoodState> moodDataList;
-    private MoodHistoryManager moodHistoryManager;
+    private ArrayList<String> following;
+    private FeedManager feedManager;
     private static final String TAG = "HomePageActivity";
 
     /**
@@ -42,8 +44,8 @@ public class HomePageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
 
-        // Initialize MoodHistoryManager
-        moodHistoryManager = new MoodHistoryManager();
+        // Initialize FeedManager
+        feedManager = new FeedManager();
 
         // Get the string from the login page
         currentUser = (String) getIntent().getSerializableExtra("currentUser");
@@ -59,78 +61,48 @@ public class HomePageActivity extends AppCompatActivity {
         // Set up the ListView for recent moods
         recentMoodsList = findViewById(R.id.recentMoodsList);
         moodDataList = new ArrayList<>();
-        // Use the existing MoodArrayAdapter
+        // Use the existing MoodArrayAdapter and pass the current user
         moodAdapter = new MoodArrayAdapter(this, moodDataList, currentUser);
         recentMoodsList.setAdapter(moodAdapter);
 
-        // Load recent moods from other users
-        fetchOtherUsersMoods();
+        // Load recent moods from following list
+        fetchFollowingAndMoods();
     }
 
     /**
-     * Fetches and displays the three most recent mood events from other users
+     * Fetches the following list and then fetches moods for the followed users.
      */
-    private void fetchOtherUsersMoods() {
-        // First get a list of users
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("Users")
-                .limit(10)  // Limit to 10 users to avoid excessive queries
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    ArrayList<String> users = new ArrayList<>();
-                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                        String username = document.getId();
-                        // Skip the current user
-                        if (!username.equals(currentUser)) {
-                            users.add(username);
-                        }
-                    }
+    private void fetchFollowingAndMoods() {
+        feedManager.getFollowing(currentUser, new FeedManager.FollowingCallback() {
+            @Override
+            public void onCallback(ArrayList<String> followingList) {
+                if (followingList != null && !followingList.isEmpty()) {
+                    following = followingList;
 
-                    if (users.isEmpty()) {
-                        Toast.makeText(HomePageActivity.this, "No other users found.", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-
-                    // Now fetch moods for these users
-                    fetchMoodsForUsers(users);
-                })
-                .addOnFailureListener(e -> {
-                    Log.e(TAG, "Error getting users", e);
-                    Toast.makeText(HomePageActivity.this, "Error finding other users", Toast.LENGTH_SHORT).show();
-                });
-    }
-
-    /**
-     * Fetches moods for multiple users and combines them
-     * @param users List of usernames to fetch moods for
-     */
-    private void fetchMoodsForUsers(ArrayList<String> users) {
-        final int[] completedQueries = {0};
-        final int totalUsers = users.size();
-        final ArrayList<MoodState> allMoods = new ArrayList<>();
-
-        for (String username : users) {
-            moodHistoryManager.fetchMoodHistory(username, new MoodHistoryManager.MoodHistoryCallback() {
-                @Override
-                public void onCallback(ArrayList<MoodState> userMoods) {
-                    completedQueries[0]++;
-
-                    if (userMoods != null && !userMoods.isEmpty()) {
-                        // Only add public moods if there's a visibility filter
-                        for (MoodState mood : userMoods) {
-                            if (mood.getVisibility() == null || mood.getVisibility()) {
-                                allMoods.add(mood);
-                            }
-                        }
-                    }
-
-                    // If all queries completed, display moods
-                    if (completedQueries[0] == totalUsers) {
-                        processMoods(allMoods);
-                    }
+                    // Fetch moods for the followed users
+                    fetchMoodsFromFollowing();
+                } else {
+                    Toast.makeText(HomePageActivity.this, "You are not following anyone yet.", Toast.LENGTH_SHORT).show();
                 }
-            });
-        }
+            }
+        });
+    }
+
+    /**
+     * Fetches moods from users in the following list
+     */
+    private void fetchMoodsFromFollowing() {
+        feedManager.fetchFeed(following, new FeedManager.FeedCallback() {
+            @Override
+            public void onCallback(ArrayList<MoodState> feed) {
+                if (feed != null && !feed.isEmpty()) {
+                    // Process and display the moods
+                    processMoods(feed);
+                } else {
+                    Toast.makeText(HomePageActivity.this, "No recent moods from people you follow.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     /**
@@ -138,11 +110,6 @@ public class HomePageActivity extends AppCompatActivity {
      * @param moods List of moods to process
      */
     private void processMoods(ArrayList<MoodState> moods) {
-        if (moods.isEmpty()) {
-            Toast.makeText(HomePageActivity.this, "No mood events found from other users.", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
         // Clear current data
         moodDataList.clear();
 
@@ -162,18 +129,15 @@ public class HomePageActivity extends AppCompatActivity {
 
         // Update the adapter
         moodAdapter.notifyDataSetChanged();
-
-        Log.d(TAG, "Displaying " + moodDataList.size() + " recent moods from other users");
     }
 
     /**
-     //     * Takes you to a page to view mood history
-     //     * @param view The view that was clicked
-     //     */
+     * Takes you to a page to view the feed
+     * @param view The view that was clicked
+     */
     public void viewFeed(View view) {
         Intent i = new Intent(this, FeedActivity.class);
         i.putExtra("currentUser", currentUser);
         startActivity(i);
     }
-
 }

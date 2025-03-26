@@ -30,6 +30,19 @@ import com.google.firebase.storage.StorageReference;
 import java.util.Calendar;
 import java.util.Map;
 
+/**
+ * EditMoodActivity provides functionality to modify existing mood events.
+ * The activity allows the user to modify the mood state, visibility, reason, social situation,
+ * date and time, and media attachments
+ *
+ * This activity interacts with the following components:
+ * - MoodDropDownManager: Handles the interface for selecting a mood
+ * - DateTimeManager: Manages the date and time selection
+ * - SocialSituationManager: Manages the social situation context
+ * - MoodMediaManager: Manages the image and location attachments
+ * - MoodRepository: Interfaces with the Firestore database for updating the mood event
+ * - NavBarFragment: Provides navigation capabilities
+ */
 public class EditMoodActivity extends AppCompatActivity {
     // UI elements
     private Button doneButton, cancelButton;

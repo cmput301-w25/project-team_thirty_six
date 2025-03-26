@@ -20,6 +20,14 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * SearchActivity allows the user to use a search interface for finding other users profiles
+ *
+ * This class interacts with the following components:
+ * - UserAdapter: Displays the user results in a recycler view
+ * - User: Model for the users information
+ * - NavBarFragment: Provides navigation capabilities
+ */
 public class SearchActivity extends AppCompatActivity {
     private SearchView searchView;
     private RecyclerView recyclerView;
@@ -28,6 +36,9 @@ public class SearchActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private String currentUser;
 
+    /**
+     * Initializes the activity, sets up the UI components and event listeners
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,7 +104,7 @@ public class SearchActivity extends AppCompatActivity {
 
     /**
      * Search for users whose ID contains the query
-     * @param query The search query text
+     * @param query The search query text entered by the user
      */
     private void searchUsers(String query) {
         // Convert query to lowercase for case-insensitive search
@@ -114,10 +125,7 @@ public class SearchActivity extends AppCompatActivity {
                         }
                         userAdapter.notifyDataSetChanged();
 
-                        // Log for debugging
-                        Log.d("SearchActivity", "Found " + userList.size() + " users for query: " + query);
                     } else {
-                        Log.e("SearchActivity", "Error searching users", task.getException());
                         Toast.makeText(SearchActivity.this,
                                 "Error searching users: " + task.getException().getMessage(),
                                 Toast.LENGTH_SHORT).show();
