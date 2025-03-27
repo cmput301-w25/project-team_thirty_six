@@ -317,7 +317,7 @@ public class MoodDetailsActivity extends AppCompatActivity {
             // Show reason if available
             if (reason != null && !reason.isEmpty()) {
                 tvReason.setVisibility(View.VISIBLE);
-                tvReason.setText("Reason: " + reason);
+                tvReason.setText(reason);
             }
 
             // Show social situation if available
