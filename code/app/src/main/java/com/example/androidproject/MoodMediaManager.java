@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
 import com.google.firebase.storage.FirebaseStorage;
@@ -33,6 +34,8 @@ public class MoodMediaManager {
     private final TextView removeImageText;
     private final TextView addImageText;
     private final ImageView imageButtonIcon;
+    private final TextView addLocationText;
+    private final TextView removeLocationText;
 
     // Request codes
     public static final int IMAGE_PICK_REQUEST_CODE = 1001;
@@ -66,7 +69,8 @@ public class MoodMediaManager {
      */
     public MoodMediaManager(Activity activity, ImageView moodImageView, TextView locationTextView,
                             CardView imagePreviewCardView, CardView locationPreviewCardView,
-                            TextView addImageText, TextView removeImageText, ImageView imageButtonIcon) {
+                            TextView addImageText, TextView removeImageText, ImageView imageButtonIcon,
+                            TextView addLocationText, TextView removeLocationText) { //updated parameters
         this.activity = activity;
         this.context = activity;
         this.moodImageView = moodImageView;
@@ -76,6 +80,8 @@ public class MoodMediaManager {
         this.addImageText = addImageText;
         this.removeImageText = removeImageText;
         this.imageButtonIcon = imageButtonIcon;
+        this.addLocationText = addLocationText;
+        this.removeLocationText = removeLocationText;
     }
 
     /**
@@ -89,9 +95,54 @@ public class MoodMediaManager {
 
     /**
      * Opens location picker
-     * NEED TO IMPLEMENT
+     * In progress
      */
     public void openLocationPicker() {
+        // If user is editing an existing location, the picker is opened on the map
+        if (activity instanceof EditMoodActivity) {
+            // map picker
+            Intent mapPickerIntent = new Intent(context, LocationPickerActivity.class);
+
+            // existing location is the starting point for vicinity traversing
+            if (location != null) {
+                mapPickerIntent.putExtra("latitude", location.getLatitude());
+                mapPickerIntent.putExtra("longitude", location.getLongitude());
+            }
+
+            activity.startActivityForResult(mapPickerIntent, LOCATION_PICK_REQUEST_CODE);
+        }
+        // if adding location for the first time then we just take current location without map picker
+        else {
+            // location permission fragment to get current location
+            LocationPermissionFragment locationFragment = new LocationPermissionFragment();
+            locationFragment.show(((AppCompatActivity)context).getSupportFragmentManager(),
+                    "LocationPermissionFragment");
+
+            // Permission check (if granted or not)
+            locationFragment.setOnPermissionGrantedListener(() -> {
+                locationFragment.startTrackingLocation();
+
+                locationFragment.getLastKnownLocation(new LocationPermissionFragment.OnLocationReceivedListener() {
+                    @Override
+                    public void onLocationReceived(Location location) {
+                        location.setMslAltitudeAccuracyMeters(0);
+                        location.setMslAltitudeMeters(0);
+                        // Save the location and update the display to show this
+                        setLocation(location);
+
+                        if (activity instanceof EditMoodActivity) {
+                            ((EditMoodActivity) activity).onLocationPicked(location);
+                        }
+                    }
+
+                    @Override
+                    public void onLocationFailure(String errorMessage) {
+                        Toast.makeText(context, "Failed to get location: " + errorMessage,
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
+            });
+        }
     }
 
     /**
@@ -157,9 +208,32 @@ public class MoodMediaManager {
 
     /**
      * Processes activity result for location selection
-     * STILL NEEDS IMPLEMENTATION
+     * Initially unused but gained knowledge from https://www.youtube.com/watch?v=mbQd6frpC3g
      */
-    public void processLocationResult(int resultCode, Intent data) {}
+    public void processLocationResult(int resultCode, Intent data) {
+        if (resultCode == Activity.RESULT_OK && data != null) {
+            if (data.hasExtra("latitude") && data.hasExtra("longitude")) {
+                double latitude = data.getDoubleExtra("latitude", 0);
+                double longitude = data.getDoubleExtra("longitude", 0);
+
+                // Create location object
+                Location selectedLocation = new Location("map-selection");
+                selectedLocation.setLatitude(latitude);
+                selectedLocation.setLongitude(longitude);
+
+                selectedLocation.setMslAltitudeAccuracyMeters(0);
+                selectedLocation.setMslAltitudeMeters(0);
+
+                // Update the location
+                setLocation(selectedLocation);
+
+                // Notify activity if necessary
+                if (activity instanceof EditMoodActivity) {
+                    ((EditMoodActivity) activity).onLocationPicked(selectedLocation);
+                }
+            }
+        }
+    }
 
     /**
      * Sets image ID from existing data in Firebase
@@ -208,7 +282,21 @@ public class MoodMediaManager {
         if (location != null) {
             locationTextView.setText(location.toString());
             locationPreviewCardView.setVisibility(View.VISIBLE);
+            showRemoveLocationOption();
+
+        } else {
+            locationPreviewCardView.setVisibility((View.GONE));
+            showAddLocationOption();
         }
+    }
+
+    /**
+     * Removes location
+     */
+    public void removeLocation() {
+        this.location = null;
+        locationPreviewCardView.setVisibility(View.GONE);
+        showAddLocationOption();
     }
 
     /**
@@ -271,6 +359,22 @@ public class MoodMediaManager {
      */
     public Location getLocation() {
         return location;
+    }
+
+    /**
+     * The visual prompt to add a location if user wishes to
+     */
+    private void showAddLocationOption() {
+        addLocationText.setVisibility(View.VISIBLE);
+        removeLocationText.setVisibility(View.GONE);
+    }
+
+    /**
+     * If location is already added, the visual prompt to show them they can remove it
+     */
+    private void showRemoveLocationOption() {
+        addLocationText.setVisibility(View.GONE);
+        removeLocationText.setVisibility(View.VISIBLE);
     }
 
     /**

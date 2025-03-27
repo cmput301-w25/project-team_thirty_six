@@ -101,7 +101,14 @@ public class MoodRepository {
         }
 
         if (location != null) {
-            updatedData.put("location", location);
+            // map based on chosen cords
+            Map<String, Double> locationMap = new HashMap<>();
+            locationMap.put("latitude", location.getLatitude());
+            locationMap.put("longitude", location.getLongitude());
+            updatedData.put("location", locationMap);
+        } else {
+            // only adds it if its empty/null
+            updatedData.put("location", null);
         }
 
         if (imageUrl != null && !imageUrl.isEmpty()) {
