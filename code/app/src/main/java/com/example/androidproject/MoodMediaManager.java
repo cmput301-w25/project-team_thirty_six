@@ -10,6 +10,10 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.location.Address;
+import android.location.Geocoder;
+import java.util.List;
+import java.util.Locale;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
@@ -42,11 +46,11 @@ public class MoodMediaManager {
     public static final int LOCATION_PICK_REQUEST_CODE = 1002;
 
     // Current data
-    private Uri newImageUri;  // Only set when user selects a new image
-    private String existingImageId;  // The ID of an existing image in Firebase
-    private boolean hasImage = false;  // Flag to track if we have any image
+    private Uri newImageUri;
+    private String existingImageId;
+    private boolean hasImage = false;
     private Location location;
-    private String imageToDeleteId = null; // Track image ID to delete
+    private String imageToDeleteId = null;
 
     /**
      *  Creats a constructor for mood media manager
@@ -280,12 +284,51 @@ public class MoodMediaManager {
     public void setLocation(Location location) {
         this.location = location;
         if (location != null) {
-            locationTextView.setText(location.toString());
+            Geocoder geocoder = new Geocoder(context, Locale.getDefault());
+            try {
+                List<Address> addresses = geocoder.getFromLocation(
+                        location.getLatitude(), location.getLongitude(), 1);
+
+                if (addresses != null && !addresses.isEmpty()) {
+                    Address address = addresses.get(0);
+                    StringBuilder sb = new StringBuilder();
+                    String thoroughfare = address.getThoroughfare();
+                    String locality = address.getLocality();
+                    String adminArea = address.getAdminArea();
+                    String countryName = address.getCountryName();
+
+                    if (thoroughfare != null) {
+                        sb.append(thoroughfare);
+                    }
+                    if (locality != null) {
+                        if (sb.length() > 0) sb.append(", ");
+                        sb.append(locality);
+                    }
+                    if (adminArea != null) {
+                        if (sb.length() > 0) sb.append(", ");
+                        sb.append(adminArea);
+                    }
+                    if (countryName != null) {
+                        if (sb.length() > 0) sb.append(", ");
+                        sb.append(countryName);
+                    }
+                    String locationText = sb.toString();
+                    locationTextView.setText(locationText);
+                } else {
+                    String locationText = String.format(Locale.getDefault(),
+                            "Location: %.6f, %.6f", location.getLatitude(), location.getLongitude());
+                    locationTextView.setText(locationText);
+                }
+            } catch (IOException e) {
+                String locationText = String.format(Locale.getDefault(),
+                        "Location: %.6f, %.6f", location.getLatitude(), location.getLongitude());
+                locationTextView.setText(locationText);
+            }
+
             locationPreviewCardView.setVisibility(View.VISIBLE);
             showRemoveLocationOption();
-
         } else {
-            locationPreviewCardView.setVisibility((View.GONE));
+            locationPreviewCardView.setVisibility(View.GONE);
             showAddLocationOption();
         }
     }
