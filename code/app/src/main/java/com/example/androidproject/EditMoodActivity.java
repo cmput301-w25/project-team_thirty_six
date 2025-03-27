@@ -53,7 +53,7 @@ public class EditMoodActivity extends AppCompatActivity {
     private LinearLayout addImageButton, addLocationButton, datePickerButton, timePickerButton;
     private CardView imagePreviewCardView, locationPreviewCardView;
     private ImageView moodImageView, imageButtonIcon;
-    private TextView locationTextView, textViewSelectedDate, textViewSelectedTime, addImageText, removeImageText;
+    private TextView locationTextView, textViewSelectedDate, textViewSelectedTime, addImageText, removeImageText, addLocationText, removeLocationText;
     private FloatingActionButton deleteButton;
 
     // Data
@@ -147,6 +147,8 @@ public class EditMoodActivity extends AppCompatActivity {
         locationPreviewCardView = findViewById(R.id.locationPreviewCardView);
         moodImageView = findViewById(R.id.moodImageView);
         locationTextView = findViewById(R.id.locationTextView);
+        addLocationText = findViewById(R.id.add_location_text);
+        removeLocationText = findViewById(R.id.remove_location_text);
     }
 
     /**
@@ -162,10 +164,10 @@ public class EditMoodActivity extends AppCompatActivity {
         // Create social situation manager
         socialSituationManager = new SocialSituationManager(radioAlone, radioPair, radioGroup, radioCrowd);
 
-        // Create media manager
+        // Create media manager //Updated parameters
         mediaManager = new MoodMediaManager(this, moodImageView, locationTextView,
                 imagePreviewCardView, locationPreviewCardView,
-                addImageText, removeImageText, imageButtonIcon);
+                addImageText, removeImageText, imageButtonIcon, addLocationText, removeLocationText);
 
         // Create mood dropdown manager
         moodDropdownManager = new MoodDropdownManager(this, moodDropdown, mood -> {
@@ -373,7 +375,15 @@ public class EditMoodActivity extends AppCompatActivity {
                 mediaManager.openImagePicker();
             }
         });
-        addLocationButton.setOnClickListener(v -> mediaManager.openLocationPicker());
+        addLocationButton.setOnClickListener(v -> {
+            if (locationPreviewCardView.getVisibility() == View.VISIBLE) {
+                // existing added location gets removed
+                mediaManager.removeLocation();
+            } else {
+                // location picker/current location accessed
+                mediaManager.openLocationPicker();
+            }
+        });
 
         // Confirm, cancel or delete changes made to mood event
         doneButton.setOnClickListener(v -> saveMood());
@@ -395,6 +405,14 @@ public class EditMoodActivity extends AppCompatActivity {
                 .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
                 .create()
                 .show();
+    }
+
+    /**
+     * Function for when location needs to be picked and is done well
+     */
+    public void onLocationPicked(Location location) {
+        // popup message acknowledging confirmation
+        Toast.makeText(this, "Location updated", Toast.LENGTH_SHORT).show();
     }
 
     /**

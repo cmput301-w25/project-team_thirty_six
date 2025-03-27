@@ -442,12 +442,21 @@
                             android:src="@drawable/mapsymbol" />
 
                         <TextView
+                            android:id="@+id/add_location_text"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/add_location"
                             android:textColor="#FFFFFF"
                             android:textSize="16sp" />
 
+                        <TextView
+                            android:id="@+id/remove_location_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/remove_location"
+                            android:textColor="#FFFFFF"
+                            android:textSize="16sp"
+                            android:visibility="gone" />
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
 
