@@ -1,5 +1,6 @@
 package com.example.androidproject;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
@@ -7,23 +8,17 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
-
+import android.location.Address;
+import android.location.Geocoder;
 
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -33,7 +28,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
-import java.sql.DatabaseMetaData;
 import java.text.DateFormatSymbols;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -63,6 +57,7 @@ public class MoodDetailsActivity extends AppCompatActivity {
     private TextView tvSocialSituation;
     private TextView tvTimestamp;
     private TextView btnEdit;
+    private TextView tvLocation;
     // Button for adding comments
     private ImageButton confirm_comment;
     private TextInputEditText comment_text;
@@ -97,10 +92,8 @@ public class MoodDetailsActivity extends AppCompatActivity {
         String currentLoggedInUser = getIntent().getStringExtra("user");
 
         if (currentLoggedInUser != null) {
-            Log.d(TAG, "Current user: " + currentLoggedInUser);
             userId = currentLoggedInUser;
         } else {
-            Log.e(TAG, "No user data found");
             Toast.makeText(this, "Error: User not found!", Toast.LENGTH_LONG).show();
             finish();
             return;
@@ -151,11 +144,13 @@ public class MoodDetailsActivity extends AppCompatActivity {
         confirm_comment = findViewById(R.id.confirm_comment_button);
         comment_text = findViewById(R.id.comment_text);
         commentListView = findViewById(R.id.linearCommentView);
+        tvLocation = findViewById(R.id.textView_mood_details_location);
 
         // Hide optional fields initially
         tvReason.setVisibility(View.GONE);
         tvSocialSituation.setVisibility(View.GONE);
         ivMoodImage.setVisibility(View.GONE);
+        tvLocation.setVisibility(View.GONE);
 
         // only if the current user is the owner of the mood
         btnEdit.setVisibility(View.GONE);
@@ -223,8 +218,6 @@ public class MoodDetailsActivity extends AppCompatActivity {
                         Comment comment = new Comment(currentDoc.get("username").toString(), currentDoc.get("moodID").toString(), currentDoc.get("text").toString());
                         // Adds comment to temp list
                         comments.add(comment);
-                        Log.e("User", comments.get(i).getUsername());
-                        Log.e("Text", comments.get(i).getText());
                     }
                     // Loops through all the comments
                     for (int i = 0; i < comments.size(); i++) {
@@ -294,6 +287,7 @@ public class MoodDetailsActivity extends AppCompatActivity {
      *
      * @param document The DocumentSnapshot containing the mood data
      */
+    @SuppressLint("SetTextI18n")
     private void updateUIWithMoodData(DocumentSnapshot document) {
         try {
             // Extract mood details
@@ -302,6 +296,7 @@ public class MoodDetailsActivity extends AppCompatActivity {
             String reason = document.getString("reason");
             String situation = document.getString("situation");
             String imageUrl = document.getString("id");
+            Map<String, Object> locationMap = (Map<String, Object>) document.get("location");
 
             // Set mood name and icon
             if (moodName != null) {
@@ -322,13 +317,13 @@ public class MoodDetailsActivity extends AppCompatActivity {
             // Show reason if available
             if (reason != null && !reason.isEmpty()) {
                 tvReason.setVisibility(View.VISIBLE);
-                tvReason.setText(reason);
+                tvReason.setText("Reason: " + reason);
             }
 
             // Show social situation if available
             if (situation != null && !situation.isEmpty()) {
                 tvSocialSituation.setVisibility(View.VISIBLE);
-                tvSocialSituation.setText(situation);
+                tvSocialSituation.setText("Social Situation: " + situation);
             }
 
             // Load image if available
@@ -351,15 +346,63 @@ public class MoodDetailsActivity extends AppCompatActivity {
                             })
                             .addOnFailureListener(e -> {
                                 // Log the error but don't crash
-                                Log.w(TAG, "Image not found in storage: " + e.getMessage());
                                 ivMoodImage.setVisibility(View.GONE);
                             });
                 } catch (Exception e) {
-                    Log.w(TAG, "Error setting up image loading: " + e.getMessage());
                     ivMoodImage.setVisibility(View.GONE);
                 }
             } else {
                 ivMoodImage.setVisibility(View.GONE);
+            }
+
+            if (locationMap != null) {
+                // Get the longitude and latitude of the location
+                Double latitude = (Double) locationMap.get("latitude");
+                Double longitude = (Double) locationMap.get("longitude");
+
+                if (latitude != null && longitude != null) {
+                    try {
+                        // Use geocoder to convert longitude and latitude to an address
+                        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+                        List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
+
+                        if (addresses != null && !addresses.isEmpty()) {
+                            Address address = addresses.get(0);
+                            StringBuilder sb = new StringBuilder();
+
+                            // Set the locality/city
+                            if (address.getLocality() != null) {
+                                sb.append(address.getLocality());
+                            }
+                            // Set the area/province
+                            if (address.getAdminArea() != null) {
+                                if (sb.length() > 0) sb.append(", ");
+                                sb.append(address.getAdminArea());
+                            }
+                            // Set country name
+                            if (address.getCountryName() != null) {
+                                if (sb.length() > 0) sb.append(", ");
+                                sb.append(address.getCountryName());
+                            }
+
+                            String locationText = sb.toString();
+                            tvLocation.setText(locationText);
+                            tvLocation.setVisibility(View.VISIBLE);
+                        } else {
+                            throw new Exception("No addresses found");
+                        }
+                    } catch (Exception e) {
+                        // Displays the coordinates if geocoder fails or if no addresses were found
+                        String locationText = String.format(Locale.getDefault(),
+                                "Location: %.6f, %.6f", latitude, longitude);
+                        tvLocation.setText(locationText);
+                        tvLocation.setVisibility(View.VISIBLE);
+                    }
+                } else {
+                    tvLocation.setVisibility(View.GONE);
+                }
+            } else {
+                tvLocation.setVisibility(View.GONE);
             }
 
             // Format timestamp based on what's available
@@ -395,7 +438,6 @@ public class MoodDetailsActivity extends AppCompatActivity {
                 formatTimestampFromLocalDateTime(dateTime);
                 return;
             } catch (Exception e) {
-                Log.w(TAG, "Error parsing date string: " + e.getMessage());
             }
         }
 
@@ -436,7 +478,6 @@ public class MoodDetailsActivity extends AppCompatActivity {
 
             tvTimestamp.setText(formattedTime);
         } catch (Exception e) {
-            Log.w(TAG, "Error formatting timestamp from map: " + e.getMessage());
             tvTimestamp.setText("Unknown time");
         }
     }

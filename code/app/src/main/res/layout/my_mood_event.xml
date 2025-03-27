@@ -14,9 +14,6 @@
         tools:layout_editor_absoluteX="10dp"
         tools:layout_editor_absoluteY="10dp">
 
-
-        <!-- Date Text -->
-
         <TextView
             android:id="@+id/mood_event_username"
             android:layout_width="wrap_content"
@@ -44,9 +41,6 @@
             app:layout_constraintTop_toBottomOf="@+id/viewMoreDetails"
             app:layout_constraintVertical_bias="1.0" />
 
-
-        <!-- Emoticon (ImageView) -->
-
         <ImageView
             android:id="@+id/image_mood"
             android:layout_width="114dp"
@@ -59,31 +53,18 @@
             app:layout_constraintTop_toTopOf="parent" />
 
 
-        <!-- Mood Text -->
-        <TextView
-            android:id="@+id/text_mood_state"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="7dp"
-            android:text="State:"
-            android:textColor="@color/white"
-            android:textSize="18sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/image_mood" />
-
         <TextView
             android:id="@+id/text_mood"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
             android:layout_marginTop="7dp"
             android:text="Happy"
             android:textColor="@color/white"
+            android:gravity="center"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/text_mood_state"
+            app:layout_constraintEnd_toEndOf="@+id/image_mood"
+            app:layout_constraintStart_toStartOf="@+id/image_mood"
             app:layout_constraintTop_toBottomOf="@+id/image_mood"
             app:layout_constraintVertical_bias="0.0" />
 

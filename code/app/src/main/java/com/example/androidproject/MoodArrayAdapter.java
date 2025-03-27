@@ -81,9 +81,6 @@ public class MoodArrayAdapter extends ArrayAdapter<MoodState> {
 
                 // Set click listener for view more button
                 viewMoreButton.setOnClickListener(v -> {
-                    Log.d("MoodAdapter", "Opening details for mood: " + moodState.getId() +
-                            ", Mood Owner: " + moodOwner +
-                            ", Logged in user: " + loggedInUser);
 
                     Intent intent = new Intent(getContext(), MoodDetailsActivity.class);
                     intent.putExtra("id", moodState.getId());
