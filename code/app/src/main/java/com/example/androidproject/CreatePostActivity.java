@@ -1,5 +1,7 @@
 package com.example.androidproject;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -51,11 +53,11 @@ public class CreatePostActivity extends AppCompatActivity {
     LocationHelper locationHelper;
     Button moodDropdown;
     EditText reasonText;
-    Button aloneButton;
-    Button crowdButton;
-    Button groupButton;
+    RadioButton aloneButton;
+    RadioButton crowdButton;
+    RadioButton groupButton;
     Button confirmButton;
-    Button pairButton;
+    RadioButton pairButton;
     Button cancelButton;
     RadioButton privateButton;
     RadioButton publicButton;
@@ -75,6 +77,7 @@ public class CreatePostActivity extends AppCompatActivity {
     Location moodLocation;
     Boolean locationState = Boolean.FALSE;
     TextView locationStateText;
+    private RadioButton currentlySelectedButton = null;
 
 
     @Override
@@ -209,7 +212,18 @@ public class CreatePostActivity extends AppCompatActivity {
              */
             @Override
             public void onClick(View v) {
-                chosenSituation = "Alone";
+                if (currentlySelectedButton == aloneButton) {
+                    aloneButton.setChecked(false);
+                    currentlySelectedButton = null;
+                    chosenSituation = null;
+                } else {
+                    if (currentlySelectedButton != null) {
+                        currentlySelectedButton.setChecked(false);
+                    }
+                    aloneButton.setChecked(true);
+                    currentlySelectedButton = aloneButton;
+                    chosenSituation = "Alone";
+                }
             }
         });
         // Sets the pair option button
@@ -220,18 +234,40 @@ public class CreatePostActivity extends AppCompatActivity {
              */
             @Override
             public void onClick(View v) {
-                chosenSituation = "Pair";
+                if (currentlySelectedButton == pairButton) {
+                    pairButton.setChecked(false);
+                    currentlySelectedButton = null;
+                    chosenSituation = null;
+                } else {
+                    if (currentlySelectedButton != null) {
+                        currentlySelectedButton.setChecked(false);
+                    }
+                    pairButton.setChecked(true);
+                    currentlySelectedButton = pairButton;
+                    chosenSituation = "Pair";
+                }
             }
         });
-        // Sets the pair option button
+        // Sets the crowd option button
         crowdButton.setOnClickListener(new View.OnClickListener() {
             /**
              * Creates an option to chose
-             * @param v The view of pair button.
+             * @param v The view of crowd button.
              */
             @Override
             public void onClick(View v) {
-                chosenSituation = "Crowd";
+                if (currentlySelectedButton == crowdButton) {
+                    crowdButton.setChecked(false);
+                    currentlySelectedButton = null;
+                    chosenSituation = null;
+                } else {
+                    if (currentlySelectedButton != null) {
+                        currentlySelectedButton.setChecked(false);
+                    }
+                    crowdButton.setChecked(true);
+                    currentlySelectedButton = crowdButton;
+                    chosenSituation = "Crowd";
+                }
             }
         });
         // Sets the group option button
@@ -242,7 +278,18 @@ public class CreatePostActivity extends AppCompatActivity {
              */
             @Override
             public void onClick(View v) {
-                chosenSituation = "Group";
+                if (currentlySelectedButton == groupButton) {
+                    groupButton.setChecked(false);
+                    currentlySelectedButton = null;
+                    chosenSituation = null;
+                } else {
+                    if (currentlySelectedButton != null) {
+                        currentlySelectedButton.setChecked(false);
+                    }
+                    groupButton.setChecked(true);
+                    currentlySelectedButton = groupButton;
+                    chosenSituation = "Group";
+                }
             }
         });
         //Sets the image button on click listener
