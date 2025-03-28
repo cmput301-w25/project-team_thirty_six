@@ -35,12 +35,12 @@ import java.util.Map;
  * The activity allows the user to modify the mood state, visibility, reason, social situation,
  * date and time, and media attachments
  *
- * This activity interacts with the following components:
- * - MoodDropDownManager: Handles the interface for selecting a mood
- * - DateTimeManager: Manages the date and time selection
- * - SocialSituationManager: Manages the social situation context
- * - MoodMediaManager: Manages the image and location attachments
- * - MoodRepository: Interfaces with the Firestore database for updating the mood event
+ * This class interacts with the following components:
+ * - MoodDropDownManager: Handles the interface for changing a mood
+ * - DataTimeManager: Manages the date and time selection
+ * - SocialSituationManager: Manges the social situation
+ * - MoodMediaManager: Manages the images and location processes
+ * - MoodRepository: Interfaces with database to update mood event
  * - NavBarFragment: Provides navigation capabilities
  */
 public class EditMoodActivity extends AppCompatActivity {
@@ -81,12 +81,6 @@ public class EditMoodActivity extends AppCompatActivity {
 
         // Retrieve the currentUser from the Intent
         String userId = (String) getIntent().getSerializableExtra("user");
-
-        if (userId != null) {
-            Log.d("MoodDetailsActivity", "Current user: " + userId);
-        } else {
-            Log.e("MoodDetailsActivity", "No user data found");
-        }
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
@@ -164,7 +158,7 @@ public class EditMoodActivity extends AppCompatActivity {
         // Create social situation manager
         socialSituationManager = new SocialSituationManager(radioAlone, radioPair, radioGroup, radioCrowd);
 
-        // Create media manager //Updated parameters
+        // Create media manager with updated implementation
         mediaManager = new MoodMediaManager(this, moodImageView, locationTextView,
                 imagePreviewCardView, locationPreviewCardView,
                 addImageText, removeImageText, imageButtonIcon, addLocationText, removeLocationText);
@@ -302,49 +296,6 @@ public class EditMoodActivity extends AppCompatActivity {
     }
 
     /**
-     * Extracts date and time values from the dayTime field
-     * @param document
-     * @return
-     */
-    private Calendar extractCalendarFromDocument(DocumentSnapshot document) {
-        Calendar calendar = Calendar.getInstance();
-        Object dayTimeObj = document.get("dayTime");
-
-        if (dayTimeObj instanceof Map) {
-            Map<String, Object> dayTimeMap = (Map<String, Object>) dayTimeObj;
-
-            try {
-                // Safely extract each component with null checks
-                Integer year = dayTimeMap.containsKey("year") ?
-                        ((Long) dayTimeMap.get("year")).intValue() :
-                        calendar.get(Calendar.YEAR);
-
-                Integer monthValue = dayTimeMap.containsKey("monthValue") ?
-                        ((Long) dayTimeMap.get("monthValue")).intValue() - 1 :
-                        calendar.get(Calendar.MONTH);
-
-                Integer day = dayTimeMap.containsKey("dayOfMonth") ?
-                        ((Long) dayTimeMap.get("dayOfMonth")).intValue() :
-                        calendar.get(Calendar.DAY_OF_MONTH);
-
-                Integer hour = dayTimeMap.containsKey("hour") ?
-                        ((Long) dayTimeMap.get("hour")).intValue() :
-                        calendar.get(Calendar.HOUR_OF_DAY);
-
-                Integer minute = dayTimeMap.containsKey("minute") ?
-                        ((Long) dayTimeMap.get("minute")).intValue() :
-                        calendar.get(Calendar.MINUTE);
-
-                // Set the calendar with extracted values
-                calendar.set(year, monthValue, day, hour, minute);
-            } catch (Exception e) {
-            }
-        }
-
-        return calendar;
-    }
-
-    /**
      * Setup all event listeners for user interactions
      */
     private void setupEventListeners() {
@@ -375,6 +326,7 @@ public class EditMoodActivity extends AppCompatActivity {
                 mediaManager.openImagePicker();
             }
         });
+
         addLocationButton.setOnClickListener(v -> {
             if (locationPreviewCardView.getVisibility() == View.VISIBLE) {
                 // existing added location gets removed
@@ -453,7 +405,7 @@ public class EditMoodActivity extends AppCompatActivity {
                         mediaManager.getNewImageUri(),
                         null,
                         dateTimeManager.getCalendar(),
-                        isPublic,  // Pass visibility value
+                        isPublic,
                         new MoodRepository.OnMoodUpdateListener() {
                             @Override
                             public void onSuccess() {
@@ -481,7 +433,7 @@ public class EditMoodActivity extends AppCompatActivity {
                         mediaManager.getNewImageUri(),
                         null, // Still mark as removed even if deletion failed
                         dateTimeManager.getCalendar(),
-                        isPublic,  // Pass visibility value
+                        isPublic,
                         new MoodRepository.OnMoodUpdateListener() {
                             @Override
                             public void onSuccess() {
@@ -511,7 +463,7 @@ public class EditMoodActivity extends AppCompatActivity {
                     mediaManager.getNewImageUri(),
                     mediaManager.getExistingImageId(),
                     dateTimeManager.getCalendar(),
-                    isPublic,  // Pass visibility value
+                    isPublic,
                     new MoodRepository.OnMoodUpdateListener() {
                         @Override
                         public void onSuccess() {
@@ -551,6 +503,7 @@ public class EditMoodActivity extends AppCompatActivity {
     }
 
     /**
+     * Process location result from the activity
      *
      * @param requestCode The integer request code originally supplied to
      *                    startActivityForResult(), allowing you to identify who this
@@ -559,15 +512,11 @@ public class EditMoodActivity extends AppCompatActivity {
      *                   through its setResult().
      * @param data An Intent, which can return result data to the caller
      *               (various data can be attached to Intent "extras").
-     *
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == MoodMediaManager.IMAGE_PICK_REQUEST_CODE) {
-            mediaManager.processImageResult(resultCode, data);
-        } else if (requestCode == MoodMediaManager.LOCATION_PICK_REQUEST_CODE) {
+        if (requestCode == MoodMediaManager.LOCATION_PICK_REQUEST_CODE) {
             mediaManager.processLocationResult(resultCode, data);
         }
     }
