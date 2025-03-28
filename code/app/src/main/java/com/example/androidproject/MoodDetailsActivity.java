@@ -317,13 +317,15 @@ public class MoodDetailsActivity extends AppCompatActivity {
             // Show reason if available
             if (reason != null && !reason.isEmpty()) {
                 tvReason.setVisibility(View.VISIBLE);
-                tvReason.setText(reason);
+                tvReason.setText("Reason: " + reason);
             }
 
             // Show social situation if available
             if (situation != null && !situation.isEmpty()) {
                 tvSocialSituation.setVisibility(View.VISIBLE);
                 tvSocialSituation.setText("Social Situation: " + situation);
+            } else {
+                tvSocialSituation.setVisibility(View.GONE);
             }
 
             // Load image if available

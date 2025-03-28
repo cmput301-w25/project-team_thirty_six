@@ -15,6 +15,9 @@ import android.location.Geocoder;
 import java.util.List;
 import java.util.Locale;
 
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
@@ -30,7 +33,7 @@ import java.io.InputStream;
  */
 public class MoodMediaManager {
     private final Context context;
-    private final Activity activity;
+    private final AppCompatActivity activity;
     private final ImageView moodImageView;
     private final TextView locationTextView;
     private final CardView imagePreviewCardView;
@@ -42,7 +45,6 @@ public class MoodMediaManager {
     private final TextView removeLocationText;
 
     // Request codes
-    public static final int IMAGE_PICK_REQUEST_CODE = 1001;
     public static final int LOCATION_PICK_REQUEST_CODE = 1002;
 
     // Current data
@@ -52,8 +54,11 @@ public class MoodMediaManager {
     private Location location;
     private String imageToDeleteId = null;
 
+    // Image picker launcher
+    private ActivityResultLauncher<String> imageLauncher;
+
     /**
-     *  Creats a constructor for mood media manager
+     * Creates a constructor for mood media manager
      * @param activity
      *      current activity
      * @param moodImageView
@@ -67,14 +72,14 @@ public class MoodMediaManager {
      * @param addImageText
      *      text that says to add image
      * @param removeImageText
-     *      text that displays temove image
+     *      text that displays remove image
      * @param imageButtonIcon
      *      image button
      */
-    public MoodMediaManager(Activity activity, ImageView moodImageView, TextView locationTextView,
+    public MoodMediaManager(AppCompatActivity activity, ImageView moodImageView, TextView locationTextView,
                             CardView imagePreviewCardView, CardView locationPreviewCardView,
                             TextView addImageText, TextView removeImageText, ImageView imageButtonIcon,
-                            TextView addLocationText, TextView removeLocationText) { //updated parameters
+                            TextView addLocationText, TextView removeLocationText) {
         this.activity = activity;
         this.context = activity;
         this.moodImageView = moodImageView;
@@ -86,20 +91,89 @@ public class MoodMediaManager {
         this.imageButtonIcon = imageButtonIcon;
         this.addLocationText = addLocationText;
         this.removeLocationText = removeLocationText;
+
+        initializeImageLauncher();
     }
 
     /**
-     * Opens image picker
+     * Initializes the image picker launcher using ActivityResultLauncher
+     */
+    private void initializeImageLauncher() {
+        imageLauncher = activity.registerForActivityResult(
+                new ActivityResultContracts.GetContent(),
+                new ActivityResultCallback<Uri>() {
+                    @Override
+                    public void onActivityResult(Uri uri) {
+                        if (uri != null) {
+                            // Check image size before proceeding
+                            if (!isImageSizeValid(uri)) {
+                                return;
+                            }
+
+                            // Clear any pending deletion
+                            imageToDeleteId = null;
+
+                            // Store the new image URI and clear any existing image ID
+                            newImageUri = uri;
+                            existingImageId = null;
+                            hasImage = true;
+
+                            // Display the selected image
+                            Picasso.get()
+                                    .load(uri)
+                                    .into(moodImageView);
+
+                            imagePreviewCardView.setVisibility(View.VISIBLE);
+
+                            // switch to the remove image mode
+                            showRemoveImageOption();
+                        }
+                    }
+                }
+        );
+    }
+
+    /**
+     * Validates if image size is within the 64KB limit
+     * @param imageUri URI of the selected image
+     * @return true if valid, false otherwise
+     */
+    private boolean isImageSizeValid(Uri imageUri) {
+        try {
+            InputStream inputStream = context.getContentResolver().openInputStream(imageUri);
+            if (inputStream == null) {
+                Toast.makeText(context, "Unable to access the selected image",
+                        Toast.LENGTH_SHORT).show();
+                return false;
+            }
+
+            int imageSize = inputStream.available();
+            inputStream.close();
+
+            if (imageSize >= 65536) {
+                // Image is too large
+                Toast.makeText(context, "Image size exceeds 64KB limit. Please select a smaller image.",
+                        Toast.LENGTH_LONG).show();
+                return false;
+            }
+
+            return true;
+        } catch (IOException e) {
+            Toast.makeText(context, "Error checking image size: " + e.getMessage(),
+                    Toast.LENGTH_SHORT).show();
+            return false;
+        }
+    }
+
+    /**
+     * Opens image picker using the ActivityResultLauncher
      */
     public void openImagePicker() {
-        Intent intent = new Intent(Intent.ACTION_PICK);
-        intent.setType("image/*");
-        activity.startActivityForResult(intent, IMAGE_PICK_REQUEST_CODE);
+        imageLauncher.launch("image/*");
     }
 
     /**
      * Opens location picker
-     * In progress
      */
     public void openLocationPicker() {
         // If user is editing an existing location, the picker is opened on the map
@@ -150,69 +224,7 @@ public class MoodMediaManager {
     }
 
     /**
-     * Processes activity result for image selection
-     */
-    public void processImageResult(int resultCode, Intent data) {
-        if (resultCode == Activity.RESULT_OK && data != null) {
-            Uri selectedImage = data.getData();
-            if (selectedImage != null) {
-                // Check image size before proceeding
-                InputStream inputStream = null;
-                try {
-                    inputStream = context.getContentResolver().openInputStream(selectedImage);
-                    if (inputStream == null) {
-                        Toast.makeText(context, "Unable to access the selected image",
-                                Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-
-                    int imageSize = inputStream.available();
-
-                    if (imageSize >= 65536) {
-                        // Image is too large
-                        Toast.makeText(context, "Image size exceeds 64KB limit. Please select a smaller image.",
-                                Toast.LENGTH_LONG).show();
-                        return;
-                    }
-
-                    // Clear any pending deletion
-                    imageToDeleteId = null;
-
-                    // Store the new image URI and clear any existing image ID
-                    newImageUri = selectedImage;
-                    existingImageId = null;
-                    hasImage = true;
-
-                    // Display the selected image
-                    Picasso.get()
-                            .load(selectedImage)
-                            .into(moodImageView);
-
-                    imagePreviewCardView.setVisibility(View.VISIBLE);
-
-                    // switch to the remove image mode
-                    showRemoveImageOption();
-
-                } catch (IOException e) {
-                    Toast.makeText(context, "Error checking image size: " + e.getMessage(),
-                            Toast.LENGTH_SHORT).show();
-                } finally {
-                    if (inputStream != null) {
-                        try {
-                            inputStream.close();
-                        } catch (IOException e) {
-                            // Log the error but continue
-                            Log.e("MoodMediaManager", "Error closing input stream", e);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    /**
      * Processes activity result for location selection
-     * Initially unused but gained knowledge from https://www.youtube.com/watch?v=mbQd6frpC3g
      */
     public void processLocationResult(int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK && data != null) {
@@ -413,7 +425,7 @@ public class MoodMediaManager {
     }
 
     /**
-     * If location is already added, the visual prompt to show them they can remove it
+     * If location is already added, the visual prompt to show they can remove it
      */
     private void showRemoveLocationOption() {
         addLocationText.setVisibility(View.GONE);

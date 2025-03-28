@@ -4,6 +4,7 @@ import android.location.Location;
 import android.net.Uri;
 import android.util.Log;
 
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -94,6 +95,8 @@ public class MoodRepository {
         // Only add fields if they are not empty
         if (situation != null && !situation.isEmpty()) {
             updatedData.put("situation", situation);
+        } else {
+            updatedData.put("situation", null);
         }
 
         if (reason != null && !reason.isEmpty()) {
