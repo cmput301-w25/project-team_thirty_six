@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -41,6 +42,7 @@ public class LocationMapActivity extends AppCompatActivity {
     private MoodHistoryManager moodHistoryManager;
     private String currentUser;
     private static final String TAG = "LocationMapActivity";
+    private static final double radius_in_km = 5.0;
     private GoogleMap mMap;
     ImageButton followingFilter;
     ImageButton moodFilter;
@@ -48,6 +50,7 @@ public class LocationMapActivity extends AppCompatActivity {
     private boolean feedScreen = Boolean.FALSE;
     private FeedManager feedManager;
     private FloatingActionButton distanceFilter;
+    private CheckBox checkNearbyFollowing;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -304,6 +307,9 @@ public class LocationMapActivity extends AppCompatActivity {
         CheckBox checkRecentWeek = dialogView.findViewById(R.id.check_recent_week);
         CheckBox checkFilterMood = dialogView.findViewById(R.id.check_filter_mood);
         CheckBox checkFilterKeyword = dialogView.findViewById(R.id.check_filter_keyword);
+
+        CheckBox checkNearbyFollowing = dialogView.findViewById(R.id.check_nearby_following); // added the 5k feature checkbox
+
         Spinner spinnerMoods = dialogView.findViewById(R.id.spinner_moods);
         EditText editKeyword = dialogView.findViewById(R.id.edit_keyword);
 
@@ -352,6 +358,9 @@ public class LocationMapActivity extends AppCompatActivity {
                             filterByKeyword(keyword);
                         }
                     }
+                    if (checkNearbyFollowing.isChecked() && checkNearbyFollowing!= null) {
+                        filterByNearbyFollowing();
+                    }
                 })
                 .setNegativeButton("Cancel", null)
                 .setNeutralButton("Reset", (dialog, which) -> {
@@ -365,6 +374,51 @@ public class LocationMapActivity extends AppCompatActivity {
                 })
                 .show();
 
+    }
+
+    private void filterByNearbyFollowing() {
+        // start by getting the users current location
+        LocationPermissionFragment locationFragment = new LocationPermissionFragment();
+        locationFragment.show(getSupportFragmentManager(), "LocationPermissionFragment");
+
+        locationFragment.setOnPermissionGrantedListener(() -> {
+            locationFragment.startTrackingLocation();
+
+            locationFragment.getLastKnownLocation(new LocationPermissionFragment.OnLocationReceivedListener() {
+                @Override
+                public void onLocationReceived(Location location) {
+                    // get the users following list
+                    feedManager.getFollowing(currentUser, new FeedManager.FollowingCallback() {
+                        @Override
+                        public void onCallback(ArrayList<String> following) {
+                            feedManager.fetchFeed(following, new FeedManager.FeedCallback() {
+                                @Override
+                                public void onCallback(ArrayList<MoodState> feed) {
+                                    // call the filter function
+                                    moodHistory = Filter.filterBy5kDistance(
+                                            feed, location, following, radius_in_km);
+
+                                    // update the map to reflect this
+                                    updateMapMarkers();
+
+                                    // The number of moods found should be informed to the user
+                                    Toast.makeText(LocationMapActivity.this,
+                                            moodHistory.size() + " nearby mood events found",
+                                            Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+                    });
+                }
+
+                @Override
+                public void onLocationFailure(String errorMessage) {
+                    Toast.makeText(LocationMapActivity.this,
+                            "Failed to get your location: " + errorMessage,
+                            Toast.LENGTH_SHORT).show();
+                }
+            });
+        });
     }
 
     /**
