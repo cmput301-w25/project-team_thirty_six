@@ -86,6 +86,7 @@ public class UserManager {
                     // If the query is empty create new user
                     User user = new User(username, password);
                     database.addUser(user);
+                    currentUser = user;
                     // TODO Start the next activity, wherever the screen goes after signup
                     callback.onSignUpSuccess();
                 }
@@ -97,6 +98,7 @@ public class UserManager {
                 Log.d("UserManager","Could not connect to database");
             }
         });
+
     }
 
     public interface LoginCallback {
