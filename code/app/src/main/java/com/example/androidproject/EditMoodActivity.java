@@ -3,6 +3,7 @@ package com.example.androidproject;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.InputFilter;
 import android.util.Log;
@@ -208,6 +209,7 @@ public class EditMoodActivity extends AppCompatActivity {
                         // Set sea level so that there is no invocation error
                         location.setMslAltitudeAccuracyMeters(0);
                         location.setMslAltitudeMeters(0);
+
                         location.setLatitude(latitude);
                         location.setLongitude(longitude);
                     }
