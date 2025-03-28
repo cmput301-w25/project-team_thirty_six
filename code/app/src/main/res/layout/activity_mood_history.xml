@@ -25,21 +25,30 @@ android:background="@color/main_background">
         tools:layout_editor_absoluteX="0dp"
         tools:layout_editor_absoluteY="0dp">
 
-
-        <!-- Page title -->
-
-        <!-- List of Moods -->
-
+        <ImageButton
+            android:id="@+id/history_button_back"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="24dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/back_button"
+            android:padding="12dp"
+            android:src="@drawable/arrow_back_button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageButton
             android:id="@+id/filter_button"
-            android:layout_width="43dp"
-            android:layout_height="46dp"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:layout_above="@+id/mood_list"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginTop="32dp"
-            android:layout_marginEnd="21dp"
+            android:layout_marginTop="28dp"
+            android:layout_marginEnd="28dp"
             android:layout_marginBottom="22dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:onClick="filterButton"
@@ -52,13 +61,13 @@ android:background="@color/main_background">
             android:layout_height="49dp"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:layout_marginStart="84dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="97dp"
             android:layout_marginLeft="16dp"
             android:layout_marginTop="26dp"
-            android:layout_marginEnd="36dp"
+            android:layout_marginEnd="100dp"
             android:layout_marginRight="16dp"
             android:layout_marginBottom="16dp"
-            android:layout_toStartOf="@+id/filter_button"
             android:text="My History"
             android:textAlignment="center"
             android:textColor="@color/white"

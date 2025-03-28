@@ -49,6 +49,7 @@ public class MoodHistoryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mood_history);
+        ImageButton backButton = findViewById(R.id.history_button_back);
 
         // Retrieve the currentUser from the Intent
         currentUser = (String) getIntent().getSerializableExtra("currentUser");
@@ -58,6 +59,13 @@ public class MoodHistoryActivity extends AppCompatActivity {
         } else {
             Log.e("MoodHistoryActivity", "No user data found");
         }
+
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()

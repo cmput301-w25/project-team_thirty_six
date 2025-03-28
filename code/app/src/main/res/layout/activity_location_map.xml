@@ -8,8 +8,8 @@
 
     <ImageButton
         android:id="@+id/map_filter"
-        android:layout_width="43dp"
-        android:layout_height="46dp"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="32dp"
@@ -24,12 +24,12 @@
 
     <ImageButton
         android:id="@+id/following_button_map"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="24dp"
         android:layout_marginBottom="22dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:scaleType="centerInside"
