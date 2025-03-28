@@ -46,6 +46,7 @@ public class FeedActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feed);
+        ImageButton backButton = findViewById(R.id.feed_button_back);
 
         // Retrieve the currentUser from the Intent
         currentUser = (String) getIntent().getSerializableExtra("currentUser");
@@ -62,6 +63,13 @@ public class FeedActivity extends AppCompatActivity {
                     .add(R.id.nav_bar_container, NavBarFragment.newInstance(currentUser))
                     .commit();
         }
+
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         // Initialize feedManager
         feedManager = new FeedManager();
