@@ -35,6 +35,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     /**
      * onCreate method for the ProfileActivity
+     * Sets up the userManager and gets the currentUsername from the intent.
      * @param savedInstanceState If the activity is being re-initialized after
      *     previously being shut down then this Bundle contains the data it most
      *     recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
@@ -137,7 +138,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     /**
      * The on click method for the following count textview.
-     * It opens the FollowingListFragment which displays the user's following
+     * opens the FollowingListFragment which displays the user's following
      * @param view The view that this was called in (Activity_profile)
      */
     public void followingOnClick(View view) {
@@ -195,7 +196,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     /**
      * Takes you to a page to view mood history
-     * @param view
+     * @param view The current view
      */
     public void viewMoodHistory(View view){
         Intent i = new Intent(this, MoodHistoryActivity.class);

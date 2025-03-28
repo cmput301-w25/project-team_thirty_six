@@ -18,7 +18,7 @@ import java.util.List;
 
 /**
  * This adapter handles the individual followers.
- * It is called by the FollowListFragment in order to show each list_view item.
+ * It is called by the FollowerListFragment in order to show each list_view item.
  * It contains an onClick method for clicking on a user, opening their profile.
  * It contains an OnClick method for removing a follower. 
  */
@@ -27,6 +27,13 @@ public class FollowerListAdapter extends ArrayAdapter<String> {
     private List<String> followerList;
     private User currentUser;
     private UserManager userManager;
+
+    /**
+     * Constructor for the FollowerListAdapter. calls super and sets the local variables to the arguments provided
+     * @param context The context in which this is called
+     * @param followerList an ArrayList of strings of the currentUser's followers
+     * @param currentUser the currentUser object that is currently signed in.
+     */
     public FollowerListAdapter(Context context, List<String> followerList, User currentUser){
         super(context, 0, followerList);
         this.context = context;
@@ -37,6 +44,15 @@ public class FollowerListAdapter extends ArrayAdapter<String> {
 
     }
 
+    /**
+     * getView function that belongs to the ArrayAdapter class
+     * Handles the removeFollowerButton onClick logic with the help of the userManager class.
+     * Handles clicking on a user's profile by starting OtherProfileActivity.
+     * @param position The position within the listView (index)
+     * @param convertView Helps with recycling the view instead of inflating one each time.
+     * @param parent The parent view (listView)
+     * @return The view that will be used by the listView to display the followerList
+     */
     @NonNull
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent){
         View view = convertView;

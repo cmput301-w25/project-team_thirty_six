@@ -16,15 +16,25 @@ import androidx.annotation.Nullable;
 
 import java.util.List;
 
+
 /**
- * This adapter handles the individual follow requests.
- * It is called by the FollowRequestFragment in order to show each list_view item.
+ * This adapter handles displaying the contents of the followingList into the listView.
+ * It is called by the FollowingListFragment in order to show each list_view item.
+ * It contains an onClick method for clicking on a user, opening their profile.
+ * It contains an OnClick method for unfollowing a user.
  */
 public class FollowingListAdapter extends ArrayAdapter<String> {
     private Context context;
     private List<String> followingList;
     private User currentUser;
     private UserManager userManager;
+
+    /**
+     * Constructor for the FollowingListAdapter. calls super and sets the local variables to the arguments provided
+     * @param context The context in which this is called
+     * @param followingList an ArrayList of strings of the users that currentUser is following.
+     * @param currentUser the currentUser object that is currently signed in.
+     */
     public FollowingListAdapter(Context context, List<String> followingList, User currentUser){
         super(context, 0, followingList);
         this.context = context;
@@ -35,6 +45,15 @@ public class FollowingListAdapter extends ArrayAdapter<String> {
 
     }
 
+    /**
+     * getView function that belongs to the ArrayAdapter class
+     * Handles the unfollowButton onClick.
+     * Handles clicking on a user's profile by starting OtherProfileActivity.
+     * @param position The position within the listView (index)
+     * @param convertView Helps with recycling the view instead of inflating one each time.
+     * @param parent The parent view (listView)
+     * @return The view that will be used by the listView to display the followingList
+     */
     @NonNull
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent){
         View view = convertView;

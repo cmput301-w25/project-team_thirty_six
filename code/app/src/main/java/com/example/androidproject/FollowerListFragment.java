@@ -15,6 +15,11 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+/**
+ * The purpose of this fragment is to handle the listView Fragment for the follower list.
+ * Relies on the FollowerListAdapter.
+ * Displays the listView for followers and defines a backButtonOnClick method.
+ */
 public class FollowerListFragment extends Fragment {
 
     private ListView listView;
@@ -22,7 +27,19 @@ public class FollowerListFragment extends Fragment {
     private List<String> followerList;
 
 
-
+    /**
+     * The onCreate method for the followerListFragment, sets up a backButton on click listener
+     * and opens the fragment with the populated data with help from the followerListAdapter
+     * @param inflater The LayoutInflater object that can be used to inflate
+     * any views in the fragment,
+     * @param container If non-null, this is the parent view that the fragment's
+     * UI should be attached to.  The fragment should not add the view itself,
+     * but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     *
+     * @return The view that will contain the listView and that will be used by ProfileActivity
+     */
     // This onCreate Frame was taken from ChatGPT by Rhiyon Naderi on March 22nd 2025.
     @Nullable
     @Override

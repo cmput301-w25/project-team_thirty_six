@@ -14,6 +14,8 @@ import android.widget.ImageView;
 
 /**
  * Nav bar fragment functionality
+ * The navBar carries the currentUsername into the intents that it opens.
+ * Conatins buttons to navigate to the home, search, Create Mood, Map, and Profile page.
  */
 public class NavBarFragment extends Fragment {
     private ImageView btnHome, btnSearch, btnMap, btnProfile, btnCreate;
@@ -22,8 +24,7 @@ public class NavBarFragment extends Fragment {
     /**
      * Gets a new instance of the nav bar
      * @param currentUser
-     * @return
-     *      the nav bar
+     * @return the nav bar
      */
     // The following constructor code was obtained from ChatGPT
     // Prompt: How to have a navBarFragment pass a user class instance between activities in Android Studio Java.

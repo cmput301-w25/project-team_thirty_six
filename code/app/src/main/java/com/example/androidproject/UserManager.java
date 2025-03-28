@@ -21,8 +21,10 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * This class helps with the signup and login functionalities. It facilitates interactions with the
- * database.
+ * The purpose of this class is to facilitate interactions for a User object and the database
+ * This class helps with the signup and login functionalities.
+ * Contains the logic for following, unfollowing and followRequests.
+ * Also contains a static instance of the current logged in user: currentUser.
  */
 public class UserManager {
 
@@ -64,8 +66,8 @@ public class UserManager {
     /**
      * Creates new user and adds them to the database. If the user already exists in the database
      * re-prompts the user to enter a different username
-     * @param username
-     * @param password
+     * @param username The username that is entered on signup. Unique among all other usernames
+     * @param password The password that is entered on signup.
      */
     public void addUser(String username, String password, SignUpCallback callback) {
         // Creates the query for the username
@@ -106,7 +108,7 @@ public class UserManager {
      * Handles the login verifcation in the database.
      * Ensures that the username and password entered match then fetches the user's data.
      * If they do not match then it displays a toast.
-     *
+     * calls fetchCurrentUserData which populates the static currentUser object
      * @param username the username that the user entered
      * @param password the password that the user entered
      */
@@ -135,7 +137,7 @@ public class UserManager {
     }
 
     /**
-     * Fetches the user data from the database and populates the currentUser object.
+     * Fetches the user data from the database and populates the static currentUser object.
      * @param username The username of the user to fetch.
      */
     public void fetchCurrentUserData(String username) {
@@ -175,7 +177,6 @@ public class UserManager {
                 });
 
     }
-
 
     /**
      * Sends a follow request to a user in the database
@@ -238,6 +239,12 @@ public class UserManager {
                 });
     }
 
+    /**
+     * A function to unfollow a user in the database.
+     * Can also be used to remove a follower by swapping the order of the arguments
+     * @param currentUsername The user that wishes to unfollow another user
+     * @param userToBeUnfollowed The user that is being unfollowed
+     */
     public void unfollowUser(String currentUsername, String userToBeUnfollowed){
         DocumentReference currentUserDocRef = database.getUsers().document(currentUsername);
         DocumentReference userToBeUnfollowedDocRef = database.getUsers().document(userToBeUnfollowed);
