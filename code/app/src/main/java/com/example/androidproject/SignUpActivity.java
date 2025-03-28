@@ -54,6 +54,7 @@ public class SignUpActivity extends AppCompatActivity {
             @Override
             public void onSignUpSuccess() {
                 Intent i = new Intent(SignUpActivity.this, HomePageActivity.class);
+                i.putExtra("currentUser", username);
                 startActivity(i);
 
             }
