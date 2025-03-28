@@ -82,6 +82,7 @@
 
             <TextView
                 android:id="@+id/followerAmountTextView"
+                android:onClick="followerOnClick"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="16sp"
@@ -91,6 +92,7 @@
 
             <TextView
                 android:id="@+id/followingAmountTextView"
+                android:onClick="followingOnClick"
                 android:layout_width="wrap_content"
                 android:paddingHorizontal="20dp"
                 android:textSize="16sp"

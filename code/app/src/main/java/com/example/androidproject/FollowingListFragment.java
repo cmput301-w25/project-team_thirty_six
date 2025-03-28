@@ -15,22 +15,23 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-/**
- * The purpose of this fragment is to handle the listView Fragment for the follow requests.
- * Relies on the FollowRequestAdapter.
- * Displays the listView for follow Requests and defines a backButtonOnClick method.
- */
 
-public class FollowRequestFragment extends Fragment {
+/**
+ * The purpose of this fragment is to handle the listView Fragment for the following list.
+ * Relies on the FollowingListAdapter.
+ * Displays the listView for following and defines a backButtonOnClick method.
+ */
+public class FollowingListFragment extends Fragment {
 
     private ListView listView;
-    private FollowRequestAdapter followRequestAdapter;
-    private List<String> followRequestList;
+    private FollowingListAdapter followingListAdapter;
+    private List<String> followingList;
+    private User currentUser;
 
 
     /**
-     * The onCreate method for the followRequest fragment, sets up a backButton on click listener
-     * and opens the fragment with the populated data with help from the followRequestAdapter
+     * The onCreate method for the followingListFragment, sets up a backButton on click listener
+     * and opens the fragment with the populated data with help from the followingListAdapter
      * @param inflater The LayoutInflater object that can be used to inflate
      * any views in the fragment,
      * @param container If non-null, this is the parent view that the fragment's
@@ -47,16 +48,24 @@ public class FollowRequestFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_follow_requests, container, false);
+        View view = inflater.inflate(R.layout.fragment_following_list, container, false);
 
-    // end of taken code
+        // end of taken code
 
         ImageButton backButton = view.findViewById(R.id.button_back);
         backButton.setOnClickListener(v -> {
 
             // Setup the follower string
-            int followerCount = UserManager.getCurrentUser().getFollowers().size();
+            // User currentUser = (User) this.getArguments().getSerializable("currentUser");
+            // int followerCount = UserManager.getCurrentUser().getFollowers().size();
+            int followerCount = currentUser.getFollowers().size();
+            int followingCount = currentUser.getFollowing().size();
             String followersString = String.format("%d followers", followerCount);
+            String followingString = String.format("%d following", followingCount);
+
+            // Display the following string
+            TextView followingTextView = requireActivity().findViewById(R.id.followingAmountTextView);
+            followingTextView.setText(followingString);
 
             // Display the follower string
             TextView followersTextView = requireActivity().findViewById(R.id.followerAmountTextView);
@@ -68,21 +77,15 @@ public class FollowRequestFragment extends Fragment {
 
         });
 
-        listView = view.findViewById(R.id.follow_request_list_view);
+        listView = view.findViewById(R.id.following_list_view);
         assert listView != null;
         assert this.getArguments() != null;
-        User currentUser = (User) this.getArguments().getSerializable("currentUser");
+        this.currentUser = (User) this.getArguments().getSerializable("currentUser");
         assert currentUser != null;
-        followRequestList = currentUser.getFollowRequests();
-        followRequestAdapter = new FollowRequestAdapter(getContext(), followRequestList, currentUser);
-        listView.setAdapter(followRequestAdapter);
+        followingList = currentUser.getFollowing();
+        followingListAdapter = new FollowingListAdapter(getContext(), followingList, currentUser);
+        listView.setAdapter(followingListAdapter);
         return view;
-
-
-
-
-
-
 
 
     }

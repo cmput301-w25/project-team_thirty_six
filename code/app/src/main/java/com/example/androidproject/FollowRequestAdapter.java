@@ -17,12 +17,20 @@ import java.util.List;
 /**
  * This adapter handles the individual follow requests.
  * It is called by the FollowRequestFragment in order to show each list_view item.
+ * Sets up acccept and reject button on click listeners.
  */
 public class FollowRequestAdapter extends ArrayAdapter<String> {
     private Context context;
     private List<String> requestList;
     private User currentUser;
     private UserManager userManager;
+
+    /**
+     * Constructor for the FollowRequestAdapter. calls super and sets the local variables to the arguments provided
+     * @param context The context in which this is called
+     * @param requestList an ArrayList of strings of the users that are requesting to follow the currentUser
+     * @param currentUser the currentUser object that is currently signed in.
+     */
     public FollowRequestAdapter(Context context, List<String> requestList, User currentUser){
         super(context, 0, requestList);
         this.context = context;
@@ -33,6 +41,16 @@ public class FollowRequestAdapter extends ArrayAdapter<String> {
 
     }
 
+
+    /**
+     * getView function that belongs to the ArrayAdapter class
+     * Handles the accept follow request logic
+     * Handles the reject follow request logic
+     * @param position The position within the listView (index)
+     * @param convertView Helps with recycling the view instead of inflating one each time.
+     * @param parent The parent view (listView)
+     * @return The view that will be used by the listView to display the followRequest
+     */
     @NonNull
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent){
         View view = convertView;

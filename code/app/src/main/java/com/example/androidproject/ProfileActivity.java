@@ -22,7 +22,9 @@ import androidx.navigation.ui.NavigationUI;
 import com.example.androidproject.databinding.ActivityProfileBinding;
 
 /**
- * Creates the view profile screen
+ * Creates the view profile screen, contains links to the followRequestFragment, FollowingListFragment and FollowerListFragment
+ * Requires the currentUsername of the logged in user to be given in the intent.
+ * Displays the following and follower caounts as well.
  */
 public class ProfileActivity extends AppCompatActivity {
 
@@ -32,7 +34,8 @@ public class ProfileActivity extends AppCompatActivity {
     private User currentUser;
 
     /**
-     * Runs the
+     * onCreate method for the ProfileActivity
+     * Sets up the userManager and gets the currentUsername from the intent.
      * @param savedInstanceState If the activity is being re-initialized after
      *     previously being shut down then this Bundle contains the data it most
      *     recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
@@ -86,8 +89,8 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     /**
-     * Populates the user in user profile info
-     * @param currentUsername
+     * Populates the user in user profile info into the activity_profile.xml file.
+     * @param currentUsername the username of the logged in user.
      */
     private void populateCurrentUserProfile(String currentUsername) {
         TextView userNameTextView = findViewById(R.id.displayUsername);
@@ -106,12 +109,11 @@ public class ProfileActivity extends AppCompatActivity {
         followingTextView.setText(followingString);
     }
 
-    public void updateFollowerCount(String currentUsername){
-        int followerCount = currentUser.getFollowers().size();
-        String followersString = String.format("%d followers", followerCount);
-
-    }
-
+    /**
+     * The onClick method for the followRequest sign.
+     * Opens the Follow Request Fragment and passes currentUser into the bundle.
+     * @param view
+     */
     public void followRequestsOnClick(View view) {
         Bundle bundle = new Bundle();
         bundle.putSerializable("currentUser", currentUser);
@@ -131,12 +133,70 @@ public class ProfileActivity extends AppCompatActivity {
         transaction.addToBackStack(null);
         // Commit the transaction.
         transaction.commit();
-        // End of taken code. 
+        // End of taken code.
+    }
+
+    /**
+     * The on click method for the following count textview.
+     * opens the FollowingListFragment which displays the user's following
+     * @param view The view that this was called in (Activity_profile)
+     */
+    public void followingOnClick(View view) {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("currentUser", currentUser);
+
+        Fragment listFragment = new FollowingListFragment();
+        listFragment.setArguments(bundle);
+
+        // The folowing code was obtained from ChatGPT on March 22, 2025.
+        // Taken by Rhiyon Naderi
+        // Query: how to open a list view fragment in an activities function
+
+        // Get the FragmentManager and start a transaction.
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        // Replace the container with the new fragment.
+        transaction.replace(R.id.fragment_container, listFragment);
+        // Optionally add to back stack if you want to allow the user to navigate back.
+        transaction.addToBackStack(null);
+        // Commit the transaction.
+        transaction.commit();
+        Log.d("ProfileActivity", "Reached");
+        // End of taken code.
 
     }
+
+    /**
+     * The on click method for the follower count textview.
+     * It opens the FollowListFragment which displays the user's followers
+     * @param view The view that this was called in (Activity_profile)
+     */
+    public void followerOnClick(View view) {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("currentUser", currentUser);
+
+        Fragment listFragment = new FollowerListFragment();
+        listFragment.setArguments(bundle);
+
+        // The folowing code was obtained from ChatGPT on March 22, 2025.
+        // Taken by Rhiyon Naderi
+        // Query: how to open a list view fragment in an activities function
+
+        // Get the FragmentManager and start a transaction.
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        // Replace the container with the new fragment.
+        transaction.replace(R.id.fragment_container, listFragment);
+        // Optionally add to back stack if you want to allow the user to navigate back.
+        transaction.addToBackStack(null);
+        // Commit the transaction.
+        transaction.commit();
+        Log.d("ProfileActivity", "Reached");
+        // End of taken code.
+
+    }
+
     /**
      * Takes you to a page to view mood history
-     * @param view
+     * @param view The current view
      */
     public void viewMoodHistory(View view){
         Intent i = new Intent(this, MoodHistoryActivity.class);
