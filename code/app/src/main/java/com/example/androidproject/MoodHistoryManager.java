@@ -146,7 +146,7 @@ public class MoodHistoryManager {
         if (document.getString("image") != null) {
             moodState.setImage(Uri.parse(document.getString("image")));
         }
-        // ✅ Reconstruct location from Firestore
+        // Reconstruct location from Firestore
         if (document.contains("location")) {
             Object locationObj = document.get("location");
 
@@ -156,14 +156,13 @@ public class MoodHistoryManager {
                     double lat = locationMap.get("latitude") != null ? (double) locationMap.get("latitude") : 0.0;
                     double lon = locationMap.get("longitude") != null ? (double) locationMap.get("longitude") : 0.0;
 
-                    // ✅ Debug log to check extracted values
                     Log.d("FirestoreDebug", "Extracted location - Latitude: " + lat + ", Longitude: " + lon);
 
                     // Reconstruct Location object
                     Location loc = new Location("");
                     loc.setLatitude(lat);
                     loc.setLongitude(lon);
-                    moodState.setLocation(loc); // ✅ Set reconstructed Location object
+                    moodState.setLocation(loc);
                 } else {
                     Log.w("FirestoreDebug", "Location map exists but missing latitude/longitude keys.");
                 }

@@ -36,10 +36,11 @@ public class LocationPermissionFragment extends DialogFragment {
     private static Location lastKnownLocation = null; // Stores last known location
     private OnPermissionGrantedListener permissionGrantedListener;
 
+    //creates event for permissions for callback when location is granted
     public void setOnPermissionGrantedListener(OnPermissionGrantedListener listener) {
         this.permissionGrantedListener = listener;
     }
-
+    //creates second location permission seen on the initial popup using android api
     private final ActivityResultLauncher<String> locationPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
                 if (isGranted) {
@@ -47,7 +48,7 @@ public class LocationPermissionFragment extends DialogFragment {
                     if (permissionGrantedListener != null) {
                         permissionGrantedListener.onPermissionGranted();
                     }
-                    dismiss(); // ✅ Close fragment only after handling permission
+                    dismiss();
                 } else {
                     Log.w(TAG, "Location permission denied by the user.");
                 }
@@ -55,6 +56,9 @@ public class LocationPermissionFragment extends DialogFragment {
 
     public LocationPermissionFragment() {}
 
+    /**
+     * Inflates the layout and sets up button listeners.
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -65,6 +69,7 @@ public class LocationPermissionFragment extends DialogFragment {
         Button allowButton = view.findViewById(R.id.allowButton);
         Button denyButton = view.findViewById(R.id.denyButton);
 
+        //creates client to access location services
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
 
         allowButton.setOnClickListener(v -> requestLocationPermission());
@@ -74,6 +79,7 @@ public class LocationPermissionFragment extends DialogFragment {
     }
 
     /**
+     * checks if location permission is granted
      * Requests location permission if not already granted.
      */
     private void requestLocationPermission() {
@@ -86,12 +92,14 @@ public class LocationPermissionFragment extends DialogFragment {
             if (permissionGrantedListener != null) {
                 permissionGrantedListener.onPermissionGranted();
             }
-            dismiss(); // ✅ Close fragment only if permission is already granted
+            dismiss();
         }
     }
 
     /**
      * Starts location tracking and updates the last known location.
+     * checks for permissions and periodically update the last known location
+     * every 5 seconds
      */
     public void startTrackingLocation() {
         Log.d(TAG, "Starting location tracking...");
@@ -107,6 +115,7 @@ public class LocationPermissionFragment extends DialogFragment {
         locationRequest.setInterval(5000);
         locationRequest.setFastestInterval(0);
 
+        //callback to get the last known location every time it updates
         locationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
@@ -123,7 +132,7 @@ public class LocationPermissionFragment extends DialogFragment {
                 }
             }
         };
-
+        //request for continuous updates
         Log.d(TAG, "Requesting location updates...");
         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
     }
@@ -133,25 +142,25 @@ public class LocationPermissionFragment extends DialogFragment {
      */
     public void getLastKnownLocation(OnLocationReceivedListener listener) {
         Log.d(TAG, "Fetching last known location...");
-
+        //return cached location
         if (lastKnownLocation != null) {
             Log.d(TAG, "Using last known location from memory.");
             listener.onLocationReceived(lastKnownLocation);
             return;
         }
-
+        //checks permissions again before retrieval
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             Log.w(TAG, "Permission not granted, cannot fetch location.");
             listener.onLocationFailure("Permission not granted.");
             return;
         }
-
+        //fetches last known location from the the client
         fusedLocationClient.getLastLocation()
                 .addOnSuccessListener(location -> {
                     if (location != null) {
                         Log.d(TAG, "Last known location: Lat=" + location.getLatitude() + ", Lng=" + location.getLongitude());
                         lastKnownLocation = location; // Cache the location
-                        listener.onLocationReceived(location);
+                        listener.onLocationReceived(location);//passes it here
                     } else {
                         Log.e(TAG, "No last known location available.");
                         listener.onLocationFailure("No location found.");

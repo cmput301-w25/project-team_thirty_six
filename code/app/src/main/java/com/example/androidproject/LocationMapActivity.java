@@ -65,7 +65,7 @@ public class LocationMapActivity extends AppCompatActivity {
         moodHistoryManager = new MoodHistoryManager();
         moodHistory = new ArrayList<>();
 
-        // ✅ Load map fragment before fetching moods
+        //loads map fragment
         initializeMap();
 
         // Gets the filtering buttons
@@ -100,21 +100,20 @@ public class LocationMapActivity extends AppCompatActivity {
         });
     }
 
+    //creates the map fragment as well as its assets
     private void initializeMap() {
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map_fragment);
 
         if (mapFragment != null) {
             mapFragment.getMapAsync(new OnMapReadyCallback() {
+                //When ready initialize map aspect amd fetch the mood history of user
                 @Override
                 public void onMapReady(GoogleMap googleMap) {
                     mMap = googleMap;
-                    // Enables zoomin because it way annoying me
                     mMap.getUiSettings().setZoomControlsEnabled(Boolean.TRUE);
                     isMapReady = true;
                     Log.d(TAG, "Google Map is ready.");
-
-                    // Once map is ready, fetch mood history
                     fetchMoodHistory(currentUser);
                 }
             });
@@ -123,7 +122,11 @@ public class LocationMapActivity extends AppCompatActivity {
             Toast.makeText(this, "Error loading map.", Toast.LENGTH_LONG).show();
         }
     }
-
+    /**
+     * Fetches the mood history of the user and adds markers on the map
+     * @param username
+     *      the name of the user who's feed we are checking
+     */
     private void fetchMoodHistory(String username) {
         Log.d(TAG, "Fetching mood history for user: " + username);
 
@@ -138,8 +141,6 @@ public class LocationMapActivity extends AppCompatActivity {
                     Log.e(TAG, "No moods found.");
                     Toast.makeText(LocationMapActivity.this, "No moods found for user.", Toast.LENGTH_SHORT).show();
                 }
-
-                // ✅ Only update markers if the map is ready
                 if (isMapReady) {
                     updateMapMarkers();
                 } else {
@@ -168,8 +169,6 @@ public class LocationMapActivity extends AppCompatActivity {
                     Log.e(TAG, "No moods found.");
                     Toast.makeText(LocationMapActivity.this, "No moods found for user.", Toast.LENGTH_SHORT).show();
                 }
-
-                // ✅ Only update markers if the map is ready
                 if (isMapReady) {
                     updateMapMarkers();
                 } else {
@@ -188,7 +187,11 @@ public class LocationMapActivity extends AppCompatActivity {
         double lonOffset = (random.nextDouble() - 0.5) * 0.0005; // Small offset (~50m)
         return new LatLng(latitude + latOffset, longitude + lonOffset);
     }
-
+    /**
+     * Adds the location markers the the map using the latitude and longitude
+     * Sets the camera where as long as there is one valid location it will
+     * be the initial camera viewpoint
+     */
     private void updateMapMarkers() {
         if (!isMapReady || mMap == null) {
             Log.e(TAG, "updateMapMarkers: Google Map is NULL or not ready!");
@@ -204,18 +207,15 @@ public class LocationMapActivity extends AppCompatActivity {
             LatLng firstValidLocation = null;
 
             for (MoodState mood : moodHistory) {
-                if (mood.getLocation() != null) {  // ✅ Fix: Check if location exists
+                if (mood.getLocation() != null) {
                     double lat = mood.getLocation().getLatitude();
                     double lon = mood.getLocation().getLongitude();
-
-                    // ✅ Log every mood's location data
                     Log.d(TAG, "Mood: " + mood.getMood() + " | Lat: " + lat + " | Lon: " + lon);
 
                     // Gets the emoji to display
                     Bitmap decodedEmoji = BitmapFactory.decodeResource(getResources(),mood.getEmoji());
                     Bitmap tempEmoji = Bitmap.createScaledBitmap(decodedEmoji,200,200,Boolean.FALSE);
                     BitmapDescriptor emoji = BitmapDescriptorFactory.fromBitmap(tempEmoji);
-                    // ✅ Ensure latitude and longitude are valid
                     if (lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180) {
                         LatLng adjustedLocation = getOffsetLocation(lat, lon);
                         mMap.addMarker(new MarkerOptions()
@@ -237,8 +237,6 @@ public class LocationMapActivity extends AppCompatActivity {
                     Log.w(TAG, "Skipping mood with NULL location: " + mood.getMood());
                 }
             }
-
-            // ✅ Move camera ONLY if there is at least one valid location
             if (hasValidLocation && firstValidLocation != null) {
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(firstValidLocation, 10));
             }
