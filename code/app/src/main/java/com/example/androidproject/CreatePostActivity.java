@@ -10,19 +10,21 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.location.Address;
+import android.location.Geocoder;
+import java.util.List;
+import java.util.Locale;
 
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.cardview.widget.CardView;
 
 import com.google.firebase.firestore.CollectionReference;
@@ -30,20 +32,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Collection;
-//import com.google.android.gms.location.FusedLocationProviderClient;
-//import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.GeoPoint;
-import android.Manifest;
-import android.content.pm.PackageManager;
-import com.example.androidproject.LocationHelper;
 
-import android.widget.Toast;
-
-import androidx.core.content.ContextCompat;
 
 
 /**
@@ -79,6 +69,9 @@ public class CreatePostActivity extends AppCompatActivity {
     TextView locationStateText;
     private RadioButton currentlySelectedButton = null;
 
+
+    private CardView locationPreviewCard;
+    private TextView locationAddressText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,6 +114,8 @@ public class CreatePostActivity extends AppCompatActivity {
         publicButton = findViewById(R.id.addPublic);
         locationButton = findViewById(R.id.add_location_button);
         locationStateText  = findViewById(R.id.location_state_text);
+        locationPreviewCard = findViewById(R.id.locationPreviewCardView);
+        locationAddressText = findViewById(R.id.locationTextView);
         //Sets drop down status to false to start
         dropdownStatus = Boolean.FALSE;
         //Taken from https://developer.android.com/training/basics/intents/result
@@ -347,7 +342,7 @@ public class CreatePostActivity extends AppCompatActivity {
                             moodLocation.setMslAltitudeMeters(0);
                             locationStateText.setText("Remove Location");
                             locationState = Boolean.TRUE;
-                            Log.d("CreatePostActivity", "Mood location set to: " + location.getLatitude() + ", " + location.getLongitude());
+                            displayLocationAddress(location);
                         }
 
                         @Override
@@ -359,6 +354,7 @@ public class CreatePostActivity extends AppCompatActivity {
                     moodLocation = null;
                     locationStateText.setText("Add Location");
                     locationState = Boolean.FALSE;
+                    locationPreviewCard.setVisibility(View.GONE);
                 }
             }
         });
@@ -437,6 +433,54 @@ public class CreatePostActivity extends AppCompatActivity {
             Toast.makeText(this, "Error checking image size: " + e.getMessage(),
                     Toast.LENGTH_SHORT).show();
             return false;
+        }
+    }
+
+    private void displayLocationAddress(Location location) {
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+        try {
+            List<Address> addresses = geocoder.getFromLocation(
+                    location.getLatitude(), location.getLongitude(), 1);
+
+            if (addresses != null && !addresses.isEmpty()) {
+                Address address = addresses.get(0);
+                StringBuilder sb = new StringBuilder();
+                String thoroughfare = address.getThoroughfare();
+                String locality = address.getLocality();
+                String adminArea = address.getAdminArea();
+                String countryName = address.getCountryName();
+
+                if (thoroughfare != null) {
+                    sb.append(thoroughfare);
+                }
+                if (locality != null) {
+                    if (sb.length() > 0) sb.append(", ");
+                    sb.append(locality);
+                }
+                if (adminArea != null) {
+                    if (sb.length() > 0) sb.append(", ");
+                    sb.append(adminArea);
+                }
+                if (countryName != null) {
+                    if (sb.length() > 0) sb.append(", ");
+                    sb.append(countryName);
+                }
+
+                locationAddressText.setText(sb.toString());
+            } else {
+                // If no address found, display coordinates
+                locationAddressText.setText(String.format(Locale.getDefault(),
+                        "Location: %.6f, %.6f", location.getLatitude(), location.getLongitude()));
+            }
+
+            // Show the location preview
+            locationPreviewCard.setVisibility(View.VISIBLE);
+
+        } catch (IOException e) {
+            // In case of error, display coordinates
+            locationAddressText.setText(String.format(Locale.getDefault(),
+                    "Location: %.6f, %.6f", location.getLatitude(), location.getLongitude()));
+            locationPreviewCard.setVisibility(View.VISIBLE);
         }
     }
 }
