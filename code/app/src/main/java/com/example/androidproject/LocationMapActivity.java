@@ -96,13 +96,13 @@ public class LocationMapActivity extends AppCompatActivity {
                 if (feedScreen) {
                     // Fetches the mood history of the user and updates the markers
                     fetchMoodHistory(currentUser);
-                    followingFilter.setImageDrawable(ResourcesCompat.getDrawable(getResources(),R.drawable.feed,null));
+                    followingFilter.setImageDrawable(ResourcesCompat.getDrawable(getResources(),R.drawable.personal,null));
                     // Sets feed status to false
                     feedScreen = Boolean.FALSE;
                 } else {
                     // Fetches the mood feed and updates the markers
                     fetchMoodFeed(currentUser);
-                    followingFilter.setImageDrawable(ResourcesCompat.getDrawable(getResources(),R.drawable.personal,null));
+                    followingFilter.setImageDrawable(ResourcesCompat.getDrawable(getResources(),R.drawable.feed,null));
                     // Sets feed status to True
                     feedScreen = Boolean.TRUE;
                 }
@@ -238,10 +238,11 @@ public class LocationMapActivity extends AppCompatActivity {
                     if (lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180) {
                         LatLng adjustedLocation = getOffsetLocation(lat, lon);
                         mMap.addMarker(new MarkerOptions()
-                                .position(adjustedLocation)
-                                .title(mood.getMood()))
+                                        .position(adjustedLocation)
+                                        .title("@" + mood.getUser())
+                                        .snippet("Mood: " + mood.getMood()))
                                 // Makes emojis on the map
-                                .setIcon(emoji);
+                                .setIcon(emoji);;
 
                         Log.d(TAG, "Added marker at: " + adjustedLocation.toString() + " for mood: " + mood.getMood());
 
