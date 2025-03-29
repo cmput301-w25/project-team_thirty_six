@@ -77,7 +77,7 @@ public class MoodHistoryManager {
         if (document.getString("image") != null) {
             moodState.setImage(Uri.parse(document.getString("image")));
         }
-        // Checks that the location isn't null
+        // Reconstruct location from Firestore
         if (document.get("location") != null) {
             // Gets the longitude and latitude
             Double latitude = document.get("location.latitude", Double.class);
