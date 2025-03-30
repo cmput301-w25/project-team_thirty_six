@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -139,5 +140,12 @@ public class HomePageActivity extends AppCompatActivity {
         Intent i = new Intent(this, FeedActivity.class);
         i.putExtra("currentUser", currentUser);
         startActivity(i);
+    }
+
+    public void launchChatBot(View view){
+        Intent i = new Intent(this, ChatBotActivity.class);
+        i.putExtra("currentUser", currentUser);
+        startActivity(i);
+
     }
 }

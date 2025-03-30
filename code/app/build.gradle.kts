@@ -42,6 +42,24 @@ android {
         buildConfig = true
 
     }
+
+    packagingOptions {
+        exclude("META-INF/io.netty.versions.properties")
+    }
+
+    packaging {
+        resources {
+            // Single file exclusion
+            excludes.add("META-INF/INDEX.LIST")
+
+            // Multiple file exclusions (correct collection handling)
+            excludes.addAll(setOf(
+                "META-INF/*.md",
+                "META-INF/DEPENDENCIES",
+                "META-INF/LICENSE"
+            ))
+        }
+    }
 }
 
 dependencies {
@@ -92,6 +110,11 @@ dependencies {
     implementation("com.google.android.gms:play-services-maps:18.1.0")
     implementation("com.google.android.gms:play-services-location:17.0.0")
     implementation("com.google.android.gms:play-services-basement:18.3.0")
+
+    implementation(libs.azure.core)
+    implementation(libs.azure.ai.openai)
+    implementation(libs.okhttp)
+    implementation(libs.gson)
 
 }
 secrets {
