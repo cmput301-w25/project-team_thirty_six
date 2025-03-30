@@ -76,7 +76,7 @@ public class LocationMapActivity extends AppCompatActivity {
         moodHistoryManager = new MoodHistoryManager();
         moodHistory = new ArrayList<>();
 
-        // ✅ Load map fragment before fetching moods
+        //loads map fragment
         initializeMap();
 
         // Gets the filtering buttons
@@ -112,13 +112,17 @@ public class LocationMapActivity extends AppCompatActivity {
             }
         });
     }
-
+    //creates the map fragment as well as its assets
     private void initializeMap() {
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map_fragment);
 
         if (mapFragment != null) {
             mapFragment.getMapAsync(new OnMapReadyCallback() {
+                /**
+                 * When ready initialize map aspect amd fetch the mood history of user
+                 * @param googleMap
+                 */
                 @Override
                 public void onMapReady(GoogleMap googleMap) {
                     mMap = googleMap;
@@ -137,6 +141,11 @@ public class LocationMapActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Fetches the mood history of the user and adds markers on the map
+     * @param username
+     *      the name of the user who's feed we are checking
+     */
     private void fetchMoodHistory(String username) {
         Log.d(TAG, "Fetching mood history for user: " + username);
 
@@ -152,7 +161,7 @@ public class LocationMapActivity extends AppCompatActivity {
                     Toast.makeText(LocationMapActivity.this, "No moods found for user.", Toast.LENGTH_SHORT).show();
                 }
 
-                // ✅ Only update markers if the map is ready
+                // Updates the map if the map is ready
                 if (isMapReady) {
                     updateMapMarkers();
                 } else {
@@ -211,6 +220,11 @@ public class LocationMapActivity extends AppCompatActivity {
         return new LatLng(latitude + latOffset, longitude + lonOffset);
     }
 
+    /**
+     * Adds the location markers the the map using the latitude and longitude
+     * Sets the camera where as long as there is one valid location it will
+     * be the initial camera viewpoint
+     */
     private void updateMapMarkers() {
         if (!isMapReady || mMap == null) {
             Log.e(TAG, "updateMapMarkers: Google Map is NULL or not ready!");
@@ -225,21 +239,21 @@ public class LocationMapActivity extends AppCompatActivity {
             boolean hasValidLocation = false;
             LatLng firstValidLocation = null;
 
+            // Loops through all the moods
             for (MoodState mood : moodHistory) {
-                if (mood.getLocation() != null) {  // ✅ Fix: Check if location exists
+                // Only displays moods with location
+                if (mood.getLocation() != null) {
                     double lat = mood.getLocation().getLatitude();
                     double lon = mood.getLocation().getLongitude();
-
-                    // ✅ Log every mood's location data
-                    Log.d(TAG, "Mood: " + mood.getMood() + " | Lat: " + lat + " | Lon: " + lon);
 
                     // Gets the emoji to display
                     Bitmap decodedEmoji = BitmapFactory.decodeResource(getResources(),mood.getEmoji());
                     Bitmap tempEmoji = Bitmap.createScaledBitmap(decodedEmoji,200,200,Boolean.FALSE);
                     BitmapDescriptor emoji = BitmapDescriptorFactory.fromBitmap(tempEmoji);
-                    // ✅ Ensure latitude and longitude are valid
+                    // Checks that the latitude and longitude are valid
                     if (lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180) {
                         LatLng adjustedLocation = getOffsetLocation(lat, lon);
+                        // Addds the marker to the map
                         mMap.addMarker(new MarkerOptions()
                                         .position(adjustedLocation)
                                         .title("@" + mood.getUser())
@@ -261,7 +275,7 @@ public class LocationMapActivity extends AppCompatActivity {
                 }
             }
 
-            // ✅ Move camera ONLY if there is at least one valid location
+            // Move camera ONLY if there is at least one valid location
             if (hasValidLocation && firstValidLocation != null) {
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(firstValidLocation, 10));
             }
@@ -419,13 +433,5 @@ public class LocationMapActivity extends AppCompatActivity {
                 }
             });
         });
-    }
-
-    /**
-     * Closes the view to conserve memory
-     */
-    protected void onPause(){
-        super.onPause();
-        finish();
     }
 }

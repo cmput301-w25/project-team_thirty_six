@@ -13,6 +13,7 @@ import static androidx.test.rule.GrantPermissionRule.grant;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
@@ -106,7 +107,7 @@ public class MapTest {
         launch(intent);
         // Lets teh emulator catch up
         try {
-            Thread.sleep(3000);
+            Thread.sleep(10000);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -145,7 +146,7 @@ public class MapTest {
         onView(withId(R.id.following_button_map)).perform(ViewActions.click());
         // Lets the emulator catch up
         try {
-            Thread.sleep(3000);
+            Thread.sleep(20000);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -451,7 +452,7 @@ public class MapTest {
         // Confirms the location request
         onView(withId(R.id.allowButton)).perform(ViewActions.click());
         try {
-            Thread.sleep(3000);
+            Thread.sleep(500);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -460,6 +461,14 @@ public class MapTest {
         // Taken By: Dalton Low
         // Taken On: March 28, 2025
         UiDevice uiDevice = UiDevice.getInstance(getInstrumentation());
+        // Grants the phone permissions
+        uiDevice.findObject(new UiSelector().textContains("Only")).click();
+        // Lets the emulator catch up
+        try {
+            Thread.sleep(20000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         // Checks if the marker exists
         assertFalse(uiDevice.findObject(new UiSelector().descriptionContains("@TestPostUser")).exists());
     }
