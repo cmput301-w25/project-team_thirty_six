@@ -439,12 +439,4 @@ public class LocationMapActivity extends AppCompatActivity {
             });
         });
     }
-
-    /**
-     * Closes the view to conserve memory
-     */
-    protected void onPause(){
-        super.onPause();
-        finish();
-    }
 }
