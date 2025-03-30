@@ -5,10 +5,12 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -191,6 +193,14 @@ public class MoodHistoryActivity extends AppCompatActivity {
         CheckBox checkRecentWeek = dialogView.findViewById(R.id.check_recent_week);
         CheckBox checkFilterMood = dialogView.findViewById(R.id.check_filter_mood);
         CheckBox checkFilterKeyword = dialogView.findViewById(R.id.check_filter_keyword);
+        CheckBox checkNearbyFollowing = dialogView.findViewById(R.id.check_nearby_following);
+        if (checkNearbyFollowing != null) {
+            checkNearbyFollowing.setVisibility(View.GONE); //hide the checkbox so that its only accessible from the map filters
+            ViewGroup parent = (ViewGroup) checkNearbyFollowing.getParent();
+            if (parent != null) {
+                parent.setVisibility(View.GONE);
+            }
+        }
         Spinner spinnerMoods = dialogView.findViewById(R.id.spinner_moods);
         EditText editKeyword = dialogView.findViewById(R.id.edit_keyword);
 
