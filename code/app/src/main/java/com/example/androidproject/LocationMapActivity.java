@@ -41,11 +41,12 @@ public class LocationMapActivity extends AppCompatActivity {
     private ArrayList<MoodState> moodHistory;
     private MoodHistoryManager moodHistoryManager;
     private String currentUser;
+    private TextView mapTitle;
     private static final String TAG = "LocationMapActivity";
     private static final double radius_in_km = 5.0;
     private GoogleMap mMap;
-    ImageButton followingFilter;
-    ImageButton moodFilter;
+    private ImageButton followingFilter;
+    private ImageButton moodFilter;
     private boolean isMapReady = false;
     private boolean feedScreen = Boolean.FALSE;
     private FeedManager feedManager;
@@ -83,6 +84,8 @@ public class LocationMapActivity extends AppCompatActivity {
         followingFilter = findViewById(R.id.following_button_map);
         moodFilter = findViewById(R.id.map_filter);
         distanceFilter = findViewById(R.id.distance_filter);
+        // Gets the text view at the top of the map screen
+        mapTitle = findViewById(R.id.textView_mood_map);
         feedManager = new FeedManager();
 
         // Creates the on click listener for mood filters
@@ -100,12 +103,14 @@ public class LocationMapActivity extends AppCompatActivity {
                     // Fetches the mood history of the user and updates the markers
                     fetchMoodHistory(currentUser);
                     followingFilter.setImageDrawable(ResourcesCompat.getDrawable(getResources(),R.drawable.personal,null));
+                    mapTitle.setText("History Map");
                     // Sets feed status to false
                     feedScreen = Boolean.FALSE;
                 } else {
                     // Fetches the mood feed and updates the markers
                     fetchMoodFeed(currentUser);
                     followingFilter.setImageDrawable(ResourcesCompat.getDrawable(getResources(),R.drawable.feed,null));
+                    mapTitle.setText("Feed Map");
                     // Sets feed status to True
                     feedScreen = Boolean.TRUE;
                 }
