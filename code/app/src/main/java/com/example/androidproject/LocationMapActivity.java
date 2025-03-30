@@ -410,7 +410,7 @@ public class LocationMapActivity extends AppCompatActivity {
                                 public void onCallback(ArrayList<MoodState> feed) {
                                     // call the filter function
                                     moodHistory = Filter.filterBy5kDistance(
-                                            feed, location, following, radius_in_km);
+                                            feed, location, following, radius_in_km, currentUser);
 
                                     // update the map to reflect this
                                     updateMapMarkers();

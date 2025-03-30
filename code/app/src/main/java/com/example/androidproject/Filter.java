@@ -63,7 +63,7 @@ public class Filter {
         return filteredMoods;
     }
 
-    public static ArrayList<MoodState> filterBy5kDistance(ArrayList<MoodState> moodHistory, Location currentLocation, List<String> followingList, double radius) {
+    public static ArrayList<MoodState> filterBy5kDistance(ArrayList<MoodState> moodHistory, Location currentLocation, List<String> followingList, double radius, String currentUserName) {
         if (currentLocation == null || followingList == null || followingList.isEmpty()) {
             return new ArrayList<>(); //location permission denied or user isnt following anyone then the results is basically null/empty
         }
@@ -71,7 +71,7 @@ public class Filter {
         // start by checking the radius relative to users current position as well as the users we follow
         ArrayList<MoodState> candidateMoods = new ArrayList<>();
         for (MoodState mood : moodHistory) {
-            if (mood.getLocation() != null && followingList.contains(mood.getUser())) {
+            if (mood.getLocation() != null && followingList.contains(mood.getUser()) && !mood.getUser().equals(currentUserName)) {
                 // Calculate distance
                 // Taken from https://stackoverflow.com/questions/22751306/android-location-distancebetween-and-using-previous-location/22755930#22755930
                 // Taken from https://stackoverflow.com/questions/6510050/android-location-distancebetween-and-location-distanceto-difference
