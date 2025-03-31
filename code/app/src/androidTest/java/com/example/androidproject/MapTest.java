@@ -53,27 +53,27 @@ import java.net.URL;
 import java.security.Permission;
 import java.util.Objects;
 
-@RunWith(AndroidJUnit4.class)
-@LargeTest
 /**
  * Creates the comment tests
  */
+@RunWith(AndroidJUnit4.class)
+@LargeTest
 public class MapTest {
     private MoodState mood;
-    @BeforeClass
     /**
      * Sets up firebase and firestore
      */
+    @BeforeClass
     public static void setup(){
         // Connects to the database
         FirebaseFirestore.getInstance().useEmulator("10.0.2.2",8080);
         FirebaseStorage.getInstance().useEmulator("10.0.2.2",9090);
     }
 
-    @Before
     /**
      * Gives the mood details screen something to start with
      */
+    @Before
     public void startTest(){
         // Gets the database
         Database db = Database.getInstance();
@@ -96,10 +96,10 @@ public class MapTest {
         db.addMood(mood);
     }
 
-    @Test
     /**
      *  Display the map with a mood
      */
+    @Test
     public void displayPersonalMap() throws UiObjectNotFoundException {
         // Opens the map activity
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), LocationMapActivity.class);
@@ -123,10 +123,10 @@ public class MapTest {
         angryMarker.click();
     }
 
-    @Test
     /**
      *  Display the map with a mood from the feed
      */
+    @Test
     public void displayFeedMap() throws UiObjectNotFoundException {
         // Creates a new user for the feed to test
         User newUser = new User("MR BLUE","0");
@@ -162,10 +162,10 @@ public class MapTest {
         angryMarker.click();
     }
 
-    @Test
     /**
      *  Display the map filtered by time to remove an item
      */
+    @Test
     public void displayOneWeekFilterRemovingItem() throws UiObjectNotFoundException {
         // Subtracts 2 weeks from the mood
         mood.setDayTime(mood.getDayTime().minusWeeks(2));
@@ -206,10 +206,10 @@ public class MapTest {
         assertFalse(uiDevice.findObject(new UiSelector().descriptionContains("@TestPostUser")).exists());
     }
 
-    @Test
     /**
      *  Display the map filtered by time without removing an time
      */
+    @Test
     public void displayOneWeekFilterItemRemains() throws UiObjectNotFoundException {
         // Opens the map activity
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), LocationMapActivity.class);
@@ -246,10 +246,10 @@ public class MapTest {
         assert(uiDevice.findObject(new UiSelector().descriptionContains("@TestPostUser")).exists());
     }
 
-    @Test
     /**
      *  Display the map with a mood
      */
+    @Test
     public void displayReasonFilterRemovingItem() throws UiObjectNotFoundException {
         // Opens the map activity
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), LocationMapActivity.class);
@@ -286,11 +286,10 @@ public class MapTest {
         // Checks if the marker exists
         assertFalse(uiDevice.findObject(new UiSelector().descriptionContains("@TestPostUser")).exists());
     }
-
-    @Test
     /**
      *  Display the map with a mood
      */
+    @Test
     public void displayReasonFilterItemRemains() throws UiObjectNotFoundException {
         // Opens the map activity
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), LocationMapActivity.class);
@@ -328,10 +327,10 @@ public class MapTest {
         assert(uiDevice.findObject(new UiSelector().descriptionContains("@TestPostUser")).exists());
     }
 
-    @Test
     /**
      *  Display the map with a mood filtering out an item
      */
+    @Test
     public void displayMoodFilterRemovingItem() throws UiObjectNotFoundException {
         // Opens the map activity
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), LocationMapActivity.class);
@@ -370,10 +369,10 @@ public class MapTest {
         assertFalse(uiDevice.findObject(new UiSelector().descriptionContains("@TestPostUser")).exists());
     }
 
-    @Test
     /**
      *  Display the map with a mood filtering out an item
      */
+    @Test
     public void displayMoodFilterItemRemains() throws UiObjectNotFoundException {
         // Opens the map activity
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), LocationMapActivity.class);
@@ -412,10 +411,10 @@ public class MapTest {
         assert(uiDevice.findObject(new UiSelector().descriptionContains("@TestPostUser")).exists());
     }
 
-    @Test
     /**
      *  Display the map with a mood filtering out an item
      */
+    @Test
     public void displayLocationFilterRemovingItem() throws UiObjectNotFoundException {
         // Creates a new user for the feed to test
         User newUser = new User("MR BLUE","0");

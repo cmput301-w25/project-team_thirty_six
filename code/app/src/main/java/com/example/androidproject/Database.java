@@ -48,6 +48,11 @@ public class Database {
         } return dbInstance;
     }
 
+    /**
+     * Adds a user to the database
+     * @param user
+     *      The user to be added
+     */
     public void addUser(User user){
         users.document(user.getUsername()).set(user);
     }
@@ -119,6 +124,12 @@ public class Database {
         DocumentReference newDoc = comments.document();
         newDoc.set(comment);
     }
+
+    /**
+     * Creates a function to get user collection
+     * @return
+     *      the database collection of users
+     */
     public CollectionReference getUsers() {
         return users;
     }

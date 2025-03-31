@@ -142,7 +142,7 @@ public class FeedManager {
     }
 
     /**
-     * Retrieves the following array for a specific user as an ArrayList<String>.
+     * Retrieves the following array for a specific user as an ArrayList of a string.
      *
      * @param username The username of the user whose following list needs to be retrieved.
      * @param callback The callback to handle the result.
@@ -151,6 +151,10 @@ public class FeedManager {
         DocumentReference userRef = db.collection("Users").document(username);
 
         userRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            /**
+             * Runs code once the following list has been found
+             * @param task
+             */
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {

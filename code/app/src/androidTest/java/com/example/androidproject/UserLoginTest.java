@@ -29,10 +29,16 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Objects;
 
+/**
+ * Creates a test for loging in
+ */
 public class UserLoginTest {
 
     private CollectionReference usersRef;
 
+    /**
+     * Sets up the database
+     */
     @BeforeClass
     public static void setup(){
         // Specific address for emulated device to access our localHost
@@ -42,6 +48,9 @@ public class UserLoginTest {
         FirebaseFirestore.getInstance().useEmulator(androidLocalhost, portNumber);
     }
 
+    /**
+     * Adds elements to the databsee
+     */
     @Before
     public void seedDatabase() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -50,6 +59,9 @@ public class UserLoginTest {
         usersRef.document(user1.getUsername()).set(user1);
     }
 
+    /**
+     * Allows for the initalizing of intents
+     */
     @Before
     public void setUp(){
         Intents.init();
@@ -58,6 +70,10 @@ public class UserLoginTest {
     @Rule
     public ActivityScenarioRule<LoginActivity> scenarioRule = new ActivityScenarioRule<LoginActivity>(LoginActivity.class);
 
+    /**
+     * Runs a test for user and pass being wrong
+     * @throws InterruptedException
+     */
     @Test
     public void LoginButUserAndPassAreWrongSoStaysOnLoginPage() throws InterruptedException {
         // Waits for the data to be seeded first and the activity is on the SignupPage
@@ -73,6 +89,10 @@ public class UserLoginTest {
         Intents.release();
     }
 
+    /**
+     * Runs a test for correct info being used
+     * @throws InterruptedException
+     */
     @Test
     public void loginUsingCorrectInfoSoGoesToHomePage() throws InterruptedException {;
         // Ensures the data is seeded first
@@ -88,6 +108,9 @@ public class UserLoginTest {
         Intents.release();
     }
 
+    /**
+     * Dismantles the emulated database
+     */
     @After
     public void tearDown() {
         String projectId = "mooddatabase-4398e";

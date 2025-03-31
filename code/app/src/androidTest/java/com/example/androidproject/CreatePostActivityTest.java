@@ -23,35 +23,35 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-@RunWith (AndroidJUnit4.class)
-@LargeTest
 /**
  * Creates the create post activity test
  */
+@RunWith (AndroidJUnit4.class)
+@LargeTest
 public class CreatePostActivityTest {
-    @BeforeClass
     /**
      * Sets up firebase and firestore
      */
+    @BeforeClass
     public static void setup(){
         // Connects to the database
         FirebaseFirestore.getInstance().useEmulator("10.0.2.2",8080);
         FirebaseStorage.getInstance().useEmulator("10.0.2.2",9090);
     }
 
-    @Before
     /**
      * Switches to the create post activity
      */
+    @Before
     public void switchActivity(){
         // Switches to activity
         ActivityScenario.launch(CreatePostActivity.class);
     }
 
-    @Test
     /**
      * Tests a successful addition
      */
+    @Test
     public void successfulAddTest() {
         // Gets the mood dropdown and selects anger
         onView(withId(R.id.AddMoodSelectMood)).perform(ViewActions.click());
@@ -65,6 +65,10 @@ public class CreatePostActivityTest {
         // Checks the database
         Task<QuerySnapshot> query = FirebaseFirestore.getInstance().collection("Moods").get();
         query.addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            /**
+             * Checks that the mood is in the database now
+             * @param queryDocumentSnapshots
+             */
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                 // Ensures there is only one mood
@@ -87,10 +91,10 @@ public class CreatePostActivityTest {
         }
     }
 
-    @Test
     /**
      * Tests without mood selected
      */
+    @Test
     public void noMoodAddTest() {
 
         //Sets the text and group for mood view

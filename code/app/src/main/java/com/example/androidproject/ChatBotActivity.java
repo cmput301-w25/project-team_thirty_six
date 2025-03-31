@@ -81,6 +81,11 @@ public class ChatBotActivity extends AppCompatActivity {
                 input.setText("");
 
                 openAIHelper.getChatCompletion(message, new OpenAIClientHelper.OpenAICallback() {
+                    /**
+                     * Handles receiving the response from the ai
+                     * @param response
+                     *   the string response provided
+                     */
                     @Override
                     public void onSuccess(String response) {
                         output.setText(response.replaceAll("[*#]", ""));
@@ -90,6 +95,11 @@ public class ChatBotActivity extends AppCompatActivity {
                         input.setEnabled(true);
                     }
 
+                    /**
+                     * Handles receiving an error from the ai
+                     * @param error
+                     *   the error message
+                     */
                     @Override
                     public void onError(String error) {
                         output.setText("Error: " + error);

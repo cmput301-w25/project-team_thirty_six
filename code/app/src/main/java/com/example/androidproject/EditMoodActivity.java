@@ -409,6 +409,9 @@ public class EditMoodActivity extends AppCompatActivity {
                         dateTimeManager.getCalendar(),
                         isPublic,
                         new MoodRepository.OnMoodUpdateListener() {
+                            /**
+                             * If the mood is updated successfully finish and make a toast
+                             */
                             @Override
                             public void onSuccess() {
                                 mediaManager.clearDeletionMarker();
@@ -417,6 +420,10 @@ public class EditMoodActivity extends AppCompatActivity {
                                 finish();
                             }
 
+                            /**
+                             * If the mood is not updated successfully make a toast
+                             * @param e
+                             */
                             @Override
                             public void onFailure(Exception e) {
                                 Toast.makeText(EditMoodActivity.this,
@@ -437,6 +444,9 @@ public class EditMoodActivity extends AppCompatActivity {
                         dateTimeManager.getCalendar(),
                         isPublic,
                         new MoodRepository.OnMoodUpdateListener() {
+                            /**
+                             * If the image cannot be removed edit everything else
+                             */
                             @Override
                             public void onSuccess() {
                                 mediaManager.clearDeletionMarker();
@@ -445,6 +455,11 @@ public class EditMoodActivity extends AppCompatActivity {
                                 finish();
                             }
 
+                            /**
+                             * If that fails print error message
+                             * @param e
+                             *      The exception encountered
+                             */
                             @Override
                             public void onFailure(Exception e) {
                                 Toast.makeText(EditMoodActivity.this,

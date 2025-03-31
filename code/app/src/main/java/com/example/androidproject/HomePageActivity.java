@@ -75,6 +75,11 @@ public class HomePageActivity extends AppCompatActivity {
      */
     private void fetchFollowingAndMoods() {
         feedManager.getFollowing(currentUser, new FeedManager.FollowingCallback() {
+            /**
+             * Displays the following list once it has been found
+             * @param followingList
+             *      The list of individuals being followed
+             */
             @Override
             public void onCallback(ArrayList<String> followingList) {
                 if (followingList != null && !followingList.isEmpty()) {
@@ -94,6 +99,11 @@ public class HomePageActivity extends AppCompatActivity {
      */
     private void fetchMoodsFromFollowing() {
         feedManager.fetchFeed(following, new FeedManager.FeedCallback() {
+            /**
+             * Gets the list of moods that of the people being followed
+             * @param feed
+             *      List of people being followed
+             */
             @Override
             public void onCallback(ArrayList<MoodState> feed) {
                 if (feed != null && !feed.isEmpty()) {
@@ -116,6 +126,12 @@ public class HomePageActivity extends AppCompatActivity {
 
         // Sort by date
         Collections.sort(moods, new Comparator<MoodState>() {
+            /**
+             * Comparison method
+             * @param m1 the first object to be compared.
+             * @param m2 the second object to be compared.
+             * @return
+             */
             @Override
             public int compare(MoodState m1, MoodState m2) {
                 return m2.getDayTime().compareTo(m1.getDayTime()); // Reverse order

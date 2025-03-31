@@ -33,27 +33,27 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Objects;
 
-@RunWith(AndroidJUnit4.class)
-@LargeTest
 /**
  * Creates the comment tests
  */
+@RunWith(AndroidJUnit4.class)
+@LargeTest
 public class CommentTest {
     String moodID;
-    @BeforeClass
     /**
      * Sets up firebase and firestore
      */
+    @BeforeClass
     public static void setup(){
         // Connects to the database
         FirebaseFirestore.getInstance().useEmulator("10.0.2.2",8080);
         FirebaseStorage.getInstance().useEmulator("10.0.2.2",9090);
     }
 
-    @Before
     /**
      * Gives the mood details screen something to start with
      */
+    @Before
     public void startTest(){
         // Gets the database
         Database db = Database.getInstance();

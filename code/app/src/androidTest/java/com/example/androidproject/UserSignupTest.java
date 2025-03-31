@@ -48,11 +48,17 @@ import java.util.Objects;
 
 import kotlin.jvm.JvmField;
 
+/**
+ * Runs a test for singing up
+ */
 public class UserSignupTest {
 
     private CollectionReference usersRef;
     private User currentUser;
 
+    /**
+     * Sets up the databsase
+     */
     @BeforeClass
     public static void setup(){
         // Specific address for emulated device to access our localHost
@@ -62,8 +68,9 @@ public class UserSignupTest {
         FirebaseFirestore.getInstance().useEmulator(androidLocalhost, portNumber);
     }
 
-
-
+    /**
+     * Adds user to the database to seed it
+     */
     @Before
     public void seedDatabase() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -75,13 +82,19 @@ public class UserSignupTest {
     @Rule
     public ActivityScenarioRule<SignUpActivity> scenarioRule = new ActivityScenarioRule<SignUpActivity>(SignUpActivity.class);
 
+    /**
+     * Allows for the initialization of intents
+     */
     @Before
     public void setUp(){
         Intents.init();
     }
 
 
-
+    /**
+     * Attempt signup with user already existing
+     * @throws InterruptedException
+     */
     @Test
     public void signUpAttemptUserAlreadyExistsShouldReject() throws InterruptedException {
         // Waits for the data to be seeded first and the activity is on the SignupPage
@@ -97,6 +110,10 @@ public class UserSignupTest {
         Intents.release();
     }
 
+    /**
+     * Test for going to homepage through proper sign up
+     * @throws InterruptedException
+     */
     @Test
     public void signUpAttemptShouldGoToHomePageSinceUserExistsInDatabase() throws InterruptedException {;
         // Ensures the data is seeded first
@@ -124,8 +141,9 @@ public class UserSignupTest {
         Intents.release();
     }
 
-
-
+    /**
+     * Dismantles the database
+     */
     @After
     public void tearDown() {
         String projectId = "mooddatabase-4398e";

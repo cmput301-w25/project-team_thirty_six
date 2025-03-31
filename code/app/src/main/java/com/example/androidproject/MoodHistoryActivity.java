@@ -63,6 +63,10 @@ public class MoodHistoryActivity extends AppCompatActivity {
         }
 
         backButton.setOnClickListener(new View.OnClickListener() {
+            /**
+             * Stops the program
+             * @param v The view that was clicked.
+             */
             @Override
             public void onClick(View v) {
                 finish();
@@ -104,6 +108,10 @@ public class MoodHistoryActivity extends AppCompatActivity {
      */
     private void fetchMoodHistory(String username) {
         moodHistoryManager.fetchMoodHistory(username, new MoodHistoryManager.MoodHistoryCallback() {
+            /**
+             * Adds all to mood history once it is received from the database
+             * @param moodHistory
+             */
             @Override
             public void onCallback(ArrayList<MoodState> moodHistory) {
                 if (moodHistory != null) {

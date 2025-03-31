@@ -36,6 +36,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.Random;
 
+/**
+ * Displays the map for filtered mood feed,history, and 5k
+ */
 public class LocationMapActivity extends AppCompatActivity {
 
     private ArrayList<MoodState> moodHistory;
@@ -53,6 +56,13 @@ public class LocationMapActivity extends AppCompatActivity {
     private FloatingActionButton distanceFilter;
     private CheckBox checkNearbyFollowing;
 
+    /**
+     * Main loop of the activity
+     * @param savedInstanceState If the activity is being re-initialized after
+     *     previously being shut down then this Bundle contains the data it most
+     *     recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
+     *
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -117,7 +127,10 @@ public class LocationMapActivity extends AppCompatActivity {
             }
         });
     }
-    //creates the map fragment as well as its assets
+
+    /**
+     * Requests the map according to specific settings
+     */
     private void initializeMap() {
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map_fragment);
@@ -155,6 +168,11 @@ public class LocationMapActivity extends AppCompatActivity {
         Log.d(TAG, "Fetching mood history for user: " + username);
 
         moodHistoryManager.fetchMoodHistory(username, new MoodHistoryManager.MoodHistoryCallback() {
+            /**
+             * Once mood history is received add it to this classes list
+             * @param retrievedMoods
+             *      List of mood history
+             */
             @Override
             public void onCallback(ArrayList<MoodState> retrievedMoods) {
                 if (retrievedMoods != null) {
@@ -395,6 +413,9 @@ public class LocationMapActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Filters the list to show only those who you follow's most recent mood within 5k
+     */
     private void filterByNearbyFollowing() {
         // start by getting the users current location
         LocationPermissionFragment locationFragment = new LocationPermissionFragment();
@@ -404,13 +425,25 @@ public class LocationMapActivity extends AppCompatActivity {
             locationFragment.startTrackingLocation();
 
             locationFragment.getLastKnownLocation(new LocationPermissionFragment.OnLocationReceivedListener() {
+                /**
+                 * Gets the users location to filter bu
+                 * @param location
+                 */
                 @Override
                 public void onLocationReceived(Location location) {
                     // get the users following list
                     feedManager.getFollowing(currentUser, new FeedManager.FollowingCallback() {
+                        /**
+                         * Gets the users following list
+                         * @param following
+                         */
                         @Override
                         public void onCallback(ArrayList<String> following) {
                             feedManager.fetchFeed(following, new FeedManager.FeedCallback() {
+                                /**
+                                 * Gets the users feed and adds it to the map with 5k filter
+                                 * @param feed
+                                 */
                                 @Override
                                 public void onCallback(ArrayList<MoodState> feed) {
                                     // call the filter function
@@ -430,6 +463,10 @@ public class LocationMapActivity extends AppCompatActivity {
                     });
                 }
 
+                /**
+                 * Displays error message if location cannot be received
+                 * @param errorMessage
+                 */
                 @Override
                 public void onLocationFailure(String errorMessage) {
                     Toast.makeText(LocationMapActivity.this,
