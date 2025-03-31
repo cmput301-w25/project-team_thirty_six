@@ -20,6 +20,11 @@ import android.content.Intent;
 
 import com.example.androidproject.FeedActivity;
 
+/**
+ * Test class for FeedActivity using Espresso framework.
+ * Tests the user interface and interactions for the mood feed functionality.
+ */
+
 @RunWith(AndroidJUnit4.class)
 public class FeedActivityUITest {
 
@@ -28,6 +33,10 @@ public class FeedActivityUITest {
     @Rule
     public ActivityTestRule<FeedActivity> activityRule = new ActivityTestRule<>(FeedActivity.class, true, false);
 
+    /**
+     * Setup method executed before each test.
+     * Launches the activity with test user credentials.
+     */
     @Before
     public void setUp() {
         // Setup initial conditions for the test
@@ -35,13 +44,21 @@ public class FeedActivityUITest {
         intent.putExtra("currentUser", "testUser");
         activityRule.launchActivity(intent);
     }
-
+    /**
+     * Tests visibility of the filter button.
+     * Verifies the filter button is properly displayed on screen.
+     */
     @Test
     public void testFilterButtonVisibility() {
         // Check if the filter button is visible
         Espresso.onView(withId(R.id.filter_button)).check(matches(ViewMatchers.isDisplayed()));
     }
 
+    /**
+     * Tests filter button click behavior.
+     * Verifies that clicking the filter button opens the filter dialog
+     * with the correct title.
+     */
     @Test
     public void testFilterButtonClick() {
         // Perform a click on the filter button and check if dialog appears
