@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="#1F1F1F">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Filter by"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:textAlignment="center"
+        android:layout_marginBottom="16dp"/>
+
+    <RadioGroup
+        android:id="@+id/theme_radio_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RadioButton
+            android:id="@+id/theme_default"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Default Theme"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+
+        <RadioButton
+            android:id="@+id/theme_blue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Blue Theme"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+
+        <RadioButton
+            android:id="@+id/theme_purple"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Purple Theme"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+
+        <RadioButton
+            android:id="@+id/theme_red_gold"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Red Gold Theme"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+
+        <RadioButton
+            android:id="@+id/theme_brown_orange"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Brown Orange Theme"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+
+    </RadioGroup>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="16dp">
+
+        <Button
+            android:id="@+id/theme_cancel_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Cancel"
+            android:textColor="#8A73DF"
+            android:background="@android:color/transparent"/>
+
+        <Button
+            android:id="@+id/theme_save_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Apply"
+            android:textColor="#8A73DF"
+            android:background="@android:color/transparent"/>
+    </LinearLayout>
+</LinearLayout>
