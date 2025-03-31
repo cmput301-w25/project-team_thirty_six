@@ -17,6 +17,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
 
+/**
+ * Activity that facilitates communication with a chatbot powered by OpenAI via Azure.
+ * Provides a user interface for sending messages and receiving responses from the chatbot.
+ */
 public class ChatBotActivity extends AppCompatActivity {
     private OpenAIClientHelper openAIHelper;
     private EditText input;
@@ -24,6 +28,13 @@ public class ChatBotActivity extends AppCompatActivity {
     private TextView output;
     private ProgressBar loadingIndicator;
     private String currentUser;
+
+    /**
+     * Called when the activity is first created.
+     * Initializes the UI components, sets up the OpenAI helper, and handles button actions.
+     *
+     * @param savedInstanceState The saved instance state of the activity, if any.
+     */
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +56,7 @@ public class ChatBotActivity extends AppCompatActivity {
         // Initialize with Azure OpenAI credentials
         openAIHelper = new OpenAIClientHelper(
                 "https://models.inference.ai.azure.com", // Azure OpenAI endpoint
-                "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", // Azure Open AI API token
+                "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", // Azure Open AI API token
                 currentUser
         );
 
@@ -92,6 +103,10 @@ public class ChatBotActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Called when the activity is destroyed.
+     * This method is responsible for cleaning up resources and shutting down the OpenAI helper.
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();

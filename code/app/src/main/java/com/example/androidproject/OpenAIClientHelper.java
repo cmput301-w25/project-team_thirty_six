@@ -22,6 +22,10 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+/**
+ * Helper class for interacting with OpenAI's API.
+ * Handles asynchronous requests for chat completion and mood analysis.
+ */
 public class OpenAIClientHelper {
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final Handler handler = new Handler(Looper.getMainLooper());
@@ -34,6 +38,14 @@ public class OpenAIClientHelper {
     private MoodHistoryManager moodHistoryManager;
     private String currentUser;
 
+    /**
+     * Constructor for OpenAIClientHelper.
+     *
+     * @param endpoint API endpoint for OpenAI.
+     * @param apiKey   API key for authentication.
+     * @param user     The current user for mood history retrieval.
+     */
+
     public OpenAIClientHelper(String endpoint, String apiKey, String user) {
         this.endpoint = endpoint;
         this.apiKey = apiKey;
@@ -43,6 +55,9 @@ public class OpenAIClientHelper {
         this.currentUser = user;
         fetchMoodHistory();
     }
+    /**
+     * Interface for handling OpenAI API responses.
+     */
 
     public interface OpenAICallback {
         void onSuccess(String response);
@@ -50,7 +65,9 @@ public class OpenAIClientHelper {
     }
 
 
-
+    /**
+     * Fetches the user's mood history asynchronously and updates the local cache.
+     */
     private void fetchMoodHistory() {
         if (currentUser != null) {
             moodHistoryManager.fetchMoodHistory(currentUser, new MoodHistoryManager.MoodHistoryCallback() {
@@ -67,6 +84,12 @@ public class OpenAIClientHelper {
             });
         }
     }
+    /**
+     * Sends a request to OpenAI's API for chat completion, incorporating the user's mood history.
+     *
+     * @param userMessage The message sent by the user.
+     * @param callback    Callback to handle API response.
+     */
 
     public void getChatCompletion(String userMessage, OpenAICallback callback) {
         executor.execute(() -> {
@@ -137,6 +160,9 @@ public class OpenAIClientHelper {
         });
     }
 
+    /**
+     * Shuts down the executor service to free up resources.
+     */
     public void shutdown() {
         executor.shutdown();
     }

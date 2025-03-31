@@ -88,6 +88,7 @@ dependencies {
     implementation(libs.legacy.support.v4)
     implementation(libs.recyclerview)
     testImplementation(libs.junit)
+    testImplementation(libs.ext.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
     testImplementation ("junit:junit:4.13.2")
@@ -116,6 +117,7 @@ dependencies {
     implementation(libs.azure.ai.openai)
     implementation(libs.okhttp)
     implementation(libs.gson)
+
 
 }
 secrets {

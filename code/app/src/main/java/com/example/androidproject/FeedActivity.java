@@ -40,7 +40,7 @@ public class FeedActivity extends AppCompatActivity {
 
     private ListView moodListView;
 
-    private FeedManager feedManager;
+    FeedManager feedManager;
 
     private String currentUser;
 
@@ -277,6 +277,12 @@ public class FeedActivity extends AppCompatActivity {
         moodAdapter.notifyDataSetChanged();
     }
 
+
+
+    /**
+     * Called when the activity is about to become visible or return to the foreground.
+     * Performs essential setup tasks and refreshes the feed data:
+     */
     @Override
     protected void onResume() {
         super.onResume();

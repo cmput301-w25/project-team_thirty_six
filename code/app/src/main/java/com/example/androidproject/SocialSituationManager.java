@@ -45,7 +45,7 @@ public class SocialSituationManager {
 
     /**
      * Runs the code that handles the situation clicked
-     * @param clickedButton
+     * @param clickedButton The radio button that was clicked.
      */
     private void handleSituationSelection(RadioButton clickedButton) {
         if (clickedButton == lastSelectedButton) {
@@ -73,7 +73,8 @@ public class SocialSituationManager {
 
     /**
      *  Sets the situation for the mood
-     * @param situation
+     * @param situation The situation to be selected (e.g., "Alone", "Pair", "Group", "Crowd").
+     *
      */
     public void setSituation(String situation) {
         this.chosenSituation = situation;

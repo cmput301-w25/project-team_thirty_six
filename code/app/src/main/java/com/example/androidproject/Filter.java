@@ -8,6 +8,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * The Filter class provides utility methods for filtering mood history
+ * based on different criteria such as time, emotional state, keywords, and location proximity.
+ */
+
 public class Filter {
 
     /**
@@ -63,6 +68,17 @@ public class Filter {
         return filteredMoods;
     }
 
+    /**
+     * Filters the mood history to include only events from users within a specified radius
+     * who are followed by the current user. Each followed user is represented by their most recent mood state.
+     *
+     * @param moodHistory    The list of mood states to filter.
+     * @param currentLocation The current location of the user.
+     * @param followingList  The list of usernames the user is following.
+     * @param radius         The maximum distance (in kilometers) to consider.
+     * @param currentUserName The username of the current user (to exclude their own moods).
+     * @return A filtered list containing only the most recent mood event from each followed user within the specified radius.
+     */
     public static ArrayList<MoodState> filterBy5kDistance(ArrayList<MoodState> moodHistory, Location currentLocation, List<String> followingList, double radius, String currentUserName) {
         if (currentLocation == null || followingList == null || followingList.isEmpty()) {
             return new ArrayList<>(); //location permission denied or user isnt following anyone then the results is basically null/empty

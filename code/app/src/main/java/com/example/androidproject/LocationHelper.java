@@ -12,17 +12,30 @@ import androidx.core.app.ActivityCompat;
 
 import com.google.android.gms.location.*;
 import com.google.firebase.firestore.GeoPoint;
-
+/**
+ * This class helps in obtaining the user's location using Google's FusedLocationProviderClient.
+ * It requests location updates at a specified interval and provides callbacks for location updates or errors.
+ */
 public class LocationHelper {
     private final Activity activity;
     private final FusedLocationProviderClient fusedLocationClient;
     private final LocationListener listener;
     private LocationCallback locationCallback;
 
+    /**
+     * Interface to provide callbacks for location updates or errors.
+     */
     public interface LocationListener {
         void onLocationReceived(GeoPoint geoPoint);
         void onLocationError(String error);
     }
+
+    /**
+     * Constructs a LocationHelper instance.
+     *
+     * @param activity The activity context.
+     * @param listener The listener for location updates and errors.
+     */
 
     public LocationHelper(Activity activity, LocationListener listener) {
         this.activity = activity;
@@ -30,6 +43,10 @@ public class LocationHelper {
         this.fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity);
     }
 
+    /**
+     * Starts requesting location updates. If location permission is not granted,
+     * it requests permission and notifies the listener of an error.
+     */
     public void startLocationUpdates() {
         if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -67,6 +84,10 @@ public class LocationHelper {
         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
     }
 
+
+    /**
+     * Stops location updates to prevent unnecessary battery consumption.
+     */
     public void stopLocationUpdates() {
         if (fusedLocationClient != null && locationCallback != null) {
             fusedLocationClient.removeLocationUpdates(locationCallback);

@@ -11,6 +11,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+/**
+ * UserAdapter is a RecyclerView adapter for displaying a list of users.
+ * It binds user data to the RecyclerView's item view and handles item click events to navigate
+ * to another user's profile.
+ */
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder> {
     private List<User> users;
     private Context context;
