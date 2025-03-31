@@ -2,6 +2,7 @@ package com.example.androidproject;
 
 import android.app.Activity;
 import android.app.Application;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -75,7 +76,7 @@ public class MoodApplication extends Application {
      */
     private static void applyThemeToView(View view, int themeResId, Activity activity) {
         // We don't do it to the navbar so the background can be kept the same
-        if (view.getId() == R.id.nav_bar_container) {
+        if (view.getId() == R.id.nav_bar_container || view.getId() == R.id.main || view.getId() == R.id.login_page || view.getId() == R.id.sign_up_page || view.getId() == R.id.mood_details_container || view.getId() == R.id.feed_box || view.getId() == R.id.my_feed_box) {
             return;
         }
 

@@ -7,6 +7,7 @@
     android:padding="10dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/feed_box"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/edit_mood_edit_mood_button_background"

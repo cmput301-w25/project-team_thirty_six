@@ -90,6 +90,11 @@
                 android:text="@string/followers_format"
                 android:textColor="@color/white" />
 
+            <FrameLayout
+                android:id="@+id/fragment_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
             <TextView
                 android:id="@+id/followingAmountTextView"
                 android:onClick="followingOnClick"
@@ -148,7 +153,7 @@
             app:layout_constraintHorizontal_bias="0.497"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/follower_following_linearLayout"
-            app:layout_constraintVertical_bias="0.639" />
+            app:layout_constraintVertical_bias="0.452" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/customize_theme_button"
@@ -156,18 +161,17 @@
             android:layout_width="226dp"
             android:layout_height="45dp"
             android:layout_marginTop="16dp"
-            android:layout_marginBottom="100dp"
             android:background="@drawable/intro_btn_background"
             android:onClick="customizeTheme"
             android:text="Customize"
             android:textColor="@color/white"
             android:textSize="22sp"
             android:textStyle="normal"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.497"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/view_mood_history"
-            app:layout_constraintBottom_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -181,14 +185,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-
-    <FrameLayout
-        android:id="@+id/fragment_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
