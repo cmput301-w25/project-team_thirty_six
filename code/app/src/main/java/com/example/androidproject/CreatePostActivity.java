@@ -73,6 +73,13 @@ public class CreatePostActivity extends AppCompatActivity {
     private CardView locationPreviewCard;
     private TextView locationAddressText;
 
+    /**
+     * Handles the main loop of the program
+     * @param savedInstanceState If the activity is being re-initialized after
+     *     previously being shut down then this Bundle contains the data it most
+     *     recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
+     *
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // Sets current
@@ -409,6 +416,11 @@ public class CreatePostActivity extends AppCompatActivity {
         });
         // Sets the cancel button functionality
         cancelButton.setOnClickListener(new View.OnClickListener() {
+            /**
+             * Cancels the add mood screen
+             * @param v The view that was clicked.
+             *      cancel button
+             */
             @Override
             public void onClick(View v) {
                 finish();
@@ -417,12 +429,20 @@ public class CreatePostActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Checks if an image is too large for the database
+     * @param chosenImage
+     *      path to image in phone
+     * @return
+     *      boolean of if it is too big
+     */
     private boolean isImageSizeValid(Uri chosenImage) {
         try {
+            // Opens the image input stream
             InputStream inputStream = getContentResolver().openInputStream(chosenImage);
             int imageSize = inputStream.available();
             inputStream.close();
-
+            // Checks if the image is too large
             if (imageSize >= 65536) {
                 Toast.makeText(this, "Image size exceeds 64KB limit. Please select a smaller image.",
                         Toast.LENGTH_LONG).show();
@@ -430,18 +450,25 @@ public class CreatePostActivity extends AppCompatActivity {
             }
             return true;
         } catch (IOException e) {
+            // Shows an error if checking image size goes wrong
             Toast.makeText(this, "Error checking image size: " + e.getMessage(),
                     Toast.LENGTH_SHORT).show();
             return false;
         }
     }
 
+    /**
+     * Displays the address of the location after selecting it
+     * @param location
+     */
     private void displayLocationAddress(Location location) {
         Geocoder geocoder = new Geocoder(this, Locale.getDefault());
         try {
+            // Attempts to get the address from the location
             List<Address> addresses = geocoder.getFromLocation(
                     location.getLatitude(), location.getLongitude(), 1);
 
+            // If it finds a valid address store the information
             if (addresses != null && !addresses.isEmpty()) {
                 Address address = addresses.get(0);
                 StringBuilder sb = new StringBuilder();
@@ -465,7 +492,7 @@ public class CreatePostActivity extends AppCompatActivity {
                     if (sb.length() > 0) sb.append(", ");
                     sb.append(countryName);
                 }
-
+                // Sets the text of the address
                 locationAddressText.setText(sb.toString());
             } else {
                 // If no address found, display coordinates

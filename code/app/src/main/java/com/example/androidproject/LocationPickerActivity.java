@@ -18,6 +18,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+/**
+ * Allows the user to select a location
+ */
 public class LocationPickerActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
@@ -26,6 +29,13 @@ public class LocationPickerActivity extends AppCompatActivity implements OnMapRe
     private LatLng initialLocation;
     private static final float DEFAULT_ZOOM = 15f;
 
+    /**
+     * Main body of the location picker
+     * @param savedInstanceState If the activity is being re-initialized after
+     *     previously being shut down then this Bundle contains the data it most
+     *     recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
+     *
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,7 +59,11 @@ public class LocationPickerActivity extends AppCompatActivity implements OnMapRe
         confirmButton.setOnClickListener(v -> confirmLocationSelection());
     }
 
-
+    /**
+     * Once the map is ready to use let the user select a location
+     * @param googleMap
+     *      Map dislpay
+     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -80,6 +94,9 @@ public class LocationPickerActivity extends AppCompatActivity implements OnMapRe
         });
     }
 
+    /**
+     * Gets the users current location
+     */
     private void tryGetCurrentLocation() {
         LocationPermissionFragment locationFragment = new LocationPermissionFragment();
         locationFragment.show(getSupportFragmentManager(), "LocationPermissionFragment");
@@ -104,6 +121,9 @@ public class LocationPickerActivity extends AppCompatActivity implements OnMapRe
         });
     }
 
+    /**
+     * Confirms the users selection
+     */
     private void confirmLocationSelection() {
         if (selectedMarker != null) {
             LatLng location = selectedMarker.getPosition();

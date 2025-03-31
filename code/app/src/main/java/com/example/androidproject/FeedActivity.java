@@ -44,6 +44,13 @@ public class FeedActivity extends AppCompatActivity {
 
     private String currentUser;
 
+    /**
+     * Creates the main loop of the feed activity
+     * @param savedInstanceState If the activity is being re-initialized after
+     *     previously being shut down then this Bundle contains the data it most
+     *     recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
+     *
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,6 +105,11 @@ public class FeedActivity extends AppCompatActivity {
      */
     private void fetchFollowingAndFeed() {
         feedManager.getFollowing(currentUser, new FeedManager.FollowingCallback() {
+            /**
+             * Updates the following list once it has been received from the database
+             * @param followingList
+             *      the list of following received
+             */
             @Override
             public void onCallback(ArrayList<String> followingList) {
                 if (followingList != null) {
@@ -118,6 +130,11 @@ public class FeedActivity extends AppCompatActivity {
      */
     private void fetchFeed() {
         feedManager.fetchFeed(following, new FeedManager.FeedCallback() {
+            /**
+             * Once the feed is received display it
+             * @param feed
+             *      The feed of moods
+             */
             @Override
             public void onCallback(ArrayList<MoodState> feed) {
                 if (feed != null) {
@@ -145,6 +162,12 @@ public class FeedActivity extends AppCompatActivity {
      */
     private void sortFeed() {
         feed.sort(new Comparator<MoodState>() {
+            /**
+             * A metric to compare
+             * @param m1 the first object to be compared.
+             * @param m2 the second object to be compared.
+             * @return
+             */
             @Override
             public int compare(MoodState m1, MoodState m2) {
                 return m2.getDayTime().compareTo(m1.getDayTime()); // Reverse order
@@ -153,6 +176,12 @@ public class FeedActivity extends AppCompatActivity {
         moodAdapter.notifyDataSetChanged(); // Refresh the adapter
 
         completeFeed.sort(new Comparator<MoodState>() {
+            /**
+             * A metric to compare
+             * @param m1 the first object to be compared.
+             * @param m2 the second object to be compared.
+             * @return
+             */
             @Override
             public int compare(MoodState m1, MoodState m2) {
                 return m2.getDayTime().compareTo(m1.getDayTime()); // Reverse order

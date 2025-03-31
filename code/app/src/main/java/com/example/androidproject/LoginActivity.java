@@ -16,6 +16,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
+/**
+ * Creates the activity that lets the user log in
+ */
 public class LoginActivity extends AppCompatActivity {
 
     private UserManager userManager;  // This is so that the signUpOnClick method can access the userManager function without having to instantiate it each time
@@ -59,6 +62,9 @@ public class LoginActivity extends AppCompatActivity {
         String username = editUsername.getText().toString();
         String password = editPassword.getText().toString();
         userManager.loginUser(username, password, new UserManager.LoginCallback() {
+            /**
+             * ON succesful login start homepage activity
+             */
             @Override
             public void onLoginSuccess() {
                 Intent i = new Intent(LoginActivity.this, HomePageActivity.class);
