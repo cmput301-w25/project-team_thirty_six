@@ -16,8 +16,7 @@ public class User implements Serializable {
     ArrayList<String> followers;
     static ArrayList<MoodState> moodHistory;
     MoodState mostRecentMood;
-
-
+    String themePreference = "gradient_color_background";
 
     // No-argument constructor required for Firestore
     /**
@@ -228,5 +227,21 @@ public class User implements Serializable {
 
     public void fetchMoodHistory(MoodHistoryManager moodHistoryManager, MoodHistoryManager.MoodHistoryCallback callback) {
         moodHistoryManager.fetchMoodHistory(this.username, callback);
+    }
+
+    /**
+     * Gets the user's theme preference
+     * @return The theme preference name
+     */
+    public String getThemePreference() {
+        return themePreference;
+    }
+
+    /**
+     * Sets the user's theme preference
+     * @param themePreference The theme preference name to set
+     */
+    public void setThemePreference(String themePreference) {
+        this.themePreference = themePreference;
     }
 }

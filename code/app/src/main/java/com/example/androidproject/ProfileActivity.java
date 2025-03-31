@@ -1,8 +1,10 @@
 package com.example.androidproject;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,8 +12,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
+import androidx.appcompat.app.AlertDialog;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
@@ -20,6 +29,7 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.example.androidproject.databinding.ActivityProfileBinding;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 /**
  * Creates the view profile screen, contains links to the followRequestFragment, FollowingListFragment and FollowerListFragment
@@ -86,6 +96,15 @@ public class ProfileActivity extends AppCompatActivity {
         }
 
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //ThemeManager.applyThemeToActivity(this);
+
+        //int themeResId = ThemeManager.getThemeResourceId(this);
+        //applyThemeToCurrentActivity(themeResId);
     }
 
     /**
@@ -203,5 +222,82 @@ public class ProfileActivity extends AppCompatActivity {
         i.putExtra("currentUser",
                 (String) getIntent().getSerializableExtra("currentUser"));
         startActivity(i);
+    }
+
+    public void customizeTheme(View view) {
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_theme_selection, null);
+
+        // we need to find the views
+        RadioGroup radioGroup = dialogView.findViewById(R.id.theme_radio_group);
+        RadioButton defaultTheme = dialogView.findViewById(R.id.theme_default);
+        RadioButton blueTheme = dialogView.findViewById(R.id.theme_blue);
+        RadioButton purpleTheme = dialogView.findViewById(R.id.theme_purple);
+        RadioButton redGoldTheme = dialogView.findViewById(R.id.theme_red_gold);
+        RadioButton brownOrangeTheme = dialogView.findViewById(R.id.theme_brown_orange);
+
+        // based on what the user selected as their theme
+        String currentTheme = ThemeManager.getCurrentTheme(this);
+        switch (currentTheme) {
+            case ThemeManager.THEME_BLUE:
+                blueTheme.setChecked(true);
+                break;
+            case ThemeManager.THEME_PURPLE:
+                purpleTheme.setChecked(true);
+                break;
+            case ThemeManager.THEME_RED_GOLD:
+                redGoldTheme.setChecked(true);
+                break;
+            case ThemeManager.THEME_BROWN_ORANGE:
+                brownOrangeTheme.setChecked(true);
+                break;
+            default:
+                defaultTheme.setChecked(true);
+                break;
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(dialogView);
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+
+        // Set button click listeners
+        Button cancelButton = dialogView.findViewById(R.id.theme_cancel_button);
+        Button applyButton = dialogView.findViewById(R.id.theme_save_button);
+
+        cancelButton.setOnClickListener(v -> dialog.dismiss());
+
+        applyButton.setOnClickListener(v -> {
+            // based on what the user selected as their theme
+            String selectedTheme;
+            int selectedId = radioGroup.getCheckedRadioButtonId();
+
+            if (selectedId == R.id.theme_blue) {
+                selectedTheme = ThemeManager.THEME_BLUE;
+            } else if (selectedId == R.id.theme_purple) {
+                selectedTheme = ThemeManager.THEME_PURPLE;
+            } else if (selectedId == R.id.theme_red_gold) {
+                selectedTheme = ThemeManager.THEME_RED_GOLD;
+            } else if (selectedId == R.id.theme_brown_orange) {
+                selectedTheme = ThemeManager.THEME_BROWN_ORANGE;
+            } else {
+                selectedTheme = ThemeManager.THEME_DEFAULT;
+            }
+
+            // the theme now has to be saved
+            ThemeManager.saveTheme(this, selectedTheme);
+
+            // Database now has the users preference
+            User currentUser = UserManager.getCurrentUser();
+            if (currentUser != null) {
+                currentUser.setThemePreference(selectedTheme);
+                FirebaseFirestore.getInstance().collection("Users")
+                        .document(currentUser.getUsername())
+                        .update("themePreference", selectedTheme);
+            }
+
+            // Inform user and close dialog
+            Toast.makeText(this, "Theme updated!", Toast.LENGTH_SHORT).show(); // confirmation message
+            dialog.dismiss();
+        });
     }
 }
