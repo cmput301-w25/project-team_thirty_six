@@ -23,9 +23,8 @@ A mood board app that allows users to keep track of moods and when they occurred
 
 ## Setup Instructions
 
-1. [Step 1]
-2. [Step 2]
-3. [Step 3]
+1. Before running the app follow [Chatbot Instructions](https://github.com/cmput301-w25/project-team_thirty_six/blob/main/ChatBotInstructions.zip)
+
 
 ## Documentation
 
