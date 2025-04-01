@@ -82,6 +82,19 @@
             app:layout_constraintHorizontal_bias="0.212"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/mood_details_container" />
+        <TextView
+            android:id="@+id/textView_add_mood4"
+            android:layout_width="380dp"
+            android:layout_height="67dp"
+            android:layout_marginTop="4dp"
+            android:text="Sample Prompt:                                                                            Analyze my mood history and give me advice."
+            android:textColor="@android:color/white"
+            android:textSize="15sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.516"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/user_input" />
+
 
         <Button
             android:id="@+id/send_button"
