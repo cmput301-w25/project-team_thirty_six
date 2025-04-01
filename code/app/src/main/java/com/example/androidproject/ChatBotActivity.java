@@ -56,7 +56,7 @@ public class ChatBotActivity extends AppCompatActivity {
         // Initialize with Azure OpenAI credentials
         openAIHelper = new OpenAIClientHelper(
                 "https://models.inference.ai.azure.com", // Azure OpenAI endpoint
-                "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", // Azure Open AI API token
+                "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", // Azure Open AI API token
                 currentUser
         );
 
