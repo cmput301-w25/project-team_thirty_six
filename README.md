@@ -23,7 +23,9 @@ A mood board app that allows users to keep track of moods and when they occurred
 
 ## Setup Instructions
 
-1. Before running the app follow [Chatbot Instructions](https://github.com/cmput301-w25/project-team_thirty_six/blob/main/ChatBotInstructions.zip)
+1. Before running the app, navigate to code -> app -> src -> main
+2) Open ChatBotActivity class replace line 59 with Azure Open AI API token provided in the Discord channel.
+
 
 
 ## Documentation
